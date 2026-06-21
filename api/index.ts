@@ -16,16 +16,14 @@ app.use((_req, res, next) => {
 
 const JWT_SECRET = process.env.JWT_SECRET || 'fallback-super-secret-key-1092';
 
-// Pre-computed hash of 'password123' (bcrypt, 10 rounds)
-const ADMIN_PASSWORD_HASH = '$2b$10$r7H7cbLtShf4cyGAsGHUz.Jna4Rk.F7Cd5ZpVB7eNxeg60dA0aJmC';
-
 // ===== In-Memory Mock Database =====
+const ADMIN_HASH = bcrypt.hashSync('password123', 10);
 let DATA = {
   users: [
     {
       id: '1',
       email: 'admin@portfolio.system',
-      password_hash: ADMIN_PASSWORD_HASH,
+      password_hash: ADMIN_HASH,
       name: 'Site Administrator',
       role: 'admin',
       created_at: new Date().toISOString(),

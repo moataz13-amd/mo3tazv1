@@ -6,8 +6,18 @@ import jwt from 'jsonwebtoken';
 const app = express();
 app.use(cors({ origin: true, credentials: true }));
 app.use(express.json());
+app.use((_req, res, next) => {
+  res.set('Cache-Control', 'no-store, no-cache, must-revalidate, proxy-revalidate');
+  res.set('Pragma', 'no-cache');
+  res.set('Expires', '0');
+  res.set('Surrogate-Control', 'no-store');
+  next();
+});
 
 const JWT_SECRET = process.env.JWT_SECRET || 'fallback-super-secret-key-1092';
+
+// Pre-computed hash of 'password123' (bcrypt, 10 rounds)
+const ADMIN_PASSWORD_HASH = '$2b$10$r7H7cbLtShf4cyGAsGHUz.Jna4Rk.F7Cd5ZpVB7eNxeg60dA0aJmC';
 
 // ===== In-Memory Mock Database =====
 let DATA = {
@@ -15,7 +25,7 @@ let DATA = {
     {
       id: '1',
       email: 'admin@portfolio.system',
-      password_hash: bcrypt.hashSync('password123', 10),
+      password_hash: ADMIN_PASSWORD_HASH,
       name: 'Site Administrator',
       role: 'admin',
       created_at: new Date().toISOString(),

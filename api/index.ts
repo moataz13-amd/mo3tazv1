@@ -47,7 +47,14 @@ const authenticate = (req: any, res: any, next: any) => {
 app.get('/api/_debug', (_req, res) => {
   res.json({
     uptime: process.uptime(), node: process.version, useSupabase,
-    env: { NODE_ENV: process.env.NODE_ENV || '(not set)', SUPABASE_URL: process.env.SUPABASE_URL ? '✅ set' : '❌ missing', SUPABASE_KEY: (process.env.SUPABASE_SERVICE_ROLE_KEY || process.env.SUPABASE_ANON_KEY) ? '✅ set' : '❌ missing' },
+    env: { 
+      NODE_ENV: process.env.NODE_ENV || '(not set)', 
+      SUPABASE_URL: process.env.SUPABASE_URL ? '✅ set' : '❌ missing', 
+      SUPABASE_KEY: (process.env.SUPABASE_SERVICE_ROLE_KEY || process.env.SUPABASE_ANON_KEY) ? '✅ set' : '❌ missing',
+      CLOUDINARY_CLOUD_NAME: process.env.CLOUDINARY_CLOUD_NAME ? '✅ set' : '❌ missing',
+      CLOUDINARY_API_KEY: process.env.CLOUDINARY_API_KEY ? '✅ set' : '❌ missing',
+      CLOUDINARY_API_SECRET: process.env.CLOUDINARY_API_SECRET ? '✅ set' : '❌ missing'
+    },
   });
 });
 

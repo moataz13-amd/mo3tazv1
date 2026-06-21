@@ -65,7 +65,7 @@ export default function Portfolio() {
       <FloatingNav />
 
       {/* Main layout wrapper */}
-      <main className="relative z-20 w-full flex flex-col gap-1">
+      <main className="relative z-20 w-full flex flex-col gap-1 pt-[70px] md:pt-0">
         <Hero />
         <About />
         <Services />

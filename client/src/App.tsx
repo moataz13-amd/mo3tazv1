@@ -6,6 +6,7 @@ import SplashScreen from './components/SplashScreen';
 
 // Lazy-load pages for code splitting
 const Portfolio = lazy(() => import('./pages/Portfolio'));
+const ProjectDesigns = lazy(() => import('./pages/ProjectDesigns'));
 const AdminLogin = lazy(() => import('./pages/admin/Login'));
 const AdminLayout = lazy(() => import('./pages/admin/Layout'));
 const AdminDashboard = lazy(() => import('./pages/admin/Dashboard'));
@@ -76,6 +77,7 @@ export default function App() {
         <Routes>
           {/* Public Portfolio */}
           <Route path="/" element={<Portfolio />} />
+          <Route path="/project/:id" element={<ProjectDesigns />} />
 
           {/* Admin Auth */}
           <Route path="/admin/login" element={<AdminLogin />} />

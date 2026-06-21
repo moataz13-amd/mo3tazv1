@@ -48,6 +48,7 @@ CREATE TABLE IF NOT EXISTS settings (
 CREATE TABLE IF NOT EXISTS projects (
     id UUID PRIMARY KEY DEFAULT gen_random_uuid(),
     title VARCHAR(255) NOT NULL,
+    internal_name VARCHAR(255),
     description TEXT NOT NULL,
     long_description TEXT,
     cover_image TEXT NOT NULL,
@@ -180,6 +181,17 @@ CREATE TABLE IF NOT EXISTS languages (
     created_at TIMESTAMP WITH TIME ZONE DEFAULT CURRENT_TIMESTAMP
 );
 
+-- 13. project_media Table
+CREATE TABLE IF NOT EXISTS project_media (
+    id VARCHAR(100) PRIMARY KEY,
+    url TEXT NOT NULL,
+    public_id VARCHAR(255) NOT NULL UNIQUE,
+    resource_type VARCHAR(50) DEFAULT 'image',
+    format VARCHAR(50),
+    size INTEGER,
+    created_at TIMESTAMP WITH TIME ZONE DEFAULT CURRENT_TIMESTAMP
+);
+
 -- Seed Initial Admin User (Default Password: "password123")
 -- Hash below corresponds to: bcrypt.hash("password123", 10)
 INSERT INTO users (email, password_hash, name, role)
@@ -200,8 +212,34 @@ ALTER TABLE settings ADD COLUMN IF NOT EXISTS stat2_label VARCHAR(100);
 ALTER TABLE settings ADD COLUMN IF NOT EXISTS client_logos JSONB DEFAULT '[]'::jsonb;
 ALTER TABLE settings ADD COLUMN IF NOT EXISTS marquee_row1 JSONB DEFAULT '[]'::jsonb;
 ALTER TABLE settings ADD COLUMN IF NOT EXISTS marquee_row2 JSONB DEFAULT '[]'::jsonb;
+ALTER TABLE settings ADD COLUMN IF NOT EXISTS social_links JSONB DEFAULT '[]'::jsonb;
 ALTER TABLE settings ADD COLUMN IF NOT EXISTS availability_status VARCHAR(50) DEFAULT 'available';
 ALTER TABLE settings ADD COLUMN IF NOT EXISTS availability_response_time VARCHAR(100);
+ALTER TABLE settings ADD COLUMN IF NOT EXISTS subtitle VARCHAR(255);
+ALTER TABLE settings ADD COLUMN IF NOT EXISTS cv_url TEXT;
+ALTER TABLE settings ADD COLUMN IF NOT EXISTS phone VARCHAR(50);
+ALTER TABLE settings ADD COLUMN IF NOT EXISTS location VARCHAR(255);
+ALTER TABLE settings ADD COLUMN IF NOT EXISTS seo_title VARCHAR(255);
+ALTER TABLE settings ADD COLUMN IF NOT EXISTS seo_description TEXT;
+
+-- Ensure projects columns exist
+ALTER TABLE projects ADD COLUMN IF NOT EXISTS internal_name VARCHAR(255);
+ALTER TABLE projects ADD COLUMN IF NOT EXISTS long_description TEXT;
+ALTER TABLE projects ADD COLUMN IF NOT EXISTS images TEXT[] DEFAULT '{}';
+ALTER TABLE projects ADD COLUMN IF NOT EXISTS video_url TEXT;
+ALTER TABLE projects ADD COLUMN IF NOT EXISTS tech_stack TEXT[] DEFAULT '{}';
+ALTER TABLE projects ADD COLUMN IF NOT EXISTS github_url TEXT;
+ALTER TABLE projects ADD COLUMN IF NOT EXISTS live_url TEXT;
+ALTER TABLE projects ADD COLUMN IF NOT EXISTS featured BOOLEAN DEFAULT false;
+ALTER TABLE projects ADD COLUMN IF NOT EXISTS updated_at TIMESTAMP WITH TIME ZONE DEFAULT CURRENT_TIMESTAMP;
+
+-- Ensure services columns exist
+ALTER TABLE services ADD COLUMN IF NOT EXISTS features TEXT[] DEFAULT '{}';
+ALTER TABLE services ADD COLUMN IF NOT EXISTS "order" INTEGER DEFAULT 0;
+ALTER TABLE services ADD COLUMN IF NOT EXISTS price VARCHAR(100);
+
+-- Ensure testimonials columns exist
+ALTER TABLE testimonials ADD COLUMN IF NOT EXISTS status VARCHAR(50) DEFAULT 'active';
 
 -- Seed Settings Row
 INSERT INTO settings (id, name, title, bio, email, hero_headline, hero_subheadline, about_section_title, about_section_heading, stat1_value, stat1_label, stat2_value, stat2_label)

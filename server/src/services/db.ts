@@ -5,7 +5,9 @@ import dotenv from 'dotenv';
 
 dotenv.config();
 
-const USE_MOCK = !process.env.SUPABASE_URL || !process.env.SUPABASE_ANON_KEY;
+// In development: use fast local mock storage (instant writes, no schema issues)
+// In production (Vercel): use Supabase cloud database
+const USE_MOCK = process.env.NODE_ENV !== 'production' || !process.env.SUPABASE_URL || !process.env.SUPABASE_ANON_KEY;
 const MOCK_FILE = path.join(__dirname, '../../data/db_mock.json');
 
 const defaultDeviceData = [
@@ -237,6 +239,30 @@ export const db = {
         if (settingsData.location !== undefined) supabasePayload.location = settingsData.location;
         if (settingsData.bio !== undefined) supabasePayload.bio = settingsData.bio;
         
+        // Custom copywriting and branding settings
+        if (settingsData.hero_headline !== undefined) supabasePayload.hero_headline = settingsData.hero_headline;
+        if (settingsData.hero_subheadline !== undefined) supabasePayload.hero_subheadline = settingsData.hero_subheadline;
+        if (settingsData.about_description !== undefined) supabasePayload.about_description = settingsData.about_description;
+        if (settingsData.about_section_title !== undefined) supabasePayload.about_section_title = settingsData.about_section_title;
+        if (settingsData.about_section_heading !== undefined) supabasePayload.about_section_heading = settingsData.about_section_heading;
+        if (settingsData.about_cta_text !== undefined) supabasePayload.about_cta_text = settingsData.about_cta_text;
+        
+        // Counter Statistics
+        if (settingsData.stat1_value !== undefined) supabasePayload.stat1_value = settingsData.stat1_value;
+        if (settingsData.stat1_label !== undefined) supabasePayload.stat1_label = settingsData.stat1_label;
+        if (settingsData.stat2_value !== undefined) supabasePayload.stat2_value = settingsData.stat2_value;
+        if (settingsData.stat2_label !== undefined) supabasePayload.stat2_label = settingsData.stat2_label;
+
+        // Custom Layout Assets & Lists
+        if (settingsData.client_logos !== undefined) supabasePayload.client_logos = settingsData.client_logos;
+        if (settingsData.marquee_row1 !== undefined) supabasePayload.marquee_row1 = settingsData.marquee_row1;
+        if (settingsData.marquee_row2 !== undefined) supabasePayload.marquee_row2 = settingsData.marquee_row2;
+        if (settingsData.social_links !== undefined) supabasePayload.social_links = settingsData.social_links;
+
+        // Availability badge settings
+        if (settingsData.availability_status !== undefined) supabasePayload.availability_status = settingsData.availability_status;
+        if (settingsData.availability_response_time !== undefined) supabasePayload.availability_response_time = settingsData.availability_response_time;
+        
         if (settingsData.avatar_url !== undefined) {
           supabasePayload.avatar_url = settingsData.avatar_url;
         } else if (settingsData.avatar !== undefined) {
@@ -263,10 +289,28 @@ export const db = {
 
   // Projects
   getProjects: async () => {
+    if (!USE_MOCK) {
+      try {
+        const { data, error } = await supabase.from('projects').select('*').order('created_at', { ascending: false });
+        if (!error && data) return data;
+        console.warn('Supabase getProjects failed, falling back to mock:', error?.message);
+      } catch (e: any) {
+        console.warn('Supabase getProjects failed with exception, falling back to mock:', e.message);
+      }
+    }
     return db.getMockData().projects || [];
   },
 
   createProject: async (project: any) => {
+    if (!USE_MOCK) {
+      const payload = { ...project };
+      const { data, error } = await supabase.from('projects').insert(payload).select().single();
+      if (error) {
+        console.error('Supabase createProject error:', error.message);
+        throw new Error(`Supabase createProject error: ${error.message}`);
+      }
+      return data;
+    }
     const mock = db.getMockData();
     if (!mock.projects) mock.projects = [];
     const newProj = { id: String(Date.now()), created_at: new Date().toISOString(), ...project };
@@ -276,6 +320,14 @@ export const db = {
   },
 
   updateProject: async (id: string, project: any) => {
+    if (!USE_MOCK) {
+      const { data, error } = await supabase.from('projects').update(project).eq('id', id).select().single();
+      if (error) {
+        console.error('Supabase updateProject error:', error.message);
+        throw new Error(`Supabase updateProject error: ${error.message}`);
+      }
+      return data;
+    }
     const mock = db.getMockData();
     if (!mock.projects) mock.projects = [];
     const idx = mock.projects.findIndex((p: any) => p.id === id);
@@ -288,6 +340,14 @@ export const db = {
   },
 
   deleteProject: async (id: string) => {
+    if (!USE_MOCK) {
+      const { error } = await supabase.from('projects').delete().eq('id', id);
+      if (error) {
+        console.error('Supabase deleteProject error:', error.message);
+        throw new Error(`Supabase deleteProject error: ${error.message}`);
+      }
+      return true;
+    }
     const mock = db.getMockData();
     if (!mock.projects) mock.projects = [];
     mock.projects = mock.projects.filter((p: any) => p.id !== id);
@@ -659,7 +719,11 @@ export const db = {
     if (USE_MOCK) {
       return db.getMockData().media;
     }
-    const { data } = await supabase.from('project_media').select('*');
+    const { data, error } = await supabase.from('project_media').select('*');
+    if (error) {
+      console.error('Supabase getMedia error:', error.message);
+      throw new Error(`Supabase getMedia error: ${error.message}`);
+    }
     return data || [];
   },
 
@@ -670,7 +734,11 @@ export const db = {
       db.saveMockData(mock);
       return file;
     }
-    const { data } = await supabase.from('project_media').insert(file).select().single();
+    const { data, error } = await supabase.from('project_media').insert(file).select().single();
+    if (error) {
+      console.error('Supabase addMedia error:', error.message);
+      throw new Error(`Supabase addMedia error: ${error.message}`);
+    }
     return data;
   },
 
@@ -681,7 +749,11 @@ export const db = {
       db.saveMockData(mock);
       return;
     }
-    await supabase.from('project_media').delete().eq('public_id', publicId);
+    const { error } = await supabase.from('project_media').delete().eq('public_id', publicId);
+    if (error) {
+      console.error('Supabase deleteMedia error:', error.message);
+      throw new Error(`Supabase deleteMedia error: ${error.message}`);
+    }
   },
 
   // Experience

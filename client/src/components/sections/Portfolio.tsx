@@ -1,7 +1,7 @@
-import { useState, useRef } from 'react';
-import { motion, useInView, AnimatePresence } from 'framer-motion';
+import { useRef } from 'react';
+import { useNavigate } from 'react-router-dom';
+import { motion, useInView } from 'framer-motion';
 import { useQuery } from '@tanstack/react-query';
-import { X, Image as ImageIcon, ChevronLeft, ChevronRight } from 'lucide-react';
 import { projectsAPI } from '../../lib/api';
 import type { Project } from '../../types';
 
@@ -138,7 +138,7 @@ export default function Portfolio() {
   };
 
   return (
-    <section id="portfolio" className="py-16 md:py-24 px-6 relative z-10" dir="rtl">
+    <section id="portfolio" className="py-10 md:py-16 lg:py-24 px-4 md:px-6 relative z-10" dir="rtl">
       <motion.div
         ref={ref}
         initial={{ opacity: 0, y: 30 }}
@@ -147,9 +147,9 @@ export default function Portfolio() {
         className="max-w-5xl mx-auto flex flex-col gap-12"
       >
         {/* Section Header */}
-        <div className="text-center mb-6">
+        <div className="text-center mb-4 md:mb-6">
           <div
-            className="mb-3 text-base md:text-lg font-bold tracking-wider"
+            className="mb-2 text-sm md:text-base font-bold tracking-wider"
             style={{
               color: '#26EFFD',
               fontFamily: "'Milan Display', 'Sahara Bold', 'Inter', sans-serif",
@@ -158,7 +158,7 @@ export default function Portfolio() {
             معرض الأعمال
           </div>
           <h2
-            className="text-4xl md:text-5xl lg:text-6xl font-black text-white leading-tight"
+            className="text-3xl md:text-4xl lg:text-5xl xl:text-6xl font-black text-white leading-tight"
             style={{
               fontFamily: "'Milan Display', 'Sahara Bold', 'Inter', sans-serif",
               fontWeight: 900,
@@ -169,19 +169,19 @@ export default function Portfolio() {
         </div>
 
         {/* Categories Stack (Alternating Cards) */}
-        <div className="flex flex-col gap-6 w-full">
+        <div className="flex flex-col gap-4 md:gap-6 w-full">
           {projectsList.map((project, i) => {
             const isOdd = i % 2 === 0; // index 0, 2, 4 are odd physical cards (Cyan)
             const cardNumber = String(i + 1).padStart(2, '0');
 
             return (
-              <motion.div
-                key={project.id}
-                initial={{ opacity: 0, y: 40 }}
-                animate={isInView ? { opacity: 1, y: 0 } : {}}
-                transition={{ delay: i * 0.1, duration: 0.6 }}
-                className="relative overflow-hidden rounded-[40px] md:rounded-[50px] flex flex-col transition-all duration-300 hover:scale-[1.01] min-h-[380px] md:h-[440px] border-2 border-white/10 hover:border-[#26EFFD] hover:shadow-[0_10px_30px_rgba(38,239,253,0.2)] group"
-              >
+                <motion.div
+                  key={project.id}
+                  initial={{ opacity: 0, y: 40 }}
+                  animate={isInView ? { opacity: 1, y: 0 } : {}}
+                  transition={{ delay: i * 0.1, duration: 0.6 }}
+                  className="relative overflow-hidden rounded-[40px] md:rounded-[50px] flex flex-col transition-all duration-300 hover:scale-[1.01] aspect-[4/3] md:aspect-[16/10] lg:aspect-[16/9] border-2 border-white/10 hover:border-[#26EFFD] hover:shadow-[0_10px_30px_rgba(38,239,253,0.2)] group"
+                >
                 {/* Full Bleed Background Image */}
                 <div className="absolute inset-0 z-0">
                   <img
@@ -207,21 +207,21 @@ export default function Portfolio() {
                 </div>
 
                 {/* Inner layout wrapper */}
-                <div className="w-full h-full flex flex-col justify-end relative z-10 p-8 md:p-14 pb-24 md:pb-16 flex-1">
+                <div className="w-full h-full flex flex-col justify-end relative z-10 p-4 md:p-8 lg:p-14 pb-16 md:pb-16 flex-1">
                   {/* Text information hidden as requested */}
                 </div>
 
                 {/* Bottom View Project Button */}
                 <div
-                  className={`absolute bottom-6 md:bottom-8 ${
-                    isOdd ? 'right-6 md:right-14' : 'left-6 md:left-14'
+                  className={`absolute bottom-4 md:bottom-6 lg:bottom-8 ${
+                    isOdd ? 'right-4 md:right-6 lg:right-14' : 'left-4 md:left-6 lg:left-14'
                   } z-20`}
                 >
                   <motion.button
                     onClick={() => openGallery(project)}
                     whileHover={{ scale: 1.05, y: -2 }}
                     whileTap={{ scale: 0.95 }}
-                    className="px-8 py-2.5 bg-[#ffffff] text-black border-2 border-black rounded-full font-black text-sm shadow-[4px_4px_0px_#000000] hover:shadow-[1px_1px_0px_#000000] hover:bg-white transition-all cursor-pointer"
+                    className="px-6 md:px-8 py-2 md:py-2.5 bg-[#ffffff] text-black border-2 border-black rounded-full font-black text-xs md:text-sm shadow-[3px_3px_0px_#000000] hover:shadow-[1px_1px_0px_#000000] hover:bg-white transition-all cursor-pointer"
                     style={{
                       fontFamily: "'Sahara Bold', 'Inter', sans-serif",
                     }}
@@ -242,7 +242,7 @@ export default function Portfolio() {
             initial={{ opacity: 0 }}
             animate={{ opacity: 1 }}
             exit={{ opacity: 0 }}
-            className="fixed inset-0 bg-black/90 backdrop-blur-md z-50 overflow-y-auto px-6 py-12 flex flex-col items-center"
+            className="fixed inset-0 bg-black/90 backdrop-blur-md z-50 overflow-y-auto px-4 md:px-6 py-8 md:py-12 flex flex-col items-center"
           >
             {/* Header / Nav */}
             <div className="max-w-5xl w-full flex items-center justify-end mb-10 pb-4 border-b border-white/10">
@@ -261,22 +261,22 @@ export default function Portfolio() {
             <div className="max-w-5xl w-full flex-1">
               {!activeProjectGallery.images || activeProjectGallery.images.length === 0 ? (
                 <div
-                  className="text-center py-20 text-gray-400 font-bold"
+                  className="text-center py-10 md:py-20 text-gray-400 font-bold"
                   style={{ fontFamily: "'Sahara Bold', sans-serif" }}
                 >
                   لا توجد تصميمات مضافة حالياً في هذا القسم.
                 </div>
               ) : (
-                <div className="grid grid-cols-1 sm:grid-cols-2 md:grid-cols-3 gap-6">
+                <div className="grid grid-cols-1 sm:grid-cols-2 md:grid-cols-3 gap-4 md:gap-6">
                   {activeProjectGallery.images.map((imgUrl, index) => (
-                    <motion.div
-                      key={index}
-                      initial={{ opacity: 0, y: 20 }}
-                      animate={{ opacity: 1, y: 0 }}
-                      transition={{ delay: index * 0.05 }}
-                      onClick={() => openLightbox(index)}
-                      className="group relative rounded-3xl overflow-hidden border-2 border-black bg-white shadow-[4px_4px_0px_#000000] hover:shadow-[1px_1px_0px_#000000] hover:translate-y-[2px] transition-all cursor-pointer aspect-[4/3]"
-                    >
+                      <motion.div
+                        key={index}
+                        initial={{ opacity: 0, y: 20 }}
+                        animate={{ opacity: 1, y: 0 }}
+                        transition={{ delay: index * 0.05 }}
+                        onClick={() => openLightbox(index)}
+                        className="group relative rounded-3xl overflow-hidden border-2 border-black bg-white shadow-[4px_4px_0px_#000000] hover:shadow-[1px_1px_0px_#000000] hover:translate-y-[2px] transition-all cursor-pointer aspect-[4/3] md:aspect-[3/4]"
+                      >
                       <img
                         src={imgUrl}
                         alt={`${activeProjectGallery.title} - ${index + 1}`}
@@ -330,12 +330,12 @@ export default function Portfolio() {
               animate={{ scale: 1 }}
               exit={{ scale: 0.95 }}
               onClick={(e) => e.stopPropagation()}
-              className="max-w-4xl max-h-[80vh] relative border-4 border-black rounded-3xl overflow-hidden bg-white shadow-[8px_8px_0px_#000000]"
+              className="max-w-[95vw] max-h-[85vh] md:max-w-4xl relative border-4 border-black rounded-2xl md:rounded-3xl overflow-hidden bg-white shadow-[8px_8px_0px_#000000]"
             >
               <img
                 src={activeProjectGallery.images?.[lightboxImageIndex]}
                 alt="Enlarged design"
-                className="max-w-full max-h-[80vh] object-contain"
+                className="max-w-full max-h-[85vh] object-contain"
               />
             </motion.div>
 

@@ -3,17 +3,28 @@ import bcrypt from 'bcryptjs';
 import jwt from 'jsonwebtoken';
 import { db } from '../services/db';
 import { authenticate } from '../middleware/auth';
-import { upload, cloudinary } from '../config/cloudinary';
+import { upload, cloudinary, useCloudinary } from '../config/cloudinary';
 import dotenv from 'dotenv';
+import fs from 'fs';
+import path from 'path';
 
 dotenv.config();
 
 const router = Router();
 const JWT_SECRET = process.env.JWT_SECRET || 'fallback-super-secret-key-1092';
 
-// Helper to convert request file to Cloudinary URL
+// Helper to convert request file to Cloudinary URL or local file path
 const getUploadedFileUrl = (req: any) => {
-  return req.file ? req.file.path : null;
+  if (!req.file) return null;
+  // If it's a Cloudinary URL, it will start with http or https
+  if (req.file.path && (req.file.path.startsWith('http://') || req.file.path.startsWith('https://'))) {
+    return req.file.path;
+  }
+  // Otherwise, fallback to the local static uploads URL path
+  if (req.file.filename) {
+    return `/uploads/${req.file.filename}`;
+  }
+  return req.file.path || null;
 };
 
 // ============================================
@@ -609,10 +620,14 @@ router.post('/media/upload', authenticate, upload.single('file'), async (req: an
     }
 
     const isVideo = req.file.mimetype.startsWith('video');
+    const fileUrl = (req.file.path && (req.file.path.startsWith('http://') || req.file.path.startsWith('https://')))
+      ? req.file.path
+      : `/uploads/${req.file.filename}`;
+
     const mediaFile = {
       id: String(Date.now()),
-      url: req.file.path,
-      public_id: req.file.filename,
+      url: fileUrl,
+      public_id: req.file.filename || `local-${Date.now()}`,
       resource_type: isVideo ? 'video' : 'image',
       format: req.file.mimetype.split('/')[1] || 'png',
       size: req.file.size,
@@ -630,11 +645,20 @@ router.post('/media/upload', authenticate, upload.single('file'), async (req: an
 router.delete('/media/:public_id', authenticate, async (req, res) => {
   try {
     const publicId = String(req.params.public_id);
-    // Attempt deletion in Cloudinary
-    try {
-      await cloudinary.uploader.destroy(publicId);
-    } catch (cErr) {
-      console.warn('Could not delete from Cloudinary, deleting from local database/mock anyway');
+    
+    if (useCloudinary) {
+      // Attempt deletion in Cloudinary
+      try {
+        await cloudinary.uploader.destroy(publicId);
+      } catch (cErr) {
+        console.warn('Could not delete from Cloudinary:', cErr);
+      }
+    } else {
+      // Delete the file locally from uploads folder
+      const filePath = path.join(__dirname, '../../uploads', publicId);
+      if (fs.existsSync(filePath)) {
+        fs.unlinkSync(filePath);
+      }
     }
 
     await db.deleteMedia(publicId);

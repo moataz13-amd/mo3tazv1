@@ -1,0 +1,17 @@
+{
+  "version": 2,
+  "rewrites": [
+    {
+      "source": "/api/:path*",
+      "destination": "/api"
+    },
+    {
+      "source": "/uploads/:path*",
+      "destination": "/api"
+    },
+    {
+      "source": "/((?!api|uploads|assets|favicon.ico|robots.txt|Mo3taz..svg|me2.png).*).*",
+      "destination": "/index.html"
+    }
+  ]
+}

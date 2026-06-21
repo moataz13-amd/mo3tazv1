@@ -189,96 +189,6 @@
       "category": "graphic",
       "featured": false,
       "status": "published"
-    },
-    {
-      "id": "1782007484752",
-      "created_at": "2026-06-21T02:04:44.752Z",
-      "title": "بوب ارت ",
-      "internal_name": "بوب ارت ",
-      "description": "بوب ارت ",
-      "cover_image": "https://res.cloudinary.com/dvpe9bejq/image/upload/v1782007481/portfolio_assets/a1gko2g2mbtdix9fv3af.webp",
-      "images": [],
-      "tech_stack": [],
-      "github_url": null,
-      "live_url": null,
-      "category": "graphic",
-      "featured": false,
-      "status": "published"
-    },
-    {
-      "id": "1782007750132",
-      "created_at": "2026-06-21T02:09:10.132Z",
-      "title": "بوب ارت ",
-      "internal_name": "بوب ارت ",
-      "description": "بوب ارت ",
-      "cover_image": "https://res.cloudinary.com/dvpe9bejq/image/upload/v1782007747/portfolio_assets/qkjv5wjvefp14d4vjeke.webp",
-      "images": [],
-      "tech_stack": [],
-      "github_url": null,
-      "live_url": null,
-      "category": "graphic",
-      "featured": false,
-      "status": "published"
-    },
-    {
-      "id": "1782007772439",
-      "created_at": "2026-06-21T02:09:32.439Z",
-      "title": "بوب ارت ",
-      "internal_name": "بوب ارت ",
-      "description": "بوب ارت ",
-      "cover_image": "https://res.cloudinary.com/dvpe9bejq/image/upload/v1782007769/portfolio_assets/yl0aoyw5qkgrdcqaoyjg.webp",
-      "images": [],
-      "tech_stack": [],
-      "github_url": null,
-      "live_url": null,
-      "category": "graphic",
-      "featured": false,
-      "status": "published"
-    },
-    {
-      "id": "1782007777667",
-      "created_at": "2026-06-21T02:09:37.667Z",
-      "title": "بوب ارت ",
-      "internal_name": "بوب ارت ",
-      "description": "بوب ارت ",
-      "cover_image": "https://res.cloudinary.com/dvpe9bejq/image/upload/v1782007776/portfolio_assets/tpio34fkojdlhgban6su.webp",
-      "images": [],
-      "tech_stack": [],
-      "github_url": null,
-      "live_url": null,
-      "category": "graphic",
-      "featured": false,
-      "status": "published"
-    },
-    {
-      "id": "1782007924623",
-      "created_at": "2026-06-21T02:12:04.623Z",
-      "title": "بوب ارت ",
-      "internal_name": "بوب ارت ",
-      "description": "بوب ارت ",
-      "cover_image": "https://res.cloudinary.com/dvpe9bejq/image/upload/v1782007922/portfolio_assets/hajezpsucz6hnigh6jaa.webp",
-      "images": [],
-      "tech_stack": [],
-      "github_url": null,
-      "live_url": null,
-      "category": "graphic",
-      "featured": false,
-      "status": "published"
-    },
-    {
-      "id": "1782007932655",
-      "created_at": "2026-06-21T02:12:12.655Z",
-      "title": "بوب ارت ",
-      "internal_name": "بوب ارت ",
-      "description": "بوب ارت ",
-      "cover_image": "https://res.cloudinary.com/dvpe9bejq/image/upload/v1782007931/portfolio_assets/rjkjqjlwxajhbhmjhh51.webp",
-      "images": [],
-      "tech_stack": [],
-      "github_url": null,
-      "live_url": null,
-      "category": "graphic",
-      "featured": false,
-      "status": "published"
     }
   ],
   "skills": [],
@@ -326,7 +236,7 @@
   "experience": [],
   "languages": [],
   "analytics": {
-    "total_visitors": 1420,
+    "total_visitors": 1432,
     "total_projects": 0,
     "total_messages": 0,
     "total_posts": 0,
@@ -401,7 +311,44 @@
       }
     ]
   },
-  "activity_logs": [],
+  "activity_logs": [
+    {
+      "id": "1782009923065",
+      "action": "Project Deleted",
+      "description": "Removed showcase work ID: 1782007484752",
+      "created_at": "2026-06-21T02:45:23.065Z"
+    },
+    {
+      "id": "1782009919321",
+      "action": "Project Deleted",
+      "description": "Removed showcase work ID: 1782007750132",
+      "created_at": "2026-06-21T02:45:19.321Z"
+    },
+    {
+      "id": "1782009916799",
+      "action": "Project Deleted",
+      "description": "Removed showcase work ID: 1782007772439",
+      "created_at": "2026-06-21T02:45:16.799Z"
+    },
+    {
+      "id": "1782009914769",
+      "action": "Project Deleted",
+      "description": "Removed showcase work ID: 1782007777667",
+      "created_at": "2026-06-21T02:45:14.769Z"
+    },
+    {
+      "id": "1782009911649",
+      "action": "Project Deleted",
+      "description": "Removed showcase work ID: 1782007924623",
+      "created_at": "2026-06-21T02:45:11.649Z"
+    },
+    {
+      "id": "1782009909148",
+      "action": "Project Deleted",
+      "description": "Removed showcase work ID: 1782007932655",
+      "created_at": "2026-06-21T02:45:09.148Z"
+    }
+  ],
   "media": [],
   "client_logos": [
     {

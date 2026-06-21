@@ -769,5 +769,10 @@ input[type="file"]::file-selector-button:hover {
   box-shadow: 1px 1px 0px #000000;
 }
 
-
+/* Shine beam animation for "أثر دائم" */
+@keyframes shine {
+  0% { background-position: 200% center; }
+  50% { background-position: 0% center; }
+  100% { background-position: -200% center; }
+}
 

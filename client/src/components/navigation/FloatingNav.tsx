@@ -1,6 +1,7 @@
 import { useEffect, useState } from 'react';
+import { useNavigate } from 'react-router-dom';
 import { motion, AnimatePresence } from 'framer-motion';
-import { Menu, X } from 'lucide-react';
+import { Menu, X, ArrowRight } from 'lucide-react';
 import { useUIStore } from '../../store';
 
 const navItems = [
@@ -10,25 +11,43 @@ const navItems = [
   { id: 'portfolio', label: 'المشاريع' },
 ];
 
-export default function FloatingNav() {
+export default function FloatingNav({ projectTitle }: { projectTitle?: string }) {
+  const navigate = useNavigate();
   const { activeSection, setActiveSection } = useUIStore();
   const [scrolled, setScrolled] = useState(false);
   const [mobileMenuOpen, setMobileMenuOpen] = useState(false);
+  const isProjectPage = !!projectTitle;
 
   const scrollToSection = (id: string) => {
-    const el = document.getElementById(id);
-    if (el) {
-      if ((window as any).lenis) {
-        (window as any).lenis.scrollTo(el, { offset: -20, duration: 1.2 });
-      } else {
-        el.scrollIntoView({ behavior: 'smooth', block: 'start' });
+    const doScroll = () => {
+      const el = document.getElementById(id);
+      if (el) {
+        if ((window as any).lenis) {
+          (window as any).lenis.scrollTo(el, { offset: -20, duration: 1.2 });
+        } else {
+          el.scrollIntoView({ behavior: 'smooth', block: 'start' });
+        }
+        setActiveSection(id);
       }
-      setActiveSection(id);
+    };
+    if (isProjectPage) {
+      navigate('/');
+      setTimeout(doScroll, 300);
+    } else {
+      doScroll();
     }
   };
 
+  // Set active section to portfolio when on project page
+  useEffect(() => {
+    if (isProjectPage) {
+      setActiveSection('portfolio');
+    }
+  }, [isProjectPage, setActiveSection]);
+
   // Intersection Observer to auto-detect active section
   useEffect(() => {
+    if (isProjectPage) return;
     const observers: IntersectionObserver[] = [];
     const allSections = [...navItems.map(i => i.id), 'contact'];
 
@@ -47,7 +66,7 @@ export default function FloatingNav() {
     });
 
     return () => observers.forEach((o) => o.disconnect());
-  }, [setActiveSection]);
+  }, [isProjectPage, setActiveSection]);
 
   // Handle scroll
   useEffect(() => {
@@ -83,36 +102,47 @@ export default function FloatingNav() {
             background: 'linear-gradient(135deg, rgba(255, 255, 255, 0.08) 0%, rgba(255, 255, 255, 0.03) 100%)',
           }}
         >
-          {/* Logo — right side in RTL */}
-          <button
-            onClick={() => scrollToSection('home')}
-            className="flex items-center cursor-pointer flex-shrink-0"
-          >
-            <img
-              src="/Mo3taz..svg"
-              alt="MO3TAZ."
-              style={{
-                height: '28px',
-                filter: 'brightness(0) saturate(100%) invert(75%) sepia(60%) saturate(500%) hue-rotate(145deg) brightness(1.1)',
-              }}
-              onError={(e) => {
-                (e.target as HTMLImageElement).style.display = 'none';
-                const fallback = (e.target as HTMLImageElement).nextElementSibling as HTMLElement;
-                if (fallback) fallback.style.display = 'block';
-              }}
-            />
-            <span
-              className="font-bold text-xl tracking-tight"
-              style={{
-                display: 'none',
-                fontFamily: 'Outfit, sans-serif',
-                color: '#00BFFF',
-                textShadow: '0 0 20px rgba(0,191,255,0.4)',
-              }}
+          {/* Logo / Back button */}
+          {isProjectPage ? (
+            <button
+              onClick={() => navigate('/')}
+              className="flex items-center gap-2 cursor-pointer flex-shrink-0 text-[rgba(180,220,220,0.7)] hover:text-[#00E5FF] transition-colors"
+              style={{ fontFamily: "'Sahara Bold', 'Inter', sans-serif" }}
             >
-              MO3TAZ.
-            </span>
-          </button>
+              <ArrowRight size={18} />
+              <span className="text-[14px] font-medium max-w-[140px] truncate">{projectTitle}</span>
+            </button>
+          ) : (
+            <button
+              onClick={() => scrollToSection('home')}
+              className="flex items-center cursor-pointer flex-shrink-0"
+            >
+              <img
+                src="/Mo3taz..svg"
+                alt="MO3TAZ."
+                style={{
+                  height: '28px',
+                  filter: 'brightness(0) saturate(100%) invert(75%) sepia(60%) saturate(500%) hue-rotate(145deg) brightness(1.1)',
+                }}
+                onError={(e) => {
+                  (e.target as HTMLImageElement).style.display = 'none';
+                  const fallback = (e.target as HTMLImageElement).nextElementSibling as HTMLElement;
+                  if (fallback) fallback.style.display = 'block';
+                }}
+              />
+              <span
+                className="font-bold text-xl tracking-tight"
+                style={{
+                  display: 'none',
+                  fontFamily: 'Outfit, sans-serif',
+                  color: '#00BFFF',
+                  textShadow: '0 0 20px rgba(0,191,255,0.4)',
+                }}
+              >
+                MO3TAZ.
+              </span>
+            </button>
+          )}
 
           {/* Nav Links — center */}
           <div className="flex items-center gap-7">
@@ -184,20 +214,31 @@ export default function FloatingNav() {
             boxShadow: '0 8px 32px rgba(0, 0, 0, 0.3), inset 0 1px 1px rgba(255, 255, 255, 0.25)',
           }}
         >
-          {/* Logo right */}
-          <button
-            onClick={() => { scrollToSection('home'); setMobileMenuOpen(false); }}
-            className="flex items-center cursor-pointer flex-shrink-0"
-          >
-            <img
-              src="/Mo3taz..svg"
-              alt="MO3TAZ."
-              style={{
-                height: '24px',
-                filter: 'brightness(0) saturate(100%) invert(75%) sepia(60%) saturate(500%) hue-rotate(145deg) brightness(1.1)',
-              }}
-            />
-          </button>
+          {/* Logo right / Back button */}
+          {isProjectPage ? (
+            <button
+              onClick={() => navigate('/')}
+              className="flex items-center gap-1.5 cursor-pointer flex-shrink-0 text-[rgba(180,220,220,0.7)] hover:text-[#00E5FF] transition-colors max-w-[140px]"
+              style={{ fontFamily: "'Sahara Bold', 'Inter', sans-serif" }}
+            >
+              <ArrowRight size={16} />
+              <span className="text-[13px] font-medium truncate">{projectTitle}</span>
+            </button>
+          ) : (
+            <button
+              onClick={() => { scrollToSection('home'); setMobileMenuOpen(false); }}
+              className="flex items-center cursor-pointer flex-shrink-0"
+            >
+              <img
+                src="/Mo3taz..svg"
+                alt="MO3TAZ."
+                style={{
+                  height: '24px',
+                  filter: 'brightness(0) saturate(100%) invert(75%) sepia(60%) saturate(500%) hue-rotate(145deg) brightness(1.1)',
+                }}
+              />
+            </button>
+          )}
 
           {/* Left group: Menu + CTA */}
           <div className="flex items-center gap-2">

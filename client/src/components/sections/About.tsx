@@ -194,33 +194,40 @@ export default function About() {
           whileInView={{ opacity: 1, y: 0 }}
           viewport={{ once: true }}
           transition={{ duration: 0.8, delay: 0.1 }}
-          className="flex items-center justify-center gap-3 md:gap-5 mt-16 md:mt-24 mb-10 pb-2"
+          className="flex items-center justify-center mt-16 md:mt-24 mb-10 pb-2"
         >
-          {/* Sparkles SVG matching reference image */}
-          <div className="flex-shrink-0 text-white drop-shadow-[0_0_16px_rgba(255,255,255,0.5)]">
-            <svg width="80" height="80" viewBox="0 0 60 60" fill="currentColor">
-              {/* Large Star */}
-              <path d="M 38 10 Q 38 22 50 22 Q 38 22 38 34 Q 38 22 26 22 Q 38 22 38 10 Z" />
-              {/* Medium Star */}
-              <path d="M 18 25 Q 18 32 25 32 Q 18 32 18 39 Q 18 32 11 32 Q 18 32 18 25 Z" />
-              {/* Small Star */}
-              <path d="M 30 39 Q 30 44 35 44 Q 30 44 30 49 Q 30 44 25 44 Q 30 44 30 39 Z" />
-            </svg>
+          {/* Text "أثر دائم" with shine beam */}
+          <div className="relative inline-block">
+            <span
+              className="text-white font-black leading-none select-none block relative"
+              style={{
+                fontFamily: "'Milan Display', 'Sahara Bold', 'Inter', sans-serif",
+                fontSize: 'clamp(4.5rem, 12vw, 11rem)',
+                fontWeight: 900,
+                letterSpacing: '-0.02em',
+                opacity: 0.6,
+              }}
+            >
+              أثر دائم
+            </span>
+            <span
+              className="absolute inset-0 font-black leading-none overflow-hidden pointer-events-none"
+              style={{
+                fontFamily: "'Milan Display', 'Sahara Bold', 'Inter', sans-serif",
+                fontSize: 'clamp(4.5rem, 12vw, 11rem)',
+                fontWeight: 900,
+                letterSpacing: '-0.02em',
+                background: 'linear-gradient(105deg, transparent 30%, rgba(255,255,255,0.8) 50%, transparent 70%)',
+                backgroundSize: '200% 100%',
+                backgroundClip: 'text',
+                WebkitBackgroundClip: 'text',
+                WebkitTextFillColor: 'transparent',
+                animation: 'shine 3s ease-in-out infinite',
+              }}
+            >
+              أثر دائم
+            </span>
           </div>
-
-          {/* Text "أثر دائم" */}
-          <span
-            className="text-white font-black leading-none select-none"
-            style={{
-              fontFamily: "'Milan Display', 'Sahara Bold', 'Inter', sans-serif",
-              fontSize: 'clamp(4.5rem, 12vw, 11rem)',
-              fontWeight: 900,
-              letterSpacing: '-0.02em',
-              filter: 'drop-shadow(0 2px 12px rgba(255,255,255,0.15))',
-            }}
-          >
-            أثر دائم
-          </span>
         </motion.div>
       </div>
     </section>

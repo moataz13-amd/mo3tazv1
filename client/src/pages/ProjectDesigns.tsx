@@ -1,26 +1,30 @@
 import { useState, useEffect } from 'react';
-import { useParams, useNavigate } from 'react-router-dom';
+import { useParams, useNavigate, useLocation } from 'react-router-dom';
 import { motion, AnimatePresence } from 'framer-motion';
-import { ArrowRight, X, ChevronLeft, ChevronRight } from 'lucide-react';
+import { X, ChevronLeft, ChevronRight } from 'lucide-react';
 import { projectsAPI } from '../lib/api';
+import FloatingNav from '../components/navigation/FloatingNav';
 import type { Project } from '../types';
 
 export default function ProjectDesigns() {
   const { id } = useParams<{ id: string }>();
   const navigate = useNavigate();
-  const [project, setProject] = useState<Project | null>(null);
-  const [loading, setLoading] = useState(true);
+  const location = useLocation();
+  const stateProject = (location.state as { project?: Project })?.project;
+  const [project, setProject] = useState<Project | null>(stateProject || null);
+  const [loading, setLoading] = useState(!stateProject);
   const [lightboxIndex, setLightboxIndex] = useState<number | null>(null);
 
   useEffect(() => {
     if (!id) return;
+    if (stateProject) return;
     setLoading(true);
     projectsAPI.getById(id).then((res) => {
       setProject(res.data as Project);
     }).catch(() => {
       navigate('/', { replace: true });
     }).finally(() => setLoading(false));
-  }, [id, navigate]);
+  }, [id, navigate, stateProject]);
 
   useEffect(() => {
     window.scrollTo(0, 0);
@@ -41,39 +45,10 @@ export default function ProjectDesigns() {
 
   return (
     <div className="min-h-screen bg-[#050816] text-white" dir="rtl">
-      {/* Header */}
-      <div className="fixed top-0 left-0 right-0 z-50">
-        <div className="flex items-center justify-between px-4 md:px-8 py-4 mx-3 md:mx-6 mt-3"
-          style={{
-            background: 'linear-gradient(135deg, rgba(255, 255, 255, 0.08) 0%, rgba(255, 255, 255, 0.03) 100%)',
-            backdropFilter: 'blur(24px)',
-            border: '1px solid rgba(255, 255, 255, 0.1)',
-            borderRadius: '50px',
-            boxShadow: '0 8px 32px rgba(0, 0, 0, 0.3)',
-          }}
-        >
-          <button
-            onClick={() => navigate('/')}
-            className="flex items-center gap-2 cursor-pointer text-[rgba(180,220,220,0.7)] hover:text-[#00E5FF] transition-colors"
-            style={{ fontFamily: "'Sahara Bold', 'Inter', sans-serif" }}
-          >
-            <ArrowRight size={20} />
-            <span className="text-sm">العودة</span>
-          </button>
-
-          <h1 className="text-lg font-bold truncate max-w-[200px] md:max-w-none"
-            style={{
-              color: '#00E5FF',
-              fontFamily: "'Milan Display', 'Sahara Bold', sans-serif",
-            }}
-          >
-            {project.title}
-          </h1>
-        </div>
-      </div>
+      <FloatingNav projectTitle={project.title} />
 
       {/* Content */}
-      <main className="pt-24 pb-16 px-4 md:px-8 max-w-7xl mx-auto">
+      <main className="pt-28 md:pt-32 pb-16 px-4 md:px-8 max-w-7xl mx-auto">
         {/* Project info */}
         <div className="mb-10 text-center">
           <p className="text-gray-400 max-w-2xl mx-auto leading-relaxed">{project.description}</p>
@@ -84,7 +59,7 @@ export default function ProjectDesigns() {
             لا توجد تصميمات في هذا المشروع
           </div>
         ) : (
-          <div className="flex flex-col items-center gap-8">
+          <div className="columns-1 md:columns-3 gap-4 md:gap-6 space-y-4 md:space-y-6">
             {images.map((imgUrl, index) => (
               <motion.div
                 key={index}
@@ -92,7 +67,7 @@ export default function ProjectDesigns() {
                 animate={{ opacity: 1, y: 0 }}
                 transition={{ delay: index * 0.08, duration: 0.5 }}
                 onClick={() => setLightboxIndex(index)}
-                className="w-full max-w-5xl cursor-pointer group relative rounded-2xl overflow-hidden border border-white/10 hover:border-[#00E5FF]/40 transition-all duration-300"
+                className="cursor-pointer group relative rounded-2xl overflow-hidden border border-white/10 hover:border-[#00E5FF]/40 transition-all duration-300"
                 style={{
                   boxShadow: '0 4px 30px rgba(0, 0, 0, 0.3)',
                 }}

@@ -12,8 +12,8 @@ const supabase = useSupabase ? createClient(supabaseUrl, supabaseKey, {
 
 const ADMIN_HASH = bcrypt.hashSync('password123', 10);
 
-// In-memory seed data — always available, even if Supabase is down
-let DATA: Record<string, any> = {
+// Fallback seed data — used ONLY when Supabase is not available
+const SEED: Record<string, any> = {
   users: [{ id: '1', email: 'admin@portfolio.system', password_hash: ADMIN_HASH, name: 'Site Administrator', role: 'admin', created_at: new Date().toISOString() }],
   settings: { name: 'معتز جمعة', title: 'جونيور جرافيك ديزاينر', subtitle: 'Crafting premium digital experiences',
     bio: 'الإبداع ليس ما نفعله فقط بل ما نتركه في أذهان عملائنا', email: 'hello@portfolio.dev',
@@ -56,369 +56,485 @@ let DATA: Record<string, any> = {
       { name: 'Firefox', value: 12, color: '#4F46E5' }, { name: 'Edge', value: 8, color: '#7C3AED' }] },
 };
 
-// Helper: try-catch wrapper for Supabase writes
-async function trySupabase(table: string, operation: 'insert' | 'update' | 'delete' | 'upsert', payload?: any, match?: any) {
-  if (!useSupabase || !supabase) return;
-  try {
-    let q = supabase.from(table) as any;
-    if (operation === 'insert') { await q.insert(payload); }
-    else if (operation === 'upsert') { await q.upsert(payload); }
-    else if (operation === 'update') { await q.update(payload).eq(match.field, match.value); }
-    else if (operation === 'delete') { await q.delete().eq(match.field, match.value); }
-  } catch (e: any) {
-    console.warn(`Supabase ${operation} ${table} failed:`, e.message);
-  }
-}
-
-// Helper: insert + select with try-catch
-async function supabaseInsert(table: string, item: any) {
-  if (!useSupabase || !supabase) return null;
-  try {
-    const { data } = await supabase.from(table).insert(item).select().single();
-    return data;
-  } catch (e: any) {
-    console.warn(`Supabase insert ${table} failed:`, e.message);
-    return null;
-  }
-}
-
-// Helper: try-catch wrapper for Supabase reads (returns data or null)
-async function readSupabase(table: string, options?: { orderField?: string; ascending?: boolean; limit?: number; single?: boolean }) {
-  if (!useSupabase || !supabase) return null;
-  try {
-    let q = supabase.from(table).select('*') as any;
-    if (options?.orderField) q = q.order(options.orderField, { ascending: options.ascending ?? true });
-    if (options?.limit) q = q.limit(options.limit);
-    if (options?.single) { const { data } = await q.single(); return data || null; }
-    const { data } = await q;
-    return (data && data.length > 0) ? data : null;
-  } catch (e: any) {
-    console.warn(`Supabase read ${table} failed:`, e.message);
-    return null;
-  }
-}
+// ============================================================
+// SUPABASE-FIRST DATABASE LAYER
+// All operations go to Supabase first. Memory is ONLY a fallback.
+// ============================================================
 
 export const db = {
+  // ── Auth ──
   getUserByEmail: async (email: string) => {
-    const local = DATA.users.find((u: any) => u.email === email);
-    if (local) return local;
     if (useSupabase && supabase) {
-      const data = await readSupabase('users', { single: true }).catch(() => null);
-      if (data) return data;
+      try {
+        const { data, error } = await supabase.from('users').select('*').eq('email', email).single();
+        if (!error && data) return data;
+      } catch (e: any) { console.warn('DB getUserByEmail error:', e.message); }
     }
-    return DATA.users.find((u: any) => u.email === email) || null;
+    // Fallback to hardcoded admin
+    if (email === 'admin@portfolio.system') return SEED.users[0];
+    return null;
   },
 
+  // ── Activity Logs ──
   logActivity: async (action: string, description: string) => {
     const entry = { action, description, created_at: new Date().toISOString() };
-    DATA.activity_logs.unshift(entry);
-    await trySupabase('activity_logs', 'insert', entry);
+    if (useSupabase && supabase) {
+      try { await supabase.from('activity_logs').insert(entry); } catch {}
+    }
   },
-  getActivityLogs: async () => DATA.activity_logs,
+  getActivityLogs: async () => {
+    if (useSupabase && supabase) {
+      try {
+        const { data } = await supabase.from('activity_logs').select('*').order('created_at', { ascending: false }).limit(20);
+        if (data) return data;
+      } catch {}
+    }
+    return [];
+  },
 
-  // Settings
+  // ── Settings ──
   getSettings: async () => {
-    const sData = await readSupabase('settings', { single: true });
-    if (sData) { DATA.settings = { ...DATA.settings, ...sData }; }
-    return DATA.settings;
+    if (useSupabase && supabase) {
+      try {
+        const { data, error } = await supabase.from('settings').select('*').single();
+        if (!error && data) return { ...SEED.settings, ...data };
+      } catch (e: any) { console.warn('DB getSettings error:', e.message); }
+    }
+    return SEED.settings;
   },
   updateSettings: async (body: any) => {
-    DATA.settings = { ...DATA.settings, ...body };
-    await trySupabase('settings', 'upsert', DATA.settings);
-    return DATA.settings;
+    if (useSupabase && supabase) {
+      try {
+        const payload: any = {};
+        const fields = ['name','email','title','location','bio','hero_headline','hero_subheadline',
+          'about_description','about_section_title','about_section_heading','about_cta_text',
+          'stat1_value','stat1_label','stat2_value','stat2_label','client_logos','marquee_row1',
+          'marquee_row2','social_links','availability_status','availability_response_time',
+          'subtitle','cv_url','phone','seo_title','seo_description','avatar_url'];
+        for (const f of fields) { if (body[f] !== undefined) payload[f] = body[f]; }
+        if (body.avatar !== undefined && !payload.avatar_url) payload.avatar_url = body.avatar;
+        if (Object.keys(payload).length > 0) {
+          const { error } = await supabase.from('settings').update(payload).eq('id', '00000000-0000-0000-0000-000000000000');
+          if (error) console.error('DB updateSettings error:', error.message);
+        }
+        return await db.getSettings();
+      } catch (e: any) { console.error('DB updateSettings exception:', e.message); }
+    }
+    return { ...SEED.settings, ...body };
   },
 
-  // Projects
+  // ── Projects ──
   getProjects: async () => {
-    const sData = await readSupabase('projects', { orderField: 'created_at', ascending: false });
-    if (sData) { DATA.projects = sData as any[]; return DATA.projects; }
-    return DATA.projects;
+    if (useSupabase && supabase) {
+      try {
+        const { data, error } = await supabase.from('projects').select('*').order('created_at', { ascending: false });
+        if (!error && data) return data;
+      } catch (e: any) { console.warn('DB getProjects error:', e.message); }
+    }
+    return SEED.projects;
   },
   createProject: async (body: any) => {
-    const item = { ...body, created_at: new Date().toISOString() };
-    const inserted = await supabaseInsert('projects', item);
-    if (inserted) { DATA.projects.push(inserted); return inserted; }
-    item.id = String(Date.now()); DATA.projects.push(item); return item;
+    if (useSupabase && supabase) {
+      try {
+        const { data, error } = await supabase.from('projects').insert(body).select().single();
+        if (!error && data) return data;
+        console.error('DB createProject error:', error?.message);
+      } catch (e: any) { console.error('DB createProject exception:', e.message); }
+    }
+    const item = { id: String(Date.now()), created_at: new Date().toISOString(), ...body };
+    SEED.projects.push(item);
+    return item;
   },
   updateProject: async (id: string, body: any) => {
-    const idx = DATA.projects.findIndex((p: any) => p.id === id);
-    if (idx !== -1) DATA.projects[idx] = { ...DATA.projects[idx], ...body };
-    await trySupabase('projects', 'update', body, { field: 'id', value: id });
-    return idx !== -1 ? DATA.projects[idx] : null;
+    if (useSupabase && supabase) {
+      try {
+        const { data, error } = await supabase.from('projects').update(body).eq('id', id).select().single();
+        if (!error && data) return data;
+        console.error('DB updateProject error:', error?.message);
+      } catch (e: any) { console.error('DB updateProject exception:', e.message); }
+    }
+    return null;
   },
   deleteProject: async (id: string) => {
-    DATA.projects = DATA.projects.filter((p: any) => p.id !== id);
-    await trySupabase('projects', 'delete', null, { field: 'id', value: id });
+    if (useSupabase && supabase) {
+      try {
+        const { error } = await supabase.from('projects').delete().eq('id', id);
+        if (error) console.error('DB deleteProject error:', error.message);
+      } catch (e: any) { console.error('DB deleteProject exception:', e.message); }
+    }
   },
 
-  // Skills
+  // ── Skills ──
   getSkills: async () => {
-    const sData = await readSupabase('skills', { orderField: 'order' });
-    if (sData) { DATA.skills = sData as any[]; return DATA.skills; }
-    return DATA.skills;
+    if (useSupabase && supabase) {
+      try {
+        const { data } = await supabase.from('skills').select('*').order('order', { ascending: true });
+        if (data) return data;
+      } catch {}
+    }
+    return SEED.skills;
   },
   createSkill: async (body: any) => {
-    const item = { ...body, created_at: new Date().toISOString() };
-    const inserted = await supabaseInsert('skills', item);
-    if (inserted) { DATA.skills.push(inserted); return inserted; }
-    item.id = String(Date.now()); DATA.skills.push(item); return item;
+    if (useSupabase && supabase) {
+      try {
+        const { data, error } = await supabase.from('skills').insert(body).select().single();
+        if (!error && data) return data;
+        console.error('DB createSkill error:', error?.message);
+      } catch (e: any) { console.error('DB createSkill exception:', e.message); }
+    }
+    const item = { id: String(Date.now()), created_at: new Date().toISOString(), ...body };
+    SEED.skills.push(item);
+    return item;
   },
   updateSkill: async (id: string, body: any) => {
-    const idx = DATA.skills.findIndex((s: any) => s.id === id);
-    if (idx !== -1) DATA.skills[idx] = { ...DATA.skills[idx], ...body };
-    await trySupabase('skills', 'update', body, { field: 'id', value: id });
-    return idx !== -1 ? DATA.skills[idx] : null;
+    if (useSupabase && supabase) {
+      try {
+        const { data, error } = await supabase.from('skills').update(body).eq('id', id).select().single();
+        if (!error && data) return data;
+      } catch {}
+    }
+    return null;
   },
   deleteSkill: async (id: string) => {
-    DATA.skills = DATA.skills.filter((s: any) => s.id !== id);
-    await trySupabase('skills', 'delete', null, { field: 'id', value: id });
+    if (useSupabase && supabase) {
+      try { await supabase.from('skills').delete().eq('id', id); } catch {}
+    }
   },
 
-  // Services
+  // ── Services ──
   getServices: async () => {
-    const sData = await readSupabase('services', { orderField: 'order' });
-    if (sData) { DATA.services = sData as any[]; return DATA.services; }
-    return [...DATA.services].sort((a: any, b: any) => (a.order || 0) - (b.order || 0));
+    if (useSupabase && supabase) {
+      try {
+        const { data } = await supabase.from('services').select('*').order('order', { ascending: true });
+        if (data) return data;
+      } catch {}
+    }
+    return [...SEED.services].sort((a: any, b: any) => (a.order || 0) - (b.order || 0));
   },
   createService: async (body: any) => {
-    const item = { ...body, created_at: new Date().toISOString() };
-    const inserted = await supabaseInsert('services', item);
-    if (inserted) { DATA.services.push(inserted); return inserted; }
-    item.id = String(Date.now()); DATA.services.push(item); return item;
+    if (useSupabase && supabase) {
+      try {
+        const { data, error } = await supabase.from('services').insert(body).select().single();
+        if (!error && data) return data;
+        console.error('DB createService error:', error?.message);
+      } catch (e: any) { console.error('DB createService exception:', e.message); }
+    }
+    const item = { id: String(Date.now()), created_at: new Date().toISOString(), ...body };
+    SEED.services.push(item);
+    return item;
   },
   updateService: async (id: string, body: any) => {
-    const idx = DATA.services.findIndex((s: any) => s.id === id);
-    if (idx !== -1) DATA.services[idx] = { ...DATA.services[idx], ...body };
-    await trySupabase('services', 'update', body, { field: 'id', value: id });
-    return idx !== -1 ? DATA.services[idx] : null;
+    if (useSupabase && supabase) {
+      try {
+        const { data, error } = await supabase.from('services').update(body).eq('id', id).select().single();
+        if (!error && data) return data;
+      } catch {}
+    }
+    return null;
   },
   deleteService: async (id: string) => {
-    DATA.services = DATA.services.filter((s: any) => s.id !== id);
-    await trySupabase('services', 'delete', null, { field: 'id', value: id });
+    if (useSupabase && supabase) {
+      try { await supabase.from('services').delete().eq('id', id); } catch {}
+    }
   },
 
-  // Testimonials
+  // ── Testimonials ──
   getTestimonials: async () => {
-    const sData = await readSupabase('testimonials');
-    if (sData) { DATA.testimonials = sData as any[]; return DATA.testimonials; }
-    return DATA.testimonials;
+    if (useSupabase && supabase) {
+      try {
+        const { data } = await supabase.from('testimonials').select('*');
+        if (data) return data;
+      } catch {}
+    }
+    return SEED.testimonials;
   },
   createTestimonial: async (body: any) => {
-    const item = { ...body, created_at: new Date().toISOString() };
-    const inserted = await supabaseInsert('testimonials', item);
-    if (inserted) { DATA.testimonials.push(inserted); return inserted; }
-    item.id = String(Date.now()); DATA.testimonials.push(item); return item;
+    if (useSupabase && supabase) {
+      try {
+        const { data, error } = await supabase.from('testimonials').insert(body).select().single();
+        if (!error && data) return data;
+      } catch {}
+    }
+    const item = { id: String(Date.now()), created_at: new Date().toISOString(), ...body };
+    SEED.testimonials.push(item);
+    return item;
   },
   updateTestimonial: async (id: string, body: any) => {
-    const idx = DATA.testimonials.findIndex((t: any) => t.id === id);
-    if (idx !== -1) DATA.testimonials[idx] = { ...DATA.testimonials[idx], ...body };
-    await trySupabase('testimonials', 'update', body, { field: 'id', value: id });
-    return idx !== -1 ? DATA.testimonials[idx] : null;
+    if (useSupabase && supabase) {
+      try {
+        const { data, error } = await supabase.from('testimonials').update(body).eq('id', id).select().single();
+        if (!error && data) return data;
+      } catch {}
+    }
+    return null;
   },
   deleteTestimonial: async (id: string) => {
-    DATA.testimonials = DATA.testimonials.filter((t: any) => t.id !== id);
-    await trySupabase('testimonials', 'delete', null, { field: 'id', value: id });
+    if (useSupabase && supabase) {
+      try { await supabase.from('testimonials').delete().eq('id', id); } catch {}
+    }
   },
 
-  // Messages
+  // ── Messages ──
   getMessages: async () => {
-    const sData = await readSupabase('messages', { orderField: 'created_at', ascending: false });
-    if (sData) { DATA.messages = sData as any[]; return DATA.messages; }
-    return DATA.messages;
+    if (useSupabase && supabase) {
+      try {
+        const { data } = await supabase.from('messages').select('*').order('created_at', { ascending: false });
+        if (data) return data;
+      } catch {}
+    }
+    return SEED.messages;
   },
   createMessage: async (body: any) => {
     const item = { ...body, status: 'unread', created_at: new Date().toISOString() };
-    const inserted = await supabaseInsert('messages', item);
-    if (inserted) { DATA.messages.push(inserted); return inserted; }
-    item.id = String(Date.now()); DATA.messages.push(item); return item;
+    if (useSupabase && supabase) {
+      try {
+        const { data, error } = await supabase.from('messages').insert(item).select().single();
+        if (!error && data) return data;
+      } catch {}
+    }
+    item.id = String(Date.now());
+    SEED.messages.push(item);
+    return item;
   },
   updateMessageStatus: async (id: string, status: string) => {
-    const msg = DATA.messages.find((m: any) => m.id === id);
-    if (msg) msg.status = status;
-    await trySupabase('messages', 'update', { status }, { field: 'id', value: id });
-    return msg || null;
+    if (useSupabase && supabase) {
+      try {
+        const { data, error } = await supabase.from('messages').update({ status }).eq('id', id).select().single();
+        if (!error && data) return data;
+      } catch {}
+    }
+    return null;
   },
   deleteMessage: async (id: string) => {
-    DATA.messages = DATA.messages.filter((m: any) => m.id !== id);
-    await trySupabase('messages', 'delete', null, { field: 'id', value: id });
+    if (useSupabase && supabase) {
+      try { await supabase.from('messages').delete().eq('id', id); } catch {}
+    }
   },
 
-  // Blog
+  // ── Blog ──
   getBlogPosts: async () => {
-    const sData = await readSupabase('blog_posts', { orderField: 'created_at', ascending: false });
-    if (sData) { DATA.blog_posts = sData as any[]; return DATA.blog_posts; }
-    return DATA.blog_posts;
+    if (useSupabase && supabase) {
+      try {
+        const { data } = await supabase.from('blog_posts').select('*').order('created_at', { ascending: false });
+        if (data) return data;
+      } catch {}
+    }
+    return SEED.blog_posts;
   },
   createBlogPost: async (body: any) => {
-    const item = { ...body, views: 0, created_at: new Date().toISOString() };
-    const inserted = await supabaseInsert('blog_posts', item);
-    if (inserted) { DATA.blog_posts.push(inserted); return inserted; }
-    item.id = String(Date.now()); DATA.blog_posts.push(item); return item;
+    if (useSupabase && supabase) {
+      try {
+        const { data, error } = await supabase.from('blog_posts').insert({ ...body, views: 0 }).select().single();
+        if (!error && data) return data;
+      } catch {}
+    }
+    const item = { id: String(Date.now()), views: 0, created_at: new Date().toISOString(), ...body };
+    SEED.blog_posts.push(item);
+    return item;
   },
   updateBlogPost: async (id: string, body: any) => {
-    const idx = DATA.blog_posts.findIndex((p: any) => p.id === id);
-    if (idx !== -1) DATA.blog_posts[idx] = { ...DATA.blog_posts[idx], ...body };
-    await trySupabase('blog_posts', 'update', body, { field: 'id', value: id });
-    return idx !== -1 ? DATA.blog_posts[idx] : null;
+    if (useSupabase && supabase) {
+      try {
+        const { data, error } = await supabase.from('blog_posts').update(body).eq('id', id).select().single();
+        if (!error && data) return data;
+      } catch {}
+    }
+    return null;
   },
   deleteBlogPost: async (id: string) => {
-    DATA.blog_posts = DATA.blog_posts.filter((p: any) => p.id !== id);
-    await trySupabase('blog_posts', 'delete', null, { field: 'id', value: id });
+    if (useSupabase && supabase) {
+      try { await supabase.from('blog_posts').delete().eq('id', id); } catch {}
+    }
   },
 
-  // Analytics
+  // ── Analytics ──
   getAnalyticsStats: async () => {
     if (useSupabase && supabase) {
       try {
-        const [vp] = await Promise.all([
+        const [vRes, pRes, mRes, bRes, uRes] = await Promise.all([
           supabase.from('analytics').select('visitors'),
+          supabase.from('projects').select('id', { count: 'exact', head: true }),
+          supabase.from('messages').select('id', { count: 'exact', head: true }),
+          supabase.from('blog_posts').select('id', { count: 'exact', head: true }),
+          supabase.from('messages').select('id', { count: 'exact', head: true }).eq('status', 'unread'),
         ]);
-        const totalVisitors = vp.data?.reduce((a: number, c: any) => a + (c.visitors || 0), 0) || DATA.analytics.total_visitors;
-        const pCount = await readSupabase('projects').then(d => d?.length || DATA.projects.length).catch(() => DATA.projects.length);
-        const mCount = await readSupabase('messages').then(d => d?.length || DATA.messages.length).catch(() => DATA.messages.length);
-        const bCount = await readSupabase('blog_posts').then(d => d?.length || DATA.blog_posts.length).catch(() => DATA.blog_posts.length);
-        return { total_visitors: totalVisitors, total_projects: pCount, total_messages: mCount, total_posts: bCount, unread_messages: DATA.messages.filter((m: any) => m.status === 'unread').length };
-      } catch { /* fall through */ }
+        return {
+          total_visitors: vRes.data?.reduce((a: number, c: any) => a + (c.visitors || 0), 0) || 0,
+          total_projects: pRes.count || 0,
+          total_messages: mRes.count || 0,
+          total_posts: bRes.count || 0,
+          unread_messages: uRes.count || 0,
+        };
+      } catch {}
     }
-    return { total_visitors: DATA.analytics.total_visitors, total_projects: DATA.projects.length,
-      total_messages: DATA.messages.length, total_posts: DATA.blog_posts.length,
-      unread_messages: DATA.messages.filter((m: any) => m.status === 'unread').length };
+    return SEED.analytics;
   },
   getVisitorChart: async () => {
     if (useSupabase && supabase) {
       try {
         const { data } = await supabase.from('analytics').select('date, visitors').order('date', { ascending: true }).limit(7);
         if (data && data.length > 0) return data.map((d: any) => ({ name: d.date, visits: d.visitors }));
-      } catch { /* fall through */ }
+      } catch {}
     }
-    return DATA.analytics.visitors;
+    return SEED.analytics.visitors;
   },
-  getDeviceChart: async () => DATA.analytics.devices,
-  getBrowserChart: async () => DATA.analytics.browsers,
+  getDeviceChart: async () => SEED.analytics.devices,
+  getBrowserChart: async () => SEED.analytics.browsers,
   trackVisit: async () => {
-    DATA.analytics.total_visitors += 1;
     if (useSupabase && supabase) {
       try {
         const today = new Date().toISOString().split('T')[0];
         const { data } = await supabase.from('analytics').select('*').eq('date', today).maybeSingle();
         if (data) await supabase.from('analytics').update({ visitors: data.visitors + 1 }).eq('date', today);
         else await supabase.from('analytics').insert({ date: today, visitors: 1 });
-      } catch { /* silent */ }
+      } catch {}
     }
   },
 
-  // Media
+  // ── Media ──
   getMedia: async () => {
-    const sData = await readSupabase('project_media');
-    if (sData) { DATA.media = sData as any[]; return DATA.media; }
-    return DATA.media;
+    if (useSupabase && supabase) {
+      try {
+        const { data } = await supabase.from('project_media').select('*');
+        if (data) return data;
+      } catch {}
+    }
+    return SEED.media;
   },
   addMedia: async (body: any) => {
-    const inserted = await supabaseInsert('project_media', body);
-    if (inserted) { DATA.media.push(inserted); return inserted; }
-    DATA.media.push(body); return body;
+    if (useSupabase && supabase) {
+      try {
+        const { data, error } = await supabase.from('project_media').insert(body).select().single();
+        if (!error && data) return data;
+      } catch {}
+    }
+    SEED.media.push(body);
+    return body;
   },
   deleteMedia: async (publicId: string) => {
-    DATA.media = DATA.media.filter((m: any) => m.public_id !== publicId);
-    await trySupabase('project_media', 'delete', null, { field: 'public_id', value: publicId });
+    if (useSupabase && supabase) {
+      try { await supabase.from('project_media').delete().eq('public_id', publicId); } catch {}
+    }
   },
 
-  // Experience
+  // ── Experience ──
   getExperience: async () => {
-    const sData = await readSupabase('experience', { orderField: 'order' });
-    if (sData) { DATA.experience = sData as any[]; return DATA.experience; }
-    return [...DATA.experience].sort((a: any, b: any) => (a.order || 0) - (b.order || 0));
+    if (useSupabase && supabase) {
+      try {
+        const { data } = await supabase.from('experience').select('*').order('order', { ascending: true });
+        if (data) return data;
+      } catch {}
+    }
+    return SEED.experience;
   },
   createExperience: async (body: any) => {
-    const item = { ...body, created_at: new Date().toISOString() };
-    const inserted = await supabaseInsert('experience', item);
-    if (inserted) { DATA.experience.push(inserted); return inserted; }
-    item.id = String(Date.now()); DATA.experience.push(item); return item;
+    if (useSupabase && supabase) {
+      try {
+        const { data, error } = await supabase.from('experience').insert(body).select().single();
+        if (!error && data) return data;
+      } catch {}
+    }
+    const item = { id: String(Date.now()), created_at: new Date().toISOString(), ...body };
+    SEED.experience.push(item);
+    return item;
   },
   updateExperience: async (id: string, body: any) => {
-    const idx = DATA.experience.findIndex((e: any) => e.id === id);
-    if (idx !== -1) DATA.experience[idx] = { ...DATA.experience[idx], ...body };
-    await trySupabase('experience', 'update', body, { field: 'id', value: id });
-    return idx !== -1 ? DATA.experience[idx] : null;
+    if (useSupabase && supabase) {
+      try {
+        const { data, error } = await supabase.from('experience').update(body).eq('id', id).select().single();
+        if (!error && data) return data;
+      } catch {}
+    }
+    return null;
   },
   deleteExperience: async (id: string) => {
-    DATA.experience = DATA.experience.filter((e: any) => e.id !== id);
-    await trySupabase('experience', 'delete', null, { field: 'id', value: id });
+    if (useSupabase && supabase) {
+      try { await supabase.from('experience').delete().eq('id', id); } catch {}
+    }
   },
 
-  // Languages
+  // ── Languages ──
   getLanguages: async () => {
-    const sData = await readSupabase('languages', { orderField: 'order' });
-    if (sData) { DATA.languages = sData as any[]; return DATA.languages; }
-    return [...DATA.languages].sort((a: any, b: any) => (a.order || 0) - (b.order || 0));
+    if (useSupabase && supabase) {
+      try {
+        const { data } = await supabase.from('languages').select('*').order('order', { ascending: true });
+        if (data) return data;
+      } catch {}
+    }
+    return SEED.languages;
   },
   createLanguage: async (body: any) => {
-    const item = { ...body, created_at: new Date().toISOString() };
-    const inserted = await supabaseInsert('languages', item);
-    if (inserted) { DATA.languages.push(inserted); return inserted; }
-    item.id = String(Date.now()); DATA.languages.push(item); return item;
+    if (useSupabase && supabase) {
+      try {
+        const { data, error } = await supabase.from('languages').insert(body).select().single();
+        if (!error && data) return data;
+      } catch {}
+    }
+    const item = { id: String(Date.now()), created_at: new Date().toISOString(), ...body };
+    SEED.languages.push(item);
+    return item;
   },
   updateLanguage: async (id: string, body: any) => {
-    const idx = DATA.languages.findIndex((l: any) => l.id === id);
-    if (idx !== -1) DATA.languages[idx] = { ...DATA.languages[idx], ...body };
-    await trySupabase('languages', 'update', body, { field: 'id', value: id });
-    return idx !== -1 ? DATA.languages[idx] : null;
+    if (useSupabase && supabase) {
+      try {
+        const { data, error } = await supabase.from('languages').update(body).eq('id', id).select().single();
+        if (!error && data) return data;
+      } catch {}
+    }
+    return null;
   },
   deleteLanguage: async (id: string) => {
-    DATA.languages = DATA.languages.filter((l: any) => l.id !== id);
-    await trySupabase('languages', 'delete', null, { field: 'id', value: id });
+    if (useSupabase && supabase) {
+      try { await supabase.from('languages').delete().eq('id', id); } catch {}
+    }
   },
 
-  // Client Logos
+  // ── Client Logos (stored in settings.client_logos JSONB) ──
   getClientLogos: async () => {
     if (useSupabase && supabase) {
       try {
         const { data } = await supabase.from('settings').select('client_logos').single();
-        if (data?.client_logos && Array.isArray(data.client_logos) && data.client_logos.length > 0) {
-          DATA.client_logos = data.client_logos.map((l: any, i: number) => ({
+        if (data?.client_logos && Array.isArray(data.client_logos)) {
+          return data.client_logos.map((l: any, i: number) => ({
             id: l.id || `cl-${i + 1}`, name: l.name || '', src: l.src || '',
             order: typeof l.order === 'number' ? l.order : i + 1, created_at: l.created_at || new Date().toISOString(),
           })).sort((a: any, b: any) => (a.order || 0) - (b.order || 0));
-          return DATA.client_logos;
         }
-      } catch { /* fall through */ }
+      } catch {}
     }
-    return [...DATA.client_logos].sort((a: any, b: any) => (a.order || 0) - (b.order || 0));
+    return [...SEED.client_logos].sort((a: any, b: any) => (a.order || 0) - (b.order || 0));
   },
   createClientLogo: async (body: any) => {
     const item = { id: `cl-${Date.now()}`, created_at: new Date().toISOString(), ...body };
-    DATA.client_logos.push(item);
     if (useSupabase && supabase) {
       try {
         const { data } = await supabase.from('settings').select('client_logos').single();
         const logos = [...(data?.client_logos || []), item];
         await supabase.from('settings').update({ client_logos: logos }).eq('id', '00000000-0000-0000-0000-000000000000');
-      } catch { /* silent */ }
+      } catch {}
     }
     return item;
   },
   updateClientLogo: async (id: string, body: any) => {
-    const idx = DATA.client_logos.findIndex((l: any) => l.id === id);
-    if (idx !== -1) DATA.client_logos[idx] = { ...DATA.client_logos[idx], ...body, id: DATA.client_logos[idx].id };
     if (useSupabase && supabase) {
       try {
         const { data } = await supabase.from('settings').select('client_logos').single();
         let logos = data?.client_logos || [];
         const li = logos.findIndex((l: any) => l.id === id);
-        if (li !== -1) logos[li] = { ...logos[li], ...body };
+        if (li !== -1) { logos[li] = { ...logos[li], ...body }; }
         await supabase.from('settings').update({ client_logos: logos }).eq('id', '00000000-0000-0000-0000-000000000000');
-      } catch { /* silent */ }
+        return li !== -1 ? logos[li] : null;
+      } catch {}
     }
-    return idx !== -1 ? DATA.client_logos[idx] : null;
+    return null;
   },
   deleteClientLogo: async (id: string) => {
-    DATA.client_logos = DATA.client_logos.filter((l: any) => l.id !== id);
     if (useSupabase && supabase) {
       try {
         const { data } = await supabase.from('settings').select('client_logos').single();
         const logos = (data?.client_logos || []).filter((l: any) => l.id !== id);
         await supabase.from('settings').update({ client_logos: logos }).eq('id', '00000000-0000-0000-0000-000000000000');
-      } catch { /* silent */ }
+      } catch {}
     }
   },
 };

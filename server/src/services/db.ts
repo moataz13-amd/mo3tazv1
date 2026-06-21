@@ -174,10 +174,15 @@ if (true) {
 // Seed default admin into Supabase if table is empty
 async function seedSupabaseAdmin() {
   try {
+    const bcrypt = require('bcryptjs');
     const { data, error } = await supabase.from('users').select('id').limit(1);
-    if (error && error.message?.includes('does not exist')) return;
+    if (error) {
+      if (error.message?.includes('does not exist')) {
+        console.warn('Supabase users table does not exist yet. Login will use mock fallback.');
+      }
+      return;
+    }
     if (!data || data.length === 0) {
-      const bcrypt = require('bcryptjs');
       const hash = await bcrypt.hash('password123', 10);
       await supabase.from('users').insert({
         email: 'admin@portfolio.system',
@@ -213,13 +218,34 @@ export const db = {
 
   // Users
   getUserByEmail: async (email: string) => {
-    if (USE_MOCK) {
+    if (!USE_MOCK) {
+      try {
+        const { data, error } = await supabase.from('users').select('*').eq('email', email).single();
+        if (!error && data) return data;
+        if (error) console.warn('Supabase getUserByEmail error:', error.message);
+      } catch (e: any) {
+        console.warn('Supabase getUserByEmail exception:', e.message);
+      }
+    }
+    try {
       const mock = db.getMockData();
       return mock.users.find((u: any) => u.email === email) || null;
+    } catch (e: any) {
+      console.warn('Mock data fallback failed:', e.message);
     }
-    const { data, error } = await supabase.from('users').select('*').eq('email', email).single();
-    if (error) return null;
-    return data;
+    // Hardcoded admin fallback for fresh deployments
+    if (email === 'admin@portfolio.system') {
+      const bcrypt = require('bcryptjs');
+      return {
+        id: '1',
+        email: 'admin@portfolio.system',
+        password_hash: bcrypt.hashSync('password123', 10),
+        name: 'Site Administrator',
+        role: 'admin',
+        created_at: new Date().toISOString(),
+      };
+    }
+    return null;
   },
 
   // Settings

@@ -171,6 +171,33 @@ if (true) {
   }
 }
 
+// Seed default admin into Supabase if table is empty
+async function seedSupabaseAdmin() {
+  try {
+    const { data, error } = await supabase.from('users').select('id').limit(1);
+    if (error && error.message?.includes('does not exist')) return;
+    if (!data || data.length === 0) {
+      const bcrypt = require('bcryptjs');
+      const hash = await bcrypt.hash('password123', 10);
+      await supabase.from('users').insert({
+        email: 'admin@portfolio.system',
+        password_hash: hash,
+        name: 'Site Administrator',
+        role: 'admin',
+        created_at: new Date().toISOString(),
+      });
+      console.log('Default admin seeded into Supabase');
+    }
+  } catch (e: any) {
+    console.warn('Supabase admin seed skipped:', e.message);
+  }
+}
+
+// Run seed in production
+if (!USE_MOCK) {
+  seedSupabaseAdmin();
+}
+
 // Database Operations Layer
 export const db = {
   _useMockForProjects: false,

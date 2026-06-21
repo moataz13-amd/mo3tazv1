@@ -2,10 +2,21 @@ import express from 'express';
 import cors from 'cors';
 import bcrypt from 'bcryptjs';
 import jwt from 'jsonwebtoken';
+import multer from 'multer';
 
 const app = express();
 app.use(cors({ origin: true, credentials: true }));
 app.use(express.json());
+
+// Parse multipart/form-data (text fields + file buffers in memory)
+const multipart = multer().any();
+app.use((req, _res, next) => {
+  if (req.is('multipart/form-data')) {
+    multipart(req, _res, next);
+  } else {
+    next();
+  }
+});
 app.use((_req, res, next) => {
   res.set('Cache-Control', 'no-store, no-cache, must-revalidate, proxy-revalidate');
   res.set('Pragma', 'no-cache');
@@ -185,6 +196,15 @@ const logActivity = (action: string, description: string) => {
 
 const generateId = () => String(Date.now()) + '-' + Math.random().toString(36).slice(2, 8);
 
+// Get first uploaded file URL from multer req.files
+const getFileUrl = (files: any, fieldName: string, fallback: string) => {
+  if (!files || !Array.isArray(files)) return fallback;
+  const file = files.find((f: any) => f.fieldname === fieldName);
+  if (!file) return fallback;
+  if (file.path && (file.path.startsWith('http://') || file.path.startsWith('https://'))) return file.path;
+  return file.filename ? `/uploads/${file.filename}` : (file.buffer ? `data:${file.mimetype};base64,${file.buffer.toString('base64')}` : fallback);
+};
+
 // ===== Diagnostic endpoint =====
 app.get('/api/_debug', (_req, res) => {
   res.json({
@@ -228,6 +248,10 @@ app.post('/api/auth/login', async (req, res) => {
   } catch (err: any) {
     res.status(500).json({ message: err.message });
   }
+});
+
+app.post('/api/auth/logout', async (_req, res) => {
+  res.json({ message: 'Logged out' });
 });
 
 app.get('/api/auth/me', authenticate, async (req: any, res) => {
@@ -510,6 +534,16 @@ app.delete('/api/messages/:id', authenticate, async (req, res) => {
 app.get('/api/blog', async (_req, res) => {
   try {
     res.json(DATA.blog_posts);
+  } catch (err: any) {
+    res.status(500).json({ message: err.message });
+  }
+});
+
+app.get('/api/blog/categories', async (_req, res) => {
+  try {
+    const tags = new Set<string>();
+    DATA.blog_posts.forEach((p: any) => (p.tags || []).forEach((t: string) => tags.add(t)));
+    res.json(Array.from(tags));
   } catch (err: any) {
     res.status(500).json({ message: err.message });
   }

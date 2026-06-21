@@ -4,7 +4,6 @@ const BASE_URL = import.meta.env.VITE_API_URL || '/api';
 
 const api = axios.create({
   baseURL: BASE_URL,
-  headers: { 'Content-Type': 'application/json' },
   withCredentials: true,
 });
 
@@ -47,9 +46,9 @@ export const projectsAPI = {
     api.get('/projects', { params }),
   getById: (id: string) => api.get(`/projects/${id}`),
   create: (data: FormData) =>
-    api.post('/projects', data, { headers: { 'Content-Type': 'multipart/form-data' } }),
+    api.post('/projects', data),
   update: (id: string, data: FormData) =>
-    api.put(`/projects/${id}`, data, { headers: { 'Content-Type': 'multipart/form-data' } }),
+    api.put(`/projects/${id}`, data),
   delete: (id: string) => api.delete(`/projects/${id}`),
 };
 
@@ -63,9 +62,9 @@ export const skillsAPI = {
 export const servicesAPI = {
   getAll: () => api.get('/services'),
   create: (data: FormData) =>
-    api.post('/services', data, { headers: { 'Content-Type': 'multipart/form-data' } }),
+    api.post('/services', data),
   update: (id: string, data: FormData) =>
-    api.put(`/services/${id}`, data, { headers: { 'Content-Type': 'multipart/form-data' } }),
+    api.put(`/services/${id}`, data),
   delete: (id: string) => api.delete(`/services/${id}`),
 };
 
@@ -73,9 +72,9 @@ export const testimonialsAPI = {
   getAll: (active?: boolean) =>
     api.get('/testimonials', { params: active ? { status: 'active' } : {} }),
   create: (data: FormData) =>
-    api.post('/testimonials', data, { headers: { 'Content-Type': 'multipart/form-data' } }),
+    api.post('/testimonials', data),
   update: (id: string, data: FormData) =>
-    api.put(`/testimonials/${id}`, data, { headers: { 'Content-Type': 'multipart/form-data' } }),
+    api.put(`/testimonials/${id}`, data),
   delete: (id: string) => api.delete(`/testimonials/${id}`),
 };
 
@@ -91,9 +90,9 @@ export const blogAPI = {
   getAll: (params?: Record<string, string>) => api.get('/blog', { params }),
   getById: (id: string) => api.get(`/blog/${id}`),
   create: (data: FormData) =>
-    api.post('/blog', data, { headers: { 'Content-Type': 'multipart/form-data' } }),
+    api.post('/blog', data),
   update: (id: string, data: FormData) =>
-    api.put(`/blog/${id}`, data, { headers: { 'Content-Type': 'multipart/form-data' } }),
+    api.put(`/blog/${id}`, data),
   delete: (id: string) => api.delete(`/blog/${id}`),
   getCategories: () => api.get('/blog/categories'),
 };
@@ -110,12 +109,12 @@ export const analyticsAPI = {
 export const settingsAPI = {
   get: () => api.get('/settings'),
   update: (data: FormData) =>
-    api.put('/settings', data, { headers: { 'Content-Type': 'multipart/form-data' } }),
+    api.put('/settings', data),
 };
 
 export const mediaAPI = {
   upload: (data: FormData) =>
-    api.post('/media/upload', data, { headers: { 'Content-Type': 'multipart/form-data' } }),
+    api.post('/media/upload', data),
   getAll: () => api.get('/media'),
   delete: (publicId: string) => api.delete(`/media/${publicId}`),
 };
@@ -137,8 +136,8 @@ export const languagesAPI = {
 export const clientLogosAPI = {
   getAll: () => api.get('/client-logos'),
   create: (data: FormData) =>
-    api.post('/client-logos', data, { headers: { 'Content-Type': 'multipart/form-data' } }),
+    api.post('/client-logos', data),
   update: (id: string, data: FormData) =>
-    api.put(`/client-logos/${id}`, data, { headers: { 'Content-Type': 'multipart/form-data' } }),
+    api.put(`/client-logos/${id}`, data),
   delete: (id: string) => api.delete(`/client-logos/${id}`),
 };

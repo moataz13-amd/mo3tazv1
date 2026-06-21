@@ -25,13 +25,7 @@ const defaultBrowserData = [
 
 
 // Initialize local mock JSON storage if not exists
-if (true) {
-  const dataDir = path.dirname(MOCK_FILE);
-  if (!fs.existsSync(dataDir)) {
-    fs.mkdirSync(dataDir, { recursive: true });
-  }
-  if (!fs.existsSync(MOCK_FILE)) {
-    const initialMockData = {
+const initialMockData = {
       users: [
         {
           id: '1',
@@ -167,9 +161,17 @@ if (true) {
         { id: 'cl-4', name: 'المعاهد التعليمية', src: '/logos/institutes.png', order: 4, created_at: new Date().toISOString() }
       ]
     };
-    fs.writeFileSync(MOCK_FILE, JSON.stringify(initialMockData, null, 2));
-  }
-}
+    try {
+      const dataDir = path.dirname(MOCK_FILE);
+      if (!fs.existsSync(dataDir)) {
+        fs.mkdirSync(dataDir, { recursive: true });
+      }
+      if (!fs.existsSync(MOCK_FILE)) {
+        fs.writeFileSync(MOCK_FILE, JSON.stringify(initialMockData, null, 2));
+      }
+    } catch (e: any) {
+      console.warn('Mock file init skipped (read-only filesystem):', e.message);
+    }
 
 // Seed default admin into Supabase if table is empty
 async function seedSupabaseAdmin() {

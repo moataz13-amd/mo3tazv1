@@ -187,12 +187,26 @@ const logActivity = (action: string, description: string) => {
 
 const generateId = () => String(Date.now()) + '-' + Math.random().toString(36).slice(2, 8);
 
+// ===== Diagnostic endpoint =====
+app.get('/api/_debug', (_req, res) => {
+  res.json({
+    uptime: process.uptime(),
+    memory: process.memoryUsage(),
+    node: process.version,
+    dataKeys: Object.keys(DATA),
+    clientLogosCount: DATA.client_logos.length,
+    usersCount: DATA.users.length,
+    env: { NODE_ENV: process.env.NODE_ENV || '(not set)' },
+  });
+});
+
 // ============================================
 // AUTH ROUTES
 // ============================================
 app.post('/api/auth/login', async (req, res) => {
   try {
-    const { email, password } = req.body || {};
+    const body = req.body || {};
+    const { email, password } = body;
     if (!email || !password) {
       return res.status(401).json({ message: 'Invalid credentials: Email and password required' });
     }

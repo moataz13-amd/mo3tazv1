@@ -53,18 +53,31 @@ const authenticate = (req: any, res: any, next: any) => {
 };
 
 // ===== Diagnostic endpoint =====
-app.get('/api/_debug', (_req, res) => {
+app.get('/api/_debug', async (_req, res) => {
+  let sbStatus = 'not configured';
+  if (useSupabase) {
+    try {
+      const { createClient } = await import('@supabase/supabase-js');
+      const sb = createClient(
+        process.env.SUPABASE_URL || '',
+        process.env.SUPABASE_SERVICE_ROLE_KEY || process.env.SUPABASE_ANON_KEY || ''
+      );
+      const { error: testErr } = await sb.from('messages').select('id').limit(1);
+      sbStatus = testErr ? `error: ${testErr.message}` : 'connected';
+    } catch (e: any) { sbStatus = `exception: ${e.message}`; }
+  }
   res.json({
     uptime: process.uptime(), node: process.version, useSupabase,
+    supabase: sbStatus,
     env: {
       NODE_ENV: process.env.NODE_ENV || '(not set)',
       SUPABASE_URL: process.env.SUPABASE_URL ? '✅ set' : '❌ missing',
-      SUPABASE_KEY: (process.env.SUPABASE_SERVICE_ROLE_KEY || process.env.SUPABASE_ANON_KEY) ? '✅ set' : '❌ missing',
+      SUPABASE_SERVICE_ROLE_KEY: process.env.SUPABASE_SERVICE_ROLE_KEY ? '✅ set' : '❌ missing',
+      SUPABASE_ANON_KEY: process.env.SUPABASE_ANON_KEY ? '✅ set (anon only — RLS may block writes)' : '❌ missing',
       CLOUDINARY_CLOUD_NAME: process.env.CLOUDINARY_CLOUD_NAME ? '✅ set' : '❌ missing',
       CLOUDINARY_API_KEY: process.env.CLOUDINARY_API_KEY ? '✅ set' : '❌ missing',
       CLOUDINARY_API_SECRET: process.env.CLOUDINARY_API_SECRET ? '✅ set' : '❌ missing',
     },
-    seeding: { useCloudinary, useSupabase },
   });
 });
 
@@ -261,7 +274,10 @@ app.post('/api/messages', async (req, res) => {
     const item = await db.createMessage({ name: req.body.name || '', email: req.body.email || '', subject: req.body.subject || '', message: req.body.message || '' });
     await db.logActivity('Comms Received', `Inquiry sent by: ${item.name}`);
     res.status(201).json(item);
-  } catch (err: any) { res.status(500).json({ message: err.message }); }
+  } catch (err: any) {
+    console.error('POST /api/messages error:', err.stack || err.message);
+    res.status(500).json({ message: err.message, detail: process.env.NODE_ENV === 'production' ? undefined : err.stack });
+  }
 });
 
 app.get('/api/messages', authenticate, async (_req, res) => {

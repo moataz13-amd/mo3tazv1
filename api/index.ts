@@ -10,13 +10,14 @@ app.use(cors({ origin: true, credentials: true }));
 app.use(express.json());
 
 const multipart = multer({ storage: multer.memoryStorage() }).any();
-app.use((req, _res, next) => {
-  if (req.is('multipart/form-data')) { multipart(req, _res, next); }
-  else { next(); }
-});
-app.use((req, _res, next) => {
-  console.log(`${req.method} ${req.originalUrl}`);
-  next();
+app.use((req, res, next) => {
+  const ct = (req.headers['content-type'] || '') as string;
+  if (ct.includes('multipart/form-data')) {
+    multipart(req, res, (err: any) => {
+      if (err) { console.error('Multer error:', err); return res.status(400).json({ message: 'File upload error: ' + err.message }); }
+      next();
+    });
+  } else { next(); }
 });
 app.use((_req, res, next) => {
   res.set('Cache-Control', 'no-store, no-cache, must-revalidate, proxy-revalidate');
@@ -545,4 +546,12 @@ app.use((err: any, _req: express.Request, res: express.Response, _next: express.
   res.status(500).json({ message: err.message || 'Internal Server Error' });
 });
 
-export default app;
+// Vercel serverless handler
+export default function handler(req: any, res: any) {
+  // Log every request for debugging
+  const start = Date.now();
+  res.on('finish', () => {
+    console.log(`${req.method} ${req.url} → ${res.statusCode} (${Date.now() - start}ms)`);
+  });
+  app(req, res);
+}

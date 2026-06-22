@@ -47,32 +47,13 @@ async function ensureAdmin() {
       const hash = bcrypt.hashSync('password123', 10);
       await supabase.from('users').insert({
         email: 'admin@portfolio.system', password_hash: hash,
-        name: 'Site Administrator', role: 'admin', created_at: new Date().toISOString(),
+        name: 'Admin', role: 'admin', created_at: new Date().toISOString(),
       });
     }
-  } catch (e: any) { console.warn('Admin seed skipped:', e.message); }
+  } catch {}
 }
 
-async function ensureSettings() {
-  if (!supabase) return;
-  try {
-    const { data } = await supabase.from('settings').select('id').limit(1);
-    if (!data || data.length === 0) {
-      await supabase.from('settings').insert({
-        name: 'معتز جمعة', title: 'جونيور جرافيك ديزاينر', subtitle: 'Crafting premium digital experiences',
-        bio: '', email: '', phone: '', location: '', seo_title: '', seo_description: '',
-        hero_headline: '', hero_subheadline: '', about_description: '', about_section_title: '',
-        about_section_heading: '', about_cta_text: '', stat1_value: '', stat1_label: '',
-        stat2_value: '', stat2_label: '', social_links: [], client_logos: [],
-        marquee_row1: [], marquee_row2: [], availability_status: 'available',
-        availability_response_time: '', avatar: '', cv_url: '',
-        created_at: new Date().toISOString(),
-      });
-    }
-  } catch (e: any) { console.warn('Settings seed skipped:', e.message); }
-}
-
-if (useSupabase) { ensureAdmin(); ensureSettings(); }
+if (useSupabase) { ensureAdmin(); }
 
 const SETTINGS_FIELDS = [
   'name','title','subtitle','bio','email','phone','location',

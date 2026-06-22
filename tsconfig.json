@@ -5,7 +5,7 @@
     "esModuleInterop": true,
     "skipLibCheck": true,
     "strict": false,
-    "moduleResolution": "node"
+    "moduleResolution": "bundler"
   },
   "include": ["api/**/*.ts"]
 }

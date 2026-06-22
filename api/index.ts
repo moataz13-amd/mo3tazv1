@@ -3,7 +3,7 @@ import cors from 'cors';
 import bcrypt from 'bcryptjs';
 import jwt from 'jsonwebtoken';
 import multer from 'multer';
-import { db, useSupabase } from './db';
+import { db, useSupabase, uploadToCloudinary, deleteFromCloudinary, useCloudinary } from './db';
 
 const app = express();
 app.use(cors({ origin: true, credentials: true }));
@@ -22,12 +22,16 @@ app.use((_req, res, next) => {
 
 const JWT_SECRET = process.env.JWT_SECRET || 'fallback-super-secret-key-1092';
 const generateId = () => String(Date.now()) + '-' + Math.random().toString(36).slice(2, 8);
-const getFileUrl = (files: any, fieldName: string, fallback: string) => {
+const getFileUrl = async (files: any, fieldName: string, fallback: string) => {
   if (!files || !Array.isArray(files)) return fallback;
   const file = files.find((f: any) => f.fieldname === fieldName);
   if (!file) return fallback;
   if (file.path && (file.path.startsWith('http://') || file.path.startsWith('https://'))) return file.path;
-  return file.filename ? `/uploads/${file.filename}` : fallback;
+  if (file.buffer) {
+    const result = await uploadToCloudinary(file.buffer, 'portfolio_assets');
+    if (result) return result.url;
+  }
+  return fallback;
 };
 
 const authenticate = (req: any, res: any, next: any) => {
@@ -47,14 +51,15 @@ const authenticate = (req: any, res: any, next: any) => {
 app.get('/api/_debug', (_req, res) => {
   res.json({
     uptime: process.uptime(), node: process.version, useSupabase,
-    env: { 
-      NODE_ENV: process.env.NODE_ENV || '(not set)', 
-      SUPABASE_URL: process.env.SUPABASE_URL ? '✅ set' : '❌ missing', 
+    env: {
+      NODE_ENV: process.env.NODE_ENV || '(not set)',
+      SUPABASE_URL: process.env.SUPABASE_URL ? '✅ set' : '❌ missing',
       SUPABASE_KEY: (process.env.SUPABASE_SERVICE_ROLE_KEY || process.env.SUPABASE_ANON_KEY) ? '✅ set' : '❌ missing',
       CLOUDINARY_CLOUD_NAME: process.env.CLOUDINARY_CLOUD_NAME ? '✅ set' : '❌ missing',
       CLOUDINARY_API_KEY: process.env.CLOUDINARY_API_KEY ? '✅ set' : '❌ missing',
-      CLOUDINARY_API_SECRET: process.env.CLOUDINARY_API_SECRET ? '✅ set' : '❌ missing'
+      CLOUDINARY_API_SECRET: process.env.CLOUDINARY_API_SECRET ? '✅ set' : '❌ missing',
     },
+    seeding: { useCloudinary, useSupabase },
   });
 });
 
@@ -93,7 +98,7 @@ app.get('/api/projects', async (_req, res) => {
 
 app.post('/api/projects', authenticate, async (req: any, res) => {
   try {
-    const cover_image = getFileUrl(req.files, 'cover_image', req.body.cover_image || 'https://images.unsplash.com/photo-1551288049-bebda4e38f71?w=600&q=80');
+    const cover_image = await getFileUrl(req.files, 'cover_image', req.body.cover_image || 'https://images.unsplash.com/photo-1551288049-bebda4e38f71?w=600&q=80');
     const images = req.body.images ? (typeof req.body.images === 'string' ? JSON.parse(req.body.images) : req.body.images) : [];
     const techStack = req.body.tech_stack ? (typeof req.body.tech_stack === 'string' ? JSON.parse(req.body.tech_stack) : req.body.tech_stack) : [];
     const item = await db.createProject({
@@ -113,7 +118,7 @@ app.put('/api/projects/:id', authenticate, async (req: any, res) => {
     for (const f of fields) { if (req.body[f] !== undefined) body[f] = req.body[f]; }
     if (req.body.tech_stack) body.tech_stack = typeof req.body.tech_stack === 'string' ? JSON.parse(req.body.tech_stack) : req.body.tech_stack;
     if (req.body.featured !== undefined) body.featured = req.body.featured === true || req.body.featured === 'true';
-    const cover_image = getFileUrl(req.files, 'cover_image', null);
+    const cover_image = await getFileUrl(req.files, 'cover_image', null);
     if (cover_image) body.cover_image = cover_image;
     const existingImages = req.body.existing_images ? (typeof req.body.existing_images === 'string' ? JSON.parse(req.body.existing_images) : req.body.existing_images) : [];
     const newImages = req.body.images ? (typeof req.body.images === 'string' ? JSON.parse(req.body.images) : req.body.images) : [];
@@ -171,7 +176,7 @@ app.post('/api/services', authenticate, async (req: any, res) => {
   try {
     const features = req.body.features ? (typeof req.body.features === 'string' ? JSON.parse(req.body.features) : req.body.features) : [];
     const item = await db.createService({
-      title: req.body.title || '', description: req.body.description || '', icon: getFileUrl(req.files, 'service_image', req.body.icon || ''),
+      title: req.body.title || '', description: req.body.description || '',       icon: await getFileUrl(req.files, 'service_image', req.body.icon || ''),
       features, price: req.body.price || null, order: Number(req.body.order) || 1,
     });
     await db.logActivity('Service Added', `Added service: ${item.title}`);
@@ -186,7 +191,7 @@ app.put('/api/services/:id', authenticate, async (req: any, res) => {
     for (const f of fields) { if (req.body[f] !== undefined) body[f] = req.body[f]; }
     if (req.body.order !== undefined) body.order = Number(req.body.order);
     if (req.body.features) body.features = typeof req.body.features === 'string' ? JSON.parse(req.body.features) : req.body.features;
-    const icon = getFileUrl(req.files, 'service_image', null);
+    const icon = await getFileUrl(req.files, 'service_image', null);
     if (icon) body.icon = icon;
     if (req.body.icon !== undefined && !icon) body.icon = req.body.icon;
     const item = await db.updateService(req.params.id, body);
@@ -210,7 +215,7 @@ app.get('/api/testimonials', async (_req, res) => {
 app.post('/api/testimonials', authenticate, async (req: any, res) => {
   try {
     const item = await db.createTestimonial({
-      client_name: req.body.client_name || '', client_photo: getFileUrl(req.files, 'client_photo', req.body.client_photo || 'https://images.unsplash.com/photo-1494790108377-be9c29b29330?w=100&q=80'),
+      client_name: req.body.client_name || '', client_photo: await getFileUrl(req.files, 'client_photo', req.body.client_photo || 'https://images.unsplash.com/photo-1494790108377-be9c29b29330?w=100&q=80'),
       content: req.body.content || '', rating: Number(req.body.rating) || 5, position: req.body.position || '', company: req.body.company || '',
     });
     await db.logActivity('Testimonial Added', `Added testimonial from: ${item.client_name}`);
@@ -224,7 +229,7 @@ app.put('/api/testimonials/:id', authenticate, async (req: any, res) => {
     const fields = ['client_name', 'content', 'position', 'company'];
     for (const f of fields) { if (req.body[f] !== undefined) body[f] = req.body[f]; }
     if (req.body.rating !== undefined) body.rating = Number(req.body.rating);
-    const photo = getFileUrl(req.files, 'client_photo', null);
+    const photo = await getFileUrl(req.files, 'client_photo', null);
     if (photo) body.client_photo = photo;
     const item = await db.updateTestimonial(req.params.id, body);
     if (!item) return res.status(404).json({ message: 'Testimonial not found' });
@@ -293,7 +298,7 @@ app.post('/api/blog', authenticate, async (req: any, res) => {
     const tags = req.body.tags ? (typeof req.body.tags === 'string' ? JSON.parse(req.body.tags) : req.body.tags) : [];
     const item = await db.createBlogPost({
       title: req.body.title || '', slug: (req.body.title || '').toLowerCase().replace(/[^a-z0-9]+/g, '-').replace(/(^-|-$)+/g, ''),
-      excerpt: req.body.excerpt || '', content: req.body.content || '', cover_image: getFileUrl(req.files, 'cover_image', req.body.cover_image || ''),
+      excerpt: req.body.excerpt || '', content: req.body.content || '',       cover_image: await getFileUrl(req.files, 'cover_image', req.body.cover_image || ''),
       tags, status: req.body.status || 'published',
     });
     await db.logActivity('Blog Published', `Published article: ${item.title}`);
@@ -308,7 +313,7 @@ app.put('/api/blog/:id', authenticate, async (req: any, res) => {
     for (const f of fields) { if (req.body[f] !== undefined) body[f] = req.body[f]; }
     if (req.body.tags) body.tags = typeof req.body.tags === 'string' ? JSON.parse(req.body.tags) : req.body.tags;
     if (req.body.title) body.slug = req.body.title.toLowerCase().replace(/[^a-z0-9]+/g, '-').replace(/(^-|-$)+/g, '');
-    const cover = getFileUrl(req.files, 'cover_image', null);
+    const cover = await getFileUrl(req.files, 'cover_image', null);
     if (cover) body.cover_image = cover;
     const item = await db.updateBlogPost(req.params.id, body);
     if (!item) return res.status(404).json({ message: 'Blog post not found' });
@@ -361,7 +366,12 @@ app.get('/api/settings', async (_req, res) => {
 
 app.put('/api/settings', authenticate, async (req: any, res) => {
   try {
-    const item = await db.updateSettings(req.body);
+    const body = { ...req.body };
+    const avatar = await getFileUrl(req.files, 'avatar', null);
+    if (avatar) body.avatar = avatar;
+    const cv = await getFileUrl(req.files, 'cv', null);
+    if (cv) body.cv_url = cv;
+    const item = await db.updateSettings(body);
     await db.logActivity('Settings Config', 'Modified global profile settings');
     res.json(item);
   } catch (err: any) { res.status(500).json({ message: err.message }); }
@@ -375,9 +385,21 @@ app.get('/api/media', authenticate, async (_req, res) => {
 
 app.post('/api/media/upload', authenticate, async (req: any, res) => {
   try {
-    const file = { id: generateId(), url: req.body.url || `https://via.placeholder.com/400?text=${encodeURIComponent(req.body.name || 'media')}`,
-      public_id: req.body.public_id || `local-${Date.now()}`, resource_type: req.body.resource_type || 'image',
-      format: req.body.format || 'png', size: Number(req.body.size) || 0, created_at: new Date().toISOString() };
+    const fileData = req.files?.find((f: any) => f.fieldname === 'file') || req.files?.[0];
+    if (!fileData && !req.body.url) return res.status(400).json({ message: 'No file uploaded' });
+
+    let url = req.body.url;
+    let publicId = `local-${Date.now()}`;
+    if (fileData?.buffer) {
+      const result = await uploadToCloudinary(fileData.buffer, 'portfolio_assets');
+      if (result) { url = result.url; publicId = result.publicId; }
+    }
+    const file = {
+      id: generateId(), url, public_id: publicId,
+      resource_type: fileData?.mimetype?.startsWith('video') ? 'video' : 'image',
+      format: fileData?.mimetype?.split('/')[1] || 'png',
+      size: fileData?.size || 0, created_at: new Date().toISOString(),
+    };
     const item = await db.addMedia(file);
     await db.logActivity('Media Uploaded', `Added asset: ${item.public_id}`);
     res.status(201).json(item);
@@ -385,8 +407,11 @@ app.post('/api/media/upload', authenticate, async (req: any, res) => {
 });
 
 app.delete('/api/media/:public_id', authenticate, async (req, res) => {
-  try { await db.deleteMedia(req.params.public_id); res.json({ message: 'Media deleted' }); }
-  catch (err: any) { res.status(500).json({ message: err.message }); }
+  try {
+    await deleteFromCloudinary(req.params.public_id);
+    await db.deleteMedia(req.params.public_id);
+    res.json({ message: 'Media deleted' });
+  } catch (err: any) { res.status(500).json({ message: err.message }); }
 });
 
 // EXPERIENCE
@@ -465,7 +490,7 @@ app.get('/api/client-logos', async (_req, res) => {
 app.post('/api/client-logos', authenticate, async (req: any, res) => {
   try {
     const item = await db.createClientLogo({
-      name: req.body.name || '', src: getFileUrl(req.files, 'logo_image', req.body.src || ''), order: Number(req.body.order) || 1,
+      name: req.body.name || '', src: await getFileUrl(req.files, 'logo_image', req.body.src || ''), order: Number(req.body.order) || 1,
     });
     await db.logActivity('Client Logo Added', `Added client logo: ${item.name}`);
     res.status(201).json(item);
@@ -477,7 +502,7 @@ app.put('/api/client-logos/:id', authenticate, async (req: any, res) => {
     const body: any = {};
     if (req.body.name !== undefined) body.name = req.body.name;
     if (req.body.order !== undefined) body.order = Number(req.body.order);
-    const src = getFileUrl(req.files, 'logo_image', null);
+    const src = await getFileUrl(req.files, 'logo_image', null);
     if (src) body.src = src;
     else if (req.body.src !== undefined) body.src = req.body.src;
     const item = await db.updateClientLogo(req.params.id, body);

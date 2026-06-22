@@ -112,7 +112,12 @@ export const db = {
     const payload: any = {};
     for (const f of SETTINGS_FIELDS) { if (body[f] !== undefined) payload[f] = body[f]; }
     if (Object.keys(payload).length > 0) {
-      await supabase.from('settings').update(payload).eq('id', (await supabase.from('settings').select('id').limit(1).maybeSingle()).data?.id || '');
+      const { data: existing } = await supabase.from('settings').select('id').limit(1).maybeSingle();
+      if (existing) {
+        await supabase.from('settings').update(payload).eq('id', existing.id);
+      } else {
+        await supabase.from('settings').insert({ ...payload, created_at: new Date().toISOString() });
+      }
     }
     return db.getSettings();
   },

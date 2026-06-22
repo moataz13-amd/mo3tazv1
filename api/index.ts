@@ -9,10 +9,14 @@ const app = express();
 app.use(cors({ origin: true, credentials: true }));
 app.use(express.json());
 
-const multipart = multer().any();
+const multipart = multer({ storage: multer.memoryStorage() }).any();
 app.use((req, _res, next) => {
   if (req.is('multipart/form-data')) { multipart(req, _res, next); }
   else { next(); }
+});
+app.use((req, _res, next) => {
+  console.log(`${req.method} ${req.originalUrl}`);
+  next();
 });
 app.use((_req, res, next) => {
   res.set('Cache-Control', 'no-store, no-cache, must-revalidate, proxy-revalidate');

@@ -146,7 +146,7 @@ app.get('/api/skills', async (_req, res) => {
 
 app.post('/api/skills', authenticate, async (req: any, res) => {
   try {
-    const item = await db.createSkill({ name: req.body.name, level: Number(req.body.level) || 0, category: req.body.category || '', order: Number(req.body.order) || 1 });
+    const item = await db.createSkill({ name: req.body.name, level: Number(req.body.level) || 0, category: req.body.category || 'frontend', order: Number(req.body.order) || 1 });
     await db.logActivity('Skill Added', `Added skill: ${item.name}`);
     res.status(201).json(item);
   } catch (err: any) { res.status(500).json({ message: err.message }); }
@@ -215,8 +215,11 @@ app.get('/api/testimonials', async (_req, res) => {
 app.post('/api/testimonials', authenticate, async (req: any, res) => {
   try {
     const item = await db.createTestimonial({
-      client_name: req.body.client_name || '', client_photo: await getFileUrl(req.files, 'client_photo', req.body.client_photo || 'https://images.unsplash.com/photo-1494790108377-be9c29b29330?w=100&q=80'),
-      content: req.body.content || '', rating: Number(req.body.rating) || 5, position: req.body.position || '', company: req.body.company || '',
+      client_name: req.body.client_name || '',
+      client_title: req.body.position || req.body.client_title || '',
+      client_company: req.body.company || req.body.client_company || '',
+      client_photo: await getFileUrl(req.files, 'client_photo', req.body.client_photo || 'https://images.unsplash.com/photo-1494790108377-be9c29b29330?w=100&q=80'),
+      content: req.body.content || '', rating: Number(req.body.rating) || 5,
     });
     await db.logActivity('Testimonial Added', `Added testimonial from: ${item.client_name}`);
     res.status(201).json(item);
@@ -226,9 +229,13 @@ app.post('/api/testimonials', authenticate, async (req: any, res) => {
 app.put('/api/testimonials/:id', authenticate, async (req: any, res) => {
   try {
     const body: any = {};
-    const fields = ['client_name', 'content', 'position', 'company'];
+    const fields = ['client_name', 'client_photo', 'content', 'project_type', 'status'];
     for (const f of fields) { if (req.body[f] !== undefined) body[f] = req.body[f]; }
     if (req.body.rating !== undefined) body.rating = Number(req.body.rating);
+    if (req.body.position !== undefined) body.client_title = req.body.position;
+    if (req.body.company !== undefined) body.client_company = req.body.company;
+    if (req.body.client_title !== undefined) body.client_title = req.body.client_title;
+    if (req.body.client_company !== undefined) body.client_company = req.body.client_company;
     const photo = await getFileUrl(req.files, 'client_photo', null);
     if (photo) body.client_photo = photo;
     const item = await db.updateTestimonial(req.params.id, body);
@@ -423,8 +430,10 @@ app.get('/api/experience', async (_req, res) => {
 app.post('/api/experience', authenticate, async (req: any, res) => {
   try {
     const tags = req.body.tags ? (typeof req.body.tags === 'string' ? JSON.parse(req.body.tags) : req.body.tags) : [];
-    const item = await db.createExperience({ title: req.body.title || '', company: req.body.company || '', period: req.body.period || '',
-      description: req.body.description || '', tags, order: Number(req.body.order) || 1, type: req.body.type || 'work' });
+    const item = await db.createExperience({
+      title: req.body.title || '', organization: req.body.company || req.body.organization || '', period: req.body.period || '',
+      description: req.body.description || '', tags, order: Number(req.body.order) || 1, type: req.body.type || 'experience',
+    });
     await db.logActivity('Experience Added', `Added timeline entry: ${item.title}`);
     res.status(201).json(item);
   } catch (err: any) { res.status(500).json({ message: err.message }); }
@@ -433,8 +442,10 @@ app.post('/api/experience', authenticate, async (req: any, res) => {
 app.put('/api/experience/:id', authenticate, async (req: any, res) => {
   try {
     const body: any = {};
-    const fields = ['title', 'company', 'period', 'description', 'type'];
+    const fields = ['title', 'period', 'description', 'type'];
     for (const f of fields) { if (req.body[f] !== undefined) body[f] = req.body[f]; }
+    if (req.body.company !== undefined) body.organization = req.body.company;
+    if (req.body.organization !== undefined) body.organization = req.body.organization;
     if (req.body.order !== undefined) body.order = Number(req.body.order);
     if (req.body.tags) body.tags = typeof req.body.tags === 'string' ? JSON.parse(req.body.tags) : req.body.tags;
     const item = await db.updateExperience(req.params.id, body);
@@ -457,7 +468,11 @@ app.get('/api/languages', async (_req, res) => {
 
 app.post('/api/languages', authenticate, async (req: any, res) => {
   try {
-    const item = await db.createLanguage({ name: req.body.name || '', level: Number(req.body.level) || 0, order: Number(req.body.order) || 1 });
+    const p = Number(req.body.level) || Number(req.body.proficiency) || 0;
+    const item = await db.createLanguage({
+      name: req.body.name || '', proficiency: p, level: String(p),
+      order: Number(req.body.order) || 1,
+    });
     await db.logActivity('Language Added', `Added language: ${item.name}`);
     res.status(201).json(item);
   } catch (err: any) { res.status(500).json({ message: err.message }); }
@@ -467,7 +482,10 @@ app.put('/api/languages/:id', authenticate, async (req: any, res) => {
   try {
     const body: any = {};
     if (req.body.name !== undefined) body.name = req.body.name;
-    if (req.body.level !== undefined) body.level = Number(req.body.level);
+    if (req.body.level !== undefined || req.body.proficiency !== undefined) {
+      const p = Number(req.body.proficiency) || Number(req.body.level) || 0;
+      body.proficiency = p; body.level = String(p);
+    }
     if (req.body.order !== undefined) body.order = Number(req.body.order);
     const item = await db.updateLanguage(req.params.id, body);
     if (!item) return res.status(404).json({ message: 'Language not found' });

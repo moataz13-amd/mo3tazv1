@@ -233,20 +233,26 @@ export const db = {
 
   updateSettings: async (body: any) => {
     if (!supabase) return body;
+    const safeUpdateSettings = async (data: any): Promise<void> => {
+      const id = await getSettingsId();
+      if (!id) {
+        const { error } = await supabase!.from('settings').insert({ ...data, created_at: new Date().toISOString() });
+        if (!error) return;
+        const m = error.message.match(/Could not find the '([^']+)' column/);
+        if (m && m[1]) { const { [m[1]]: _, ...rest } = data; return safeUpdateSettings(rest); }
+        console.error('[DB] updateSettings insert error:', error.message); return;
+      }
+      const { error } = await supabase!.from('settings').update(data).eq('id', id);
+      if (!error) return;
+      const m = error.message.match(/Could not find the '([^']+)' column/);
+      if (m && m[1]) { const { [m[1]]: _, ...rest } = data; return safeUpdateSettings(rest); }
+      console.error('[DB] updateSettings error:', error.message);
+    };
     const payload: any = {};
     for (const f of SETTINGS_FIELDS) {
       if (body[f] !== undefined) payload[f] = body[f];
     }
-    if (Object.keys(payload).length > 0) {
-      const id = await getSettingsId();
-      if (id) {
-        const { error } = await supabase.from('settings').update(payload).eq('id', id);
-        if (error) console.error('[DB] updateSettings error:', error.message);
-      } else {
-        const { error } = await supabase.from('settings').insert({ ...payload, created_at: new Date().toISOString() });
-        if (error) console.error('[DB] updateSettings insert error:', error.message);
-      }
-    }
+    if (Object.keys(payload).length > 0) await safeUpdateSettings(payload);
     clearCache('settings');
     log('updateSettings');
     return db.getSettings();

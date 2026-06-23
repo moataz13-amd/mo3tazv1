@@ -104,6 +104,10 @@ app.post('/api/_migrate', async (req, res) => {
       ALTER TABLE IF EXISTS projects ADD COLUMN IF NOT EXISTS featured BOOLEAN DEFAULT false;
       ALTER TABLE IF EXISTS projects ADD COLUMN IF NOT EXISTS long_description TEXT;
       ALTER TABLE IF EXISTS projects ADD COLUMN IF NOT EXISTS video_url TEXT;
+      ALTER TABLE IF EXISTS settings ADD COLUMN IF NOT EXISTS marquee_row1 JSONB DEFAULT '[]'::jsonb;
+      ALTER TABLE IF EXISTS settings ADD COLUMN IF NOT EXISTS marquee_row2 JSONB DEFAULT '[]'::jsonb;
+      ALTER TABLE IF EXISTS settings ADD COLUMN IF NOT EXISTS hero_headline TEXT;
+      ALTER TABLE IF EXISTS settings ADD COLUMN IF NOT EXISTS hero_subheadline VARCHAR(255);
       ALTER TABLE IF EXISTS projects ADD COLUMN IF NOT EXISTS updated_at TIMESTAMP WITH TIME ZONE DEFAULT CURRENT_TIMESTAMP;
       NOTIFY pgrst, 'reload schema';
     `);

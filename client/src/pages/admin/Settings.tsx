@@ -42,8 +42,6 @@ export default function SettingsPage() {
   const updateMutation = useMutation({
     mutationFn: (data: FormData) => settingsAPI.update(data),
     onSuccess: () => {
-      localStorage.setItem('portfolio_marquee_row1', JSON.stringify(marqueeRow1));
-      localStorage.setItem('portfolio_marquee_row2', JSON.stringify(marqueeRow2));
       queryClient.invalidateQueries({ queryKey: ['settings'] });
       toast.success('Settings saved successfully');
     },
@@ -110,9 +108,13 @@ export default function SettingsPage() {
     formData.append('availability_response_time', data.availability_response_time);
 
     // Append visual list editors states
+    const mq1 = JSON.stringify(marqueeRow1);
+    const mq2 = JSON.stringify(marqueeRow2);
+    localStorage.setItem('portfolio_marquee_row1', mq1);
+    localStorage.setItem('portfolio_marquee_row2', mq2);
+    formData.append('marquee_row1', mq1);
+    formData.append('marquee_row2', mq2);
     formData.append('client_logos', JSON.stringify(clientLogos));
-    formData.append('marquee_row1', JSON.stringify(marqueeRow1));
-    formData.append('marquee_row2', JSON.stringify(marqueeRow2));
 
     if (data.avatar && data.avatar[0]) {
       formData.append('avatar', data.avatar[0]);

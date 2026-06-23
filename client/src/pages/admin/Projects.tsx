@@ -21,27 +21,32 @@ export default function ProjectsManager() {
     queryFn: () => projectsAPI.getAll().then((r) => r.data as Project[]),
   });
 
+  const uploadFile = async (file: File): Promise<string> => {
+    const fd = new FormData();
+    fd.append('file', file);
+    const res = await mediaAPI.upload(fd);
+    return res.data.url || '';
+  };
+
+  const buildProjectFormData = (data: any, coverUrl: string) => {
+    const fd = new FormData();
+    fd.append('title', data.title || '');
+    fd.append('internal_name', data.internal_name || '');
+    fd.append('category', data.category || 'graphic');
+    fd.append('description', data.description || '');
+    fd.append('featured', String(data.featured));
+    fd.append('github_url', data.github_url || '');
+    fd.append('live_url', data.live_url || '');
+    fd.append('tech_stack', JSON.stringify(data.techStack || []));
+    if (coverUrl) fd.append('cover_image', coverUrl);
+    data.galleryFiles?.forEach((f: File) => fd.append('gallery_images', f));
+    return fd;
+  };
+
   const createMutation = useMutation({
     mutationFn: async (data: any) => {
-      let coverUrl = data.existingCover || '';
-      if (data.coverFile) {
-        const fd = new FormData();
-        fd.append('file', data.coverFile);
-        const res = await mediaAPI.upload(fd);
-        coverUrl = res.data.url;
-      }
-      const fd = new FormData();
-      fd.append('title', data.title || '');
-      fd.append('internal_name', data.internal_name || '');
-      fd.append('category', data.category || 'graphic');
-      fd.append('description', data.description || '');
-      fd.append('featured', String(data.featured));
-      fd.append('github_url', data.github_url || '');
-      fd.append('live_url', data.live_url || '');
-      fd.append('tech_stack', JSON.stringify(data.techStack || []));
-      fd.append('cover_image', coverUrl);
-      data.galleryFiles?.forEach((f: File) => fd.append('gallery_images', f));
-      return projectsAPI.create(fd);
+      const coverUrl = data.coverFile ? await uploadFile(data.coverFile) : (data.existingCover || '');
+      return projectsAPI.create(buildProjectFormData(data, coverUrl));
     },
     onSuccess: () => {
       queryClient.invalidateQueries({ queryKey: ['projects'] });
@@ -53,25 +58,9 @@ export default function ProjectsManager() {
 
   const updateMutation = useMutation({
     mutationFn: async ({ id, data }: { id: string; data: any }) => {
-      let coverUrl = data.existingCover || '';
-      if (data.coverFile) {
-        const fd = new FormData();
-        fd.append('file', data.coverFile);
-        const res = await mediaAPI.upload(fd);
-        coverUrl = res.data.url;
-      }
-      const fd = new FormData();
-      fd.append('title', data.title || '');
-      fd.append('internal_name', data.internal_name || '');
-      fd.append('category', data.category || 'graphic');
-      fd.append('description', data.description || '');
-      fd.append('featured', String(data.featured));
-      fd.append('github_url', data.github_url || '');
-      fd.append('live_url', data.live_url || '');
-      fd.append('tech_stack', JSON.stringify(data.techStack || []));
-      fd.append('cover_image', coverUrl);
+      const coverUrl = data.coverFile ? await uploadFile(data.coverFile) : (data.existingCover || '');
+      const fd = buildProjectFormData(data, coverUrl);
       fd.append('existing_images', JSON.stringify(data.images || []));
-      data.galleryFiles?.forEach((f: File) => fd.append('gallery_images', f));
       return projectsAPI.update(id, fd);
     },
     onSuccess: () => {

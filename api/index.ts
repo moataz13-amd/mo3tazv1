@@ -168,8 +168,8 @@ app.get('/api/projects', async (_req, res) => {
 
 app.post('/api/projects', authenticate, async (req: any, res) => {
   try {
-    console.log('[POST /projects] files:', req.files?.length || 0, 'fields:', Object.keys(req.body).join(','));
-    const cover_image = await getFileUrl(req.files, 'cover_image', req.body.cover_image || 'https://images.unsplash.com/photo-1551288049-bebda4e38f71?w=600&q=80');
+    const coverFromBody = (req.body.cover_image && req.body.cover_image !== 'undefined') ? req.body.cover_image : '';
+    const cover_image = await getFileUrl(req.files, 'cover_image', coverFromBody || 'https://images.unsplash.com/photo-1551288049-bebda4e38f71?w=600&q=80');
     const images = req.body.images ? (typeof req.body.images === 'string' ? JSON.parse(req.body.images) : req.body.images) : [];
     const techStack = req.body.tech_stack ? (typeof req.body.tech_stack === 'string' ? JSON.parse(req.body.tech_stack) : req.body.tech_stack) : [];
     const item = await db.createProject({
@@ -189,7 +189,8 @@ app.put('/api/projects/:id', authenticate, async (req: any, res) => {
     for (const f of fields) { if (req.body[f] !== undefined) body[f] = req.body[f]; }
     if (req.body.tech_stack) body.tech_stack = typeof req.body.tech_stack === 'string' ? JSON.parse(req.body.tech_stack) : req.body.tech_stack;
     if (req.body.featured !== undefined) body.featured = req.body.featured === true || req.body.featured === 'true';
-    const cover_image = await getFileUrl(req.files, 'cover_image', null);
+    const coverBody = (req.body.cover_image && req.body.cover_image !== 'undefined') ? req.body.cover_image : null;
+    const cover_image = await getFileUrl(req.files, 'cover_image', coverBody);
     if (cover_image) body.cover_image = cover_image;
     const existingImages = req.body.existing_images ? (typeof req.body.existing_images === 'string' ? JSON.parse(req.body.existing_images) : req.body.existing_images) : [];
     const newImages = req.body.images ? (typeof req.body.images === 'string' ? JSON.parse(req.body.images) : req.body.images) : [];

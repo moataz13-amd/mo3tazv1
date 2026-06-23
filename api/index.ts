@@ -547,6 +547,14 @@ app.post('/api/client-logos', authenticate, async (req: any, res) => {
   } catch (err: any) { res.status(500).json({ message: err.message }); }
 });
 
+app.delete('/api/client-logos', authenticate, async (_req, res) => {
+  try {
+    await db.clearClientLogos();
+    await db.logActivity('Client Logos Cleared', 'Removed all client logos');
+    res.json({ message: 'All client logos deleted' });
+  } catch (err: any) { res.status(500).json({ message: err.message }); }
+});
+
 app.put('/api/client-logos/:id', authenticate, async (req: any, res) => {
   try {
     const body: any = {};

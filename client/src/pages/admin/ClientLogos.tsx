@@ -1,7 +1,7 @@
 import { useState, useRef } from 'react';
 import { useQuery, useMutation, useQueryClient } from '@tanstack/react-query';
 import { useForm } from 'react-hook-form';
-import { Plus, Trash2, Edit, X, Save, ImageIcon, Upload, GripVertical } from 'lucide-react';
+import { Plus, Trash2, Edit, X, Save, ImageIcon, Upload, GripVertical, AlertTriangle } from 'lucide-react';
 import toast from 'react-hot-toast';
 import { clientLogosAPI } from '../../lib/api';
 import { useAdminTranslation } from '../../lib/adminTranslations';
@@ -59,6 +59,22 @@ export default function ClientLogosManager() {
     },
     onError: () => toast.error('فشل في حذف اللوجو'),
   });
+
+  const deleteAllMutation = useMutation({
+    mutationFn: () => clientLogosAPI.deleteAll(),
+    onSuccess: () => {
+      queryClient.invalidateQueries({ queryKey: ['client-logos'] });
+      queryClient.invalidateQueries({ queryKey: ['settings'] });
+      toast.success('تم حذف جميع اللوجوهات بنجاح');
+    },
+    onError: () => toast.error('فشل في حذف اللوجوهات'),
+  });
+
+  const handleDeleteAll = () => {
+    if (window.confirm('هل أنت متأكد؟ سيتم حذف جميع شعارات العملاء بشكل نهائي')) {
+      deleteAllMutation.mutate();
+    }
+  };
 
   const { register, handleSubmit, reset, setValue } = useForm();
 
@@ -130,9 +146,20 @@ export default function ClientLogosManager() {
           <h1 className="text-2xl font-black text-white tracking-wide">{t('clientLogos')}</h1>
           <p className="text-xs text-gray-400">{t('clientLogosDesc')}</p>
         </div>
-        <button onClick={() => openModal()} className="neon-btn px-4 py-2 text-xs font-black flex items-center gap-1.5">
-          <Plus size={14} /> {t('addLogo')}
-        </button>
+        <div className="flex items-center gap-2">
+          {logos && logos.length > 0 && (
+            <button
+              onClick={handleDeleteAll}
+              disabled={deleteAllMutation.isPending}
+              className="px-4 py-2 text-xs font-black flex items-center gap-1.5 border border-red-500/40 hover:border-red-500 text-red-400 hover:text-red-300 rounded-full transition-colors disabled:opacity-50"
+            >
+              <AlertTriangle size={14} /> حذف الكل
+            </button>
+          )}
+          <button onClick={() => openModal()} className="neon-btn px-4 py-2 text-xs font-black flex items-center gap-1.5">
+            <Plus size={14} /> {t('addLogo')}
+          </button>
+        </div>
       </div>
 
       {isLoading ? (

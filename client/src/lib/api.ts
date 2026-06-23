@@ -146,4 +146,5 @@ export const clientLogosAPI = {
   update: (id: string, data: FormData) =>
     api.put(`/client-logos/${id}`, data),
   delete: (id: string) => api.delete(`/client-logos/${id}`),
+  deleteAll: () => api.delete('/client-logos'),
 };

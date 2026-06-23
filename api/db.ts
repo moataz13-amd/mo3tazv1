@@ -552,4 +552,14 @@ export const db = {
       await supabase.from('settings').update({ client_logos: logos }).eq('id', settingsId);
     }
   },
+
+  clearClientLogos: async () => {
+    if (!supabase) return;
+    const settingsId = await getSettingsId();
+    if (settingsId) {
+      const { error } = await supabase.from('settings').update({ client_logos: [] }).eq('id', settingsId);
+      if (error) console.error('[DB] clearClientLogos error:', error.message);
+    }
+    log('clearClientLogos');
+  },
 };

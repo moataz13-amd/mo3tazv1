@@ -320,7 +320,7 @@ export const db = {
 
   createMessage: async (body: any) => {
     if (!supabase) throw new Error('Database not configured');
-    const item = { ...body, status: 'unread', created_at: new Date().toISOString() };
+    const item = { name: body.name, email: body.email, subject: body.subject, message: body.message, created_at: new Date().toISOString() };
     const { error } = await supabase.from('messages').insert(item);
     if (error) { console.error('[DB] createMessage error:', error.message); throw new Error(error.message); }
     log('createMessage', body.name || 'unknown');

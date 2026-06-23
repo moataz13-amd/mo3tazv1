@@ -67,7 +67,7 @@ export default function App() {
 
   // Track page visit on mount
   useEffect(() => {
-    analyticsAPI.trackVisit().catch(() => {});
+    analyticsAPI.trackVisit().catch((err) => console.error('[APP] trackVisit error:', err?.message));
   }, []);
 
   return (

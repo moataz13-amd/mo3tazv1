@@ -58,7 +58,7 @@ const authenticate = (req: any, res: any, next: any) => {
 };
 
 // ===== Health check =====
-app.get('/api/_health', async (_req, res) => {
+app.get(['/api/_health', '/api/health'], async (_req, res) => {
   try {
     const status = await healthCheck();
     res.json({

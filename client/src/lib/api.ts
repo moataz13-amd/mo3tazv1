@@ -1,6 +1,7 @@
 import axios from 'axios';
 
 const BASE_URL = import.meta.env.VITE_API_URL || '/api';
+console.log('[API] Base URL:', BASE_URL);
 
 const api = axios.create({
   baseURL: BASE_URL,
@@ -16,10 +17,15 @@ api.interceptors.request.use((config) => {
   return config;
 });
 
-// Response interceptor — handle 401
+// Response interceptor — log & handle 401
 api.interceptors.response.use(
-  (response) => response,
+  (response) => {
+    console.log('[API]', response.config.method?.toUpperCase(), response.config.url, '→', response.status);
+    return response;
+  },
   (error) => {
+    const detail = error.response ? `${error.response.status} ${JSON.stringify(error.response.data).slice(0, 120)}` : error.message;
+    console.error('[API ERROR]', error.config?.method?.toUpperCase(), error.config?.url, '→', detail);
     if (error.response?.status === 401) {
       localStorage.removeItem('portfolio_token');
       window.location.href = '/admin/login';

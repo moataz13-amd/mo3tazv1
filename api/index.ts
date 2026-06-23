@@ -3,7 +3,7 @@ import cors from 'cors';
 import bcrypt from 'bcryptjs';
 import jwt from 'jsonwebtoken';
 import multer from 'multer';
-import { db, useSupabase, uploadToCloudinary, deleteFromCloudinary, useCloudinary, healthCheck } from './db';
+import { db, useSupabase, uploadToCloudinary, deleteFromCloudinary, useCloudinary, healthCheck } from './db.js';
 
 const app = express();
 app.use(cors({ origin: true, credentials: true }));

@@ -207,17 +207,37 @@ export const db = {
 
   createProject: async (body: any) => {
     if (!supabase) throw new Error('Database not configured');
-    const { error } = await supabase.from('projects').insert(body);
-    if (error) { console.error('[DB] createProject error:', error.message); throw new Error(error.message); }
+    const safeInsert = async (data: any): Promise<any> => {
+      const { error } = await supabase.from('projects').insert(data);
+      if (!error) return data;
+      const m = error.message.match(/Could not find the '([^']+)' column/);
+      if (m && m[1]) {
+        const { [m[1]]: _, ...rest } = data;
+        console.warn('[DB] createProject: column missing, retrying without:', m[1]);
+        return safeInsert(rest);
+      }
+      throw error;
+    };
+    const result = await safeInsert(body);
     log('createProject', body.title || 'unknown');
-    return body;
+    return result;
   },
 
   updateProject: async (id: string, body: any) => {
     if (!supabase) return null;
-    const { data, error } = await supabase.from('projects').update(body).eq('id', id).select();
-    if (error) { console.error('[DB] updateProject error:', error.message); return null; }
-    return (data && data.length > 0) ? data[0] : null;
+    const safeUpdate = async (data: any): Promise<any> => {
+      const { data: result, error } = await supabase.from('projects').update(data).eq('id', id).select();
+      if (!error) return (result && result.length > 0) ? result[0] : null;
+      const m = error.message.match(/Could not find the '([^']+)' column/);
+      if (m && m[1]) {
+        const { [m[1]]: _, ...rest } = data;
+        console.warn('[DB] updateProject: column missing, retrying without:', m[1]);
+        return safeUpdate(rest);
+      }
+      console.error('[DB] updateProject error:', error.message);
+      return null;
+    };
+    return safeUpdate(body);
   },
 
   deleteProject: async (id: string) => {
@@ -321,10 +341,20 @@ export const db = {
   createMessage: async (body: any) => {
     if (!supabase) throw new Error('Database not configured');
     const item = { name: body.name, email: body.email, subject: body.subject, message: body.message, created_at: new Date().toISOString() };
-    const { error } = await supabase.from('messages').insert(item);
-    if (error) { console.error('[DB] createMessage error:', error.message); throw new Error(error.message); }
+    const safeInsert = async (data: any): Promise<any> => {
+      const { error } = await supabase.from('messages').insert(data);
+      if (!error) return data;
+      const m = error.message.match(/Could not find the '([^']+)' column/);
+      if (m && m[1]) {
+        const { [m[1]]: _, ...rest } = data;
+        console.warn('[DB] createMessage: column missing, retrying without:', m[1]);
+        return safeInsert(rest);
+      }
+      throw error;
+    };
+    const result = await safeInsert(item);
     log('createMessage', body.name || 'unknown');
-    return item;
+    return result;
   },
 
   updateMessageStatus: async (id: string, status: string) => {

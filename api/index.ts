@@ -585,7 +585,7 @@ app.use((err: any, _req: express.Request, res: express.Response, _next: express.
 export default app;
 
 // Local development server
-const isServerless = process.env.NETLIFY === 'true' || process.env.VERCEL === '1';
+const isServerless = process.env.NETLIFY === 'true' || process.env.VERCEL === '1' || !!process.env.AWS_LAMBDA_RUNTIME_API;
 if (!isServerless) {
   const PORT = process.env.PORT || 5000;
   app.listen(PORT, () => {

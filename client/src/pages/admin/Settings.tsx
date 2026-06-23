@@ -114,7 +114,6 @@ export default function SettingsPage() {
     localStorage.setItem('portfolio_marquee_row2', mq2);
     formData.append('marquee_row1', mq1);
     formData.append('marquee_row2', mq2);
-    formData.append('client_logos', JSON.stringify(clientLogos));
 
     if (data.avatar && data.avatar[0]) {
       formData.append('avatar', data.avatar[0]);

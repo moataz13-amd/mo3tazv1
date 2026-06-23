@@ -2,9 +2,8 @@ import { useState } from 'react';
 import { useQuery, useMutation, useQueryClient } from '@tanstack/react-query';
 import { useForm } from 'react-hook-form';
 import { Plus, Trash2, Edit, X, Save, Star, ExternalLink, Image as ImageIcon, UploadCloud } from 'lucide-react';
-import { GithubIcon } from '../../components/icons/BrandIcons';
 import toast from 'react-hot-toast';
-import { projectsAPI } from '../../lib/api';
+import { projectsAPI, mediaAPI } from '../../lib/api';
 import type { Project } from '../../types';
 import { useAdminTranslation } from '../../lib/adminTranslations';
 
@@ -23,7 +22,27 @@ export default function ProjectsManager() {
   });
 
   const createMutation = useMutation({
-    mutationFn: (data: FormData) => projectsAPI.create(data),
+    mutationFn: async (data: any) => {
+      let coverUrl = data.existingCover || '';
+      if (data.coverFile) {
+        const fd = new FormData();
+        fd.append('file', data.coverFile);
+        const res = await mediaAPI.upload(fd);
+        coverUrl = res.data.url;
+      }
+      const fd = new FormData();
+      fd.append('title', data.title || '');
+      fd.append('internal_name', data.internal_name || '');
+      fd.append('category', data.category || 'graphic');
+      fd.append('description', data.description || '');
+      fd.append('featured', String(data.featured));
+      fd.append('github_url', data.github_url || '');
+      fd.append('live_url', data.live_url || '');
+      fd.append('tech_stack', JSON.stringify(data.techStack || []));
+      fd.append('cover_image', coverUrl);
+      data.galleryFiles?.forEach((f: File) => fd.append('gallery_images', f));
+      return projectsAPI.create(fd);
+    },
     onSuccess: () => {
       queryClient.invalidateQueries({ queryKey: ['projects'] });
       toast.success('Category created successfully');
@@ -33,7 +52,28 @@ export default function ProjectsManager() {
   });
 
   const updateMutation = useMutation({
-    mutationFn: ({ id, data }: { id: string; data: FormData }) => projectsAPI.update(id, data),
+    mutationFn: async ({ id, data }: { id: string; data: any }) => {
+      let coverUrl = data.existingCover || '';
+      if (data.coverFile) {
+        const fd = new FormData();
+        fd.append('file', data.coverFile);
+        const res = await mediaAPI.upload(fd);
+        coverUrl = res.data.url;
+      }
+      const fd = new FormData();
+      fd.append('title', data.title || '');
+      fd.append('internal_name', data.internal_name || '');
+      fd.append('category', data.category || 'graphic');
+      fd.append('description', data.description || '');
+      fd.append('featured', String(data.featured));
+      fd.append('github_url', data.github_url || '');
+      fd.append('live_url', data.live_url || '');
+      fd.append('tech_stack', JSON.stringify(data.techStack || []));
+      fd.append('cover_image', coverUrl);
+      fd.append('existing_images', JSON.stringify(data.images || []));
+      data.galleryFiles?.forEach((f: File) => fd.append('gallery_images', f));
+      return projectsAPI.update(id, fd);
+    },
     onSuccess: () => {
       queryClient.invalidateQueries({ queryKey: ['projects'] });
       toast.success('Category updated successfully');
@@ -99,38 +139,29 @@ export default function ProjectsManager() {
   };
 
   const onSubmit = (data: any) => {
-    const formData = new FormData();
-    formData.append('title', data.title || '');
-    formData.append('internal_name', data.internal_name || '');
-    formData.append('category', data.category || 'graphic');
-    formData.append('description', data.description || '');
-    formData.append('featured', String(data.featured));
-    formData.append('github_url', data.github_url || '');
-    formData.append('live_url', data.live_url || '');
-
-    const stack = data.tech_stack
-      ? data.tech_stack
-          .split(',')
-          .map((s: string) => s.trim())
-          .filter(Boolean)
+    const coverFile = data.cover_image?.[0] || null;
+    const galleryFiles = data.gallery_images?.length ? Array.from(data.gallery_images) : [];
+    const techStack = data.tech_stack
+      ? data.tech_stack.split(',').map((s: string) => s.trim()).filter(Boolean)
       : [];
-    formData.append('tech_stack', JSON.stringify(stack));
-
-    if (data.cover_image && data.cover_image[0]) {
-      formData.append('cover_image', data.cover_image[0]);
-    }
-
-    if (data.gallery_images && data.gallery_images.length > 0) {
-      for (let i = 0; i < data.gallery_images.length; i++) {
-        formData.append('gallery_images', data.gallery_images[i]);
-      }
-    }
-
+    const payload: any = {
+      title: data.title || '',
+      internal_name: data.internal_name || '',
+      category: data.category || 'graphic',
+      description: data.description || '',
+      featured: data.featured,
+      github_url: data.github_url || '',
+      live_url: data.live_url || '',
+      techStack,
+      coverFile,
+      galleryFiles,
+    };
     if (editingProject) {
-      formData.append('existing_images', JSON.stringify(existingGalleryImages));
-      updateMutation.mutate({ id: editingProject.id, data: formData });
+      payload.existingCover = editingProject.cover_image;
+      payload.images = existingGalleryImages;
+      updateMutation.mutate({ id: editingProject.id, data: payload });
     } else {
-      createMutation.mutate(formData);
+      createMutation.mutate(payload);
     }
   };
 

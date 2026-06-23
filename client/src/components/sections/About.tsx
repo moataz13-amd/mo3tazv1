@@ -51,7 +51,7 @@ export default function About() {
             {sectionTitle}
           </div>
           <h2
-            className="text-4xl md:text-5xl lg:text-6xl leading-tight"
+            className="text-xl md:text-4xl lg:text-5xl leading-tight"
             style={{
               fontFamily: "'Milan Display', 'Sahara Bold', 'Inter', sans-serif",
               fontWeight: 900,
@@ -93,7 +93,7 @@ export default function About() {
           </div>
 
           {/* Profile Photo with Cyan Arch/Circle Backdrop */}
-          <div className="relative flex justify-center" style={{ marginTop: '-190px', marginBottom: '-105px' }}>
+          <div className="relative flex justify-center -mt-[80px] md:-mt-[160px] -mb-[40px] md:-mb-[90px]">
             {/* Profile Avatar Frame */}
             <div className="relative z-20 w-full max-w-[460px] md:max-w-[580px] flex items-center justify-center">
               <img

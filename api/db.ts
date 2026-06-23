@@ -101,13 +101,29 @@ export async function deleteFromCloudinary(publicId: string) {
 export async function uploadFile(buffer: Buffer, folder = 'portfolio_assets'): Promise<{ url: string; publicId: string } | null> {
   const result = await uploadToCloudinary(buffer, folder);
   if (result) return result;
-  if (!supabase) return null;
-  const fileName = `${folder}/${Date.now()}-${Math.random().toString(36).slice(2, 8)}.png`;
-  const { data, error } = await supabase.storage.from('portfolio').upload(fileName, buffer, { contentType: 'image/png', upsert: false });
-  if (error) { console.error('[DB] Supabase Storage upload failed:', error.message); return null; }
-  const { data: urlData } = supabase.storage.from('portfolio').getPublicUrl(fileName);
-  console.log('[DB] Supabase Storage upload success:', fileName);
-  return { url: urlData.publicUrl, publicId: fileName };
+  if (!supabase) {
+    const b64 = buffer.toString('base64');
+    const dataUrl = `data:image/png;base64,${b64}`;
+    console.warn('[DB] No storage backend; falling back to inline base64');
+    return { url: dataUrl, publicId: `b64-${Date.now()}` };
+  }
+  try {
+    const ext = 'png';
+    const fileName = `${folder}/${Date.now()}-${Math.random().toString(36).slice(2, 8)}.${ext}`;
+    const { data, error } = await supabase.storage.from('portfolio').upload(fileName, buffer, { contentType: `image/${ext}`, upsert: false });
+    if (!error) {
+      const { data: urlData } = supabase.storage.from('portfolio').getPublicUrl(fileName);
+      console.log('[DB] Supabase Storage upload success:', fileName);
+      return { url: urlData.publicUrl, publicId: fileName };
+    }
+    console.error('[DB] Supabase Storage upload failed:', error.message);
+  } catch (e: any) {
+    console.warn('[DB] Supabase Storage error:', e.message);
+  }
+  const b64 = buffer.toString('base64');
+  const dataUrl = `data:image/png;base64,${b64}`;
+  console.warn('[DB] All storage backends failed; falling back to inline base64');
+  return { url: dataUrl, publicId: `b64-${Date.now()}` };
 }
 
 async function ensureAdmin() {

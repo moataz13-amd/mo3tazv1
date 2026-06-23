@@ -45,10 +45,9 @@ export default function SettingsPage() {
       localStorage.setItem('portfolio_marquee_row1', JSON.stringify(marqueeRow1));
       localStorage.setItem('portfolio_marquee_row2', JSON.stringify(marqueeRow2));
       queryClient.invalidateQueries({ queryKey: ['settings'] });
-      setHasUnsaved(false);
-      toast.success(t('settingsSaved'));
+      toast.success('Settings saved successfully');
     },
-    onError: () => toast.error(t('settingsSaveFailed')),
+    onError: () => toast.error('Failed to save settings'),
   });
 
   const { register, handleSubmit, reset } = useForm();

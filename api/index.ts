@@ -8,6 +8,11 @@ import { db, useSupabase, uploadToCloudinary, deleteFromCloudinary, useCloudinar
 const app = express();
 app.use(cors({ origin: true, credentials: true }));
 app.use(express.json());
+app.use((req, res, next) => {
+  res.set('Cache-Control', 'no-store, no-cache, must-revalidate, proxy-revalidate');
+  res.set('Pragma', 'no-cache'); res.set('Expires', '0'); res.set('Surrogate-Control', 'no-store');
+  next();
+});
 
 const multipart = multer({ storage: multer.memoryStorage() }).any();
 app.use((req, res, next) => {
@@ -21,16 +26,8 @@ app.use((req, res, next) => {
 });
 
 app.use((req, res, next) => {
-  res.set('Cache-Control', 'no-store, no-cache, must-revalidate, proxy-revalidate');
-  res.set('Pragma', 'no-cache'); res.set('Expires', '0'); res.set('Surrogate-Control', 'no-store');
-  next();
-});
-
-app.use((req, res, next) => {
   const start = Date.now();
-  res.on('finish', () => {
-    console.log(`${req.method} ${req.url} → ${res.statusCode} (${Date.now() - start}ms)`);
-  });
+  res.on('finish', () => { console.log(`${req.method} ${req.url} → ${res.statusCode} (${Date.now() - start}ms)`); });
   next();
 });
 
@@ -78,29 +75,6 @@ app.get('/api/_health', async (_req, res) => {
   } catch (e: any) {
     res.status(500).json({ status: 'error', message: e.message });
   }
-});
-
-// ===== Diagnostic endpoint =====
-app.get('/api/_debug', async (_req, res) => {
-  let sbStatus = 'not configured';
-  if (useSupabase) {
-    try {
-      const { error: testErr } = await db.getSettings();
-      sbStatus = testErr ? `error: ${testErr.message}` : 'connected';
-    } catch (e: any) { sbStatus = `exception: ${e.message}`; }
-  }
-  res.json({
-    uptime: process.uptime(), node: process.version, useSupabase,
-    supabase: sbStatus,
-    env: {
-      NODE_ENV: process.env.NODE_ENV || '(not set)',
-      SUPABASE_URL: process.env.SUPABASE_URL ? 'set' : 'missing',
-      SUPABASE_SERVICE_ROLE_KEY: process.env.SUPABASE_SERVICE_ROLE_KEY ? 'set' : 'missing',
-      CLOUDINARY_CLOUD_NAME: process.env.CLOUDINARY_CLOUD_NAME ? 'set' : 'missing',
-      CLOUDINARY_API_KEY: process.env.CLOUDINARY_API_KEY ? 'set' : 'missing',
-      CLOUDINARY_API_SECRET: process.env.CLOUDINARY_API_SECRET ? 'set' : 'missing',
-    },
-  });
 });
 
 // AUTH
@@ -435,7 +409,6 @@ app.post('/api/media/upload', authenticate, async (req: any, res) => {
   try {
     const fileData = req.files?.find((f: any) => f.fieldname === 'file') || req.files?.[0];
     if (!fileData && !req.body.url) return res.status(400).json({ message: 'No file uploaded' });
-
     let url = req.body.url;
     let publicId = `local-${Date.now()}`;
     if (fileData?.buffer) {
@@ -582,13 +555,7 @@ app.use((err: any, _req: express.Request, res: express.Response, _next: express.
   res.status(500).json({ message: err.message || 'Internal Server Error' });
 });
 
-export default app;
-
-// Local development server
-const isServerless = process.env.NETLIFY === 'true' || process.env.VERCEL === '1' || !!process.env.AWS_LAMBDA_RUNTIME_API;
-if (!isServerless) {
-  const PORT = process.env.PORT || 5000;
-  app.listen(PORT, () => {
-    console.log(`API server running on http://localhost:${PORT}`);
-  });
+// Vercel serverless handler
+export default function handler(req: any, res: any) {
+  app(req, res);
 }

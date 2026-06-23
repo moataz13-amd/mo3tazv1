@@ -57,6 +57,24 @@ const authenticate = (req: any, res: any, next: any) => {
   }
 };
 
+// ===== Debug / env check =====
+app.get('/api/_debug', async (_req, res) => {
+  res.json({
+    uptime: process.uptime(),
+    node: process.version,
+    useSupabase: !!(process.env.SUPABASE_URL && process.env.SUPABASE_SERVICE_ROLE_KEY),
+    env: {
+      NODE_ENV: process.env.NODE_ENV || '(not set)',
+      SUPABASE_URL: process.env.SUPABASE_URL ? 'set' : 'missing',
+      SUPABASE_SERVICE_ROLE_KEY: process.env.SUPABASE_SERVICE_ROLE_KEY ? 'set' : 'missing',
+      CLOUDINARY_CLOUD_NAME: process.env.CLOUDINARY_CLOUD_NAME ? 'set' : 'missing',
+      CLOUDINARY_API_KEY: process.env.CLOUDINARY_API_KEY ? 'set' : 'missing',
+      CLOUDINARY_API_SECRET: process.env.CLOUDINARY_API_SECRET ? 'set' : 'missing',
+      JWT_SECRET: process.env.JWT_SECRET ? 'set' : 'missing',
+    },
+  });
+});
+
 // ===== Health check =====
 app.get(['/api/_health', '/api/health'], async (_req, res) => {
   try {

@@ -33,14 +33,17 @@ app.use((req, res, next) => {
 
 const JWT_SECRET = process.env.JWT_SECRET || 'fallback-super-secret-key-1092';
 const getFileUrl = async (files: any, fieldName: string, fallback: string) => {
-  if (!files || !Array.isArray(files)) return fallback;
+  if (!files || !Array.isArray(files)) { console.log('[getFileUrl] no files, fallback:', fallback?.slice(0, 60)); return fallback; }
   const file = files.find((f: any) => f.fieldname === fieldName);
-  if (!file) return fallback;
+  if (!file) { console.log('[getFileUrl] no file for', fieldName, 'fallback:', fallback?.slice(0, 60)); return fallback; }
   if (file.path && (file.path.startsWith('http://') || file.path.startsWith('https://'))) return file.path;
-    if (file.buffer) {
-      const result = await uploadFile(file.buffer, 'portfolio_assets');
-      if (result) return result.url;
-    }
+  if (file.buffer) {
+    const result = await uploadFile(file.buffer, 'portfolio_assets');
+    if (result) return result.url;
+    console.log('[getFileUrl] uploadFile returned null');
+  } else {
+    console.log('[getFileUrl] file has no buffer');
+  }
   return fallback;
 };
 
@@ -200,8 +203,12 @@ app.get('/api/projects', async (_req, res) => {
 
 app.post('/api/projects', authenticate, async (req: any, res) => {
   try {
+    console.log('[CREATE PROJECT] files count:', req.files?.length);
+    console.log('[CREATE PROJECT] cover_image field in body:', req.body.cover_image?.slice(0, 80));
+    console.log('[CREATE PROJECT] cover_image file in files:', req.files?.find((f: any) => f.fieldname === 'cover_image') ? 'YES' : 'NO');
     const coverFromBody = (req.body.cover_image && req.body.cover_image !== 'undefined') ? req.body.cover_image : '';
     const cover_image = await getFileUrl(req.files, 'cover_image', coverFromBody || 'https://images.unsplash.com/photo-1551288049-bebda4e38f71?w=600&q=80');
+    console.log('[CREATE PROJECT] resolved cover_image:', cover_image?.slice(0, 80));
     const existingImages = req.body.images ? (typeof req.body.images === 'string' ? JSON.parse(req.body.images) : req.body.images) : [];
     const newImages = req.files?.filter((f: any) => f.fieldname === 'gallery_images') || [];
     const uploadedImages = await Promise.all(newImages.map(async (f: any) => {
@@ -215,6 +222,7 @@ app.post('/api/projects', authenticate, async (req: any, res) => {
       cover_image, images, tech_stack: techStack, github_url: req.body.github_url || null, live_url: req.body.live_url || null,
       category: req.body.category || 'graphic', featured: req.body.featured === true || req.body.featured === 'true', status: 'published',
     });
+    console.log('[CREATE PROJECT] saved item cover_image:', item.cover_image?.slice(0, 80));
     await db.logActivity('Project Created', `Added showcase work: ${item.title}`);
     res.status(201).json(item);
   } catch (err: any) { res.status(500).json({ message: err.message }); }

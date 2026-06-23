@@ -207,17 +207,17 @@ export const db = {
 
   createProject: async (body: any) => {
     if (!supabase) throw new Error('Database not configured');
-    const { data, error } = await supabase.from('projects').insert(body).select().single();
+    const { error } = await supabase.from('projects').insert(body);
     if (error) { console.error('[DB] createProject error:', error.message); throw new Error(error.message); }
-    log('createProject', data.title);
-    return data;
+    log('createProject', body.title || 'unknown');
+    return body;
   },
 
   updateProject: async (id: string, body: any) => {
     if (!supabase) return null;
-    const { data, error } = await supabase.from('projects').update(body).eq('id', id).select().single();
+    const { data, error } = await supabase.from('projects').update(body).eq('id', id).select();
     if (error) { console.error('[DB] updateProject error:', error.message); return null; }
-    return data || null;
+    return (data && data.length > 0) ? data[0] : null;
   },
 
   deleteProject: async (id: string) => {

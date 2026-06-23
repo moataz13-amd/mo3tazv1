@@ -75,6 +75,48 @@ app.get('/api/_debug', async (_req, res) => {
   });
 });
 
+// ===== Migration endpoint — runs ALTER TABLE to fix missing columns =====
+app.post('/api/_migrate', async (req, res) => {
+  const pw = req.body?.password;
+  if (!pw && !process.env.SUPABASE_DB_PASSWORD) {
+    return res.status(400).json({ error: 'Missing database password. Add SUPABASE_DB_PASSWORD to Vercel env or pass { "password": "..." } in the body.' });
+  }
+  const password = pw || process.env.SUPABASE_DB_PASSWORD;
+  const supabaseUrl = process.env.SUPABASE_URL || '';
+  const match = supabaseUrl.match(/https:\/\/([^.]+)/);
+  if (!match) return res.status(500).json({ error: 'Invalid SUPABASE_URL' });
+  const ref = match[1];
+  const host = `db.${ref}.supabase.co`;
+
+  const { Client } = await import('pg');
+  const client = new Client({ host, port: 5432, database: 'postgres', user: 'postgres', password, ssl: { rejectUnauthorized: false } });
+  try {
+    await client.connect();
+    await client.query(`
+      ALTER TABLE IF EXISTS messages ADD COLUMN IF NOT EXISTS status VARCHAR(50) DEFAULT 'unread';
+      ALTER TABLE IF EXISTS projects ADD COLUMN IF NOT EXISTS category VARCHAR(100) DEFAULT 'web';
+      ALTER TABLE IF EXISTS projects ADD COLUMN IF NOT EXISTS status VARCHAR(50) DEFAULT 'published';
+      ALTER TABLE IF EXISTS projects ADD COLUMN IF NOT EXISTS internal_name VARCHAR(255);
+      ALTER TABLE IF EXISTS projects ADD COLUMN IF NOT EXISTS images TEXT[] DEFAULT '{}';
+      ALTER TABLE IF EXISTS projects ADD COLUMN IF NOT EXISTS tech_stack TEXT[] DEFAULT '{}';
+      ALTER TABLE IF EXISTS projects ADD COLUMN IF NOT EXISTS github_url TEXT;
+      ALTER TABLE IF EXISTS projects ADD COLUMN IF NOT EXISTS live_url TEXT;
+      ALTER TABLE IF EXISTS projects ADD COLUMN IF NOT EXISTS featured BOOLEAN DEFAULT false;
+      ALTER TABLE IF EXISTS projects ADD COLUMN IF NOT EXISTS long_description TEXT;
+      ALTER TABLE IF EXISTS projects ADD COLUMN IF NOT EXISTS video_url TEXT;
+      ALTER TABLE IF EXISTS projects ADD COLUMN IF NOT EXISTS updated_at TIMESTAMP WITH TIME ZONE DEFAULT CURRENT_TIMESTAMP;
+      NOTIFY pgrst, 'reload schema';
+    `);
+    await client.end();
+    console.log('[MIGRATE] Schema columns added successfully for ref:', ref);
+    res.json({ success: true, message: 'All missing columns added. Schema cache reloaded.' });
+  } catch (err: any) {
+    console.error('[MIGRATE] Error:', err.message);
+    try { await client.end(); } catch {}
+    res.status(500).json({ error: err.message });
+  }
+});
+
 // ===== Health check =====
 app.get(['/api/_health', '/api/health'], async (_req, res) => {
   try {

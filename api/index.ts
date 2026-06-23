@@ -202,7 +202,13 @@ app.post('/api/projects', authenticate, async (req: any, res) => {
   try {
     const coverFromBody = (req.body.cover_image && req.body.cover_image !== 'undefined') ? req.body.cover_image : '';
     const cover_image = await getFileUrl(req.files, 'cover_image', coverFromBody || 'https://images.unsplash.com/photo-1551288049-bebda4e38f71?w=600&q=80');
-    const images = req.body.images ? (typeof req.body.images === 'string' ? JSON.parse(req.body.images) : req.body.images) : [];
+    const existingImages = req.body.images ? (typeof req.body.images === 'string' ? JSON.parse(req.body.images) : req.body.images) : [];
+    const newImages = req.files?.filter((f: any) => f.fieldname === 'gallery_images') || [];
+    const uploadedImages = await Promise.all(newImages.map(async (f: any) => {
+      const r = await uploadFile(f.buffer, 'portfolio_assets');
+      return r?.url || '';
+    }));
+    const images = [...existingImages, ...uploadedImages.filter(Boolean)];
     const techStack = req.body.tech_stack ? (typeof req.body.tech_stack === 'string' ? JSON.parse(req.body.tech_stack) : req.body.tech_stack) : [];
     const item = await db.createProject({
       title: req.body.title || '', internal_name: req.body.internal_name || null, description: req.body.description || '',

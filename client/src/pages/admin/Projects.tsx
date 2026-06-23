@@ -3,7 +3,7 @@ import { useQuery, useMutation, useQueryClient } from '@tanstack/react-query';
 import { useForm } from 'react-hook-form';
 import { Plus, Trash2, Edit, X, Save, Star, ExternalLink, Image as ImageIcon, UploadCloud } from 'lucide-react';
 import toast from 'react-hot-toast';
-import { projectsAPI, mediaAPI } from '../../lib/api';
+import { projectsAPI } from '../../lib/api';
 import type { Project } from '../../types';
 import { useAdminTranslation } from '../../lib/adminTranslations';
 
@@ -21,14 +21,7 @@ export default function ProjectsManager() {
     queryFn: () => projectsAPI.getAll().then((r) => r.data as Project[]),
   });
 
-  const uploadFile = async (file: File): Promise<string> => {
-    const fd = new FormData();
-    fd.append('file', file);
-    const res = await mediaAPI.upload(fd);
-    return res.data.url || '';
-  };
-
-  const buildProjectFormData = (data: any, coverUrl: string) => {
+  const buildProjectFormData = (data: any, coverFile: File | null, existingCover: string) => {
     const fd = new FormData();
     fd.append('title', data.title || '');
     fd.append('internal_name', data.internal_name || '');
@@ -38,15 +31,19 @@ export default function ProjectsManager() {
     fd.append('github_url', data.github_url || '');
     fd.append('live_url', data.live_url || '');
     fd.append('tech_stack', JSON.stringify(data.techStack || []));
-    if (coverUrl) fd.append('cover_image', coverUrl);
+    if (coverFile) {
+      fd.append('cover_image', coverFile);
+    } else if (existingCover) {
+      fd.append('cover_image', existingCover);
+    }
     data.galleryFiles?.forEach((f: File) => fd.append('gallery_images', f));
     return fd;
   };
 
   const createMutation = useMutation({
     mutationFn: async (data: any) => {
-      const coverUrl = data.coverFile ? await uploadFile(data.coverFile) : (data.existingCover || '');
-      return projectsAPI.create(buildProjectFormData(data, coverUrl));
+      const fd = buildProjectFormData(data, data.coverFile, '');
+      return projectsAPI.create(fd);
     },
     onSuccess: () => {
       queryClient.invalidateQueries({ queryKey: ['projects'] });
@@ -58,8 +55,7 @@ export default function ProjectsManager() {
 
   const updateMutation = useMutation({
     mutationFn: async ({ id, data }: { id: string; data: any }) => {
-      const coverUrl = data.coverFile ? await uploadFile(data.coverFile) : (data.existingCover || '');
-      const fd = buildProjectFormData(data, coverUrl);
+      const fd = buildProjectFormData(data, data.coverFile, data.existingCover || '');
       fd.append('existing_images', JSON.stringify(data.images || []));
       return projectsAPI.update(id, fd);
     },

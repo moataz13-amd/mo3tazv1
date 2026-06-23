@@ -98,6 +98,18 @@ export async function deleteFromCloudinary(publicId: string) {
   }
 }
 
+export async function uploadFile(buffer: Buffer, folder = 'portfolio_assets'): Promise<{ url: string; publicId: string } | null> {
+  const result = await uploadToCloudinary(buffer, folder);
+  if (result) return result;
+  if (!supabase) return null;
+  const fileName = `${folder}/${Date.now()}-${Math.random().toString(36).slice(2, 8)}.png`;
+  const { data, error } = await supabase.storage.from('portfolio').upload(fileName, buffer, { contentType: 'image/png', upsert: false });
+  if (error) { console.error('[DB] Supabase Storage upload failed:', error.message); return null; }
+  const { data: urlData } = supabase.storage.from('portfolio').getPublicUrl(fileName);
+  console.log('[DB] Supabase Storage upload success:', fileName);
+  return { url: urlData.publicUrl, publicId: fileName };
+}
+
 async function ensureAdmin() {
   if (!supabase) return;
   try {
@@ -126,9 +138,23 @@ async function ensureAdmin() {
   }
 }
 
-// Fire-and-forget admin seeding at startup
+async function ensureStorageBucket() {
+  if (!supabase) return;
+  try {
+    const { data: buckets } = await supabase.storage.listBuckets();
+    if (!buckets?.find(b => b.name === 'portfolio')) {
+      await supabase.storage.createBucket('portfolio', { public: true });
+      console.log('[DB] Created storage bucket: portfolio');
+    }
+  } catch (e: any) {
+    console.warn('[DB] ensureStorageBucket skipped:', e.message);
+  }
+}
+
+// Fire-and-forget startup tasks
 if (useSupabase) {
   ensureAdmin();
+  ensureStorageBucket();
 }
 
 const SETTINGS_FIELDS = [

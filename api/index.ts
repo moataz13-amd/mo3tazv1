@@ -3,7 +3,7 @@ import cors from 'cors';
 import bcrypt from 'bcryptjs';
 import jwt from 'jsonwebtoken';
 import multer from 'multer';
-import { db, useSupabase, uploadToCloudinary, deleteFromCloudinary, useCloudinary, healthCheck } from './db.js';
+import { db, useSupabase, uploadFile, deleteFromCloudinary, healthCheck } from './db.js';
 
 const app = express();
 app.use(cors({ origin: true, credentials: true }));
@@ -37,10 +37,10 @@ const getFileUrl = async (files: any, fieldName: string, fallback: string) => {
   const file = files.find((f: any) => f.fieldname === fieldName);
   if (!file) return fallback;
   if (file.path && (file.path.startsWith('http://') || file.path.startsWith('https://'))) return file.path;
-  if (file.buffer) {
-    const result = await uploadToCloudinary(file.buffer, 'portfolio_assets');
-    if (result) return result.url;
-  }
+    if (file.buffer) {
+      const result = await uploadFile(file.buffer, 'portfolio_assets');
+      if (result) return result.url;
+    }
   return fallback;
 };
 
@@ -474,7 +474,7 @@ app.post('/api/media/upload', authenticate, async (req: any, res) => {
     let url = req.body.url;
     let publicId = `local-${Date.now()}`;
     if (fileData?.buffer) {
-      const result = await uploadToCloudinary(fileData.buffer, 'portfolio_assets');
+      const result = await uploadFile(fileData.buffer, 'portfolio_assets');
       if (result) { url = result.url; publicId = result.publicId; }
     }
     const file = {

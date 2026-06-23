@@ -173,6 +173,7 @@ export default function Experience() {
   const { data: dbEntries = [] } = useQuery({
     queryKey: ['experience'],
     queryFn: () => experienceAPI.getAll().then((r) => r.data as ExperienceEntry[]),
+    staleTime: 120_000,
   });
 
   const timelineData = dbEntries.length > 0

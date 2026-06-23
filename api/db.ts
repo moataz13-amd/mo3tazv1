@@ -25,6 +25,15 @@ if (useCloudinary) {
   console.log('[DB] Cloudinary configured');
 }
 
+const cache = new Map<string, { data: any; expires: number }>();
+const CACHE_TTL = 60_000;
+function withCache<T>(key: string, fn: () => Promise<T>): Promise<T> {
+  const hit = cache.get(key);
+  if (hit && hit.expires > Date.now()) return Promise.resolve(hit.data as T);
+  return fn().then(data => { cache.set(key, { data, expires: Date.now() + CACHE_TTL }); return data; });
+}
+export function clearCache(key?: string) { if (key) cache.delete(key); else cache.clear(); }
+
 const EXPECTED_TABLES = [
   'users', 'settings', 'projects', 'skills', 'services',
   'testimonials', 'messages', 'blog_posts', 'analytics',
@@ -215,9 +224,11 @@ export const db = {
 
   getSettings: async () => {
     if (!supabase) return {};
-    const { data, error } = await supabase.from('settings').select('*').limit(1).maybeSingle();
-    if (error) console.error('[DB] getSettings error:', error.message);
-    return data || {};
+    return withCache('settings', async () => {
+      const { data, error } = await supabase!.from('settings').select('*').limit(1).maybeSingle();
+      if (error) console.error('[DB] getSettings error:', error.message);
+      return data || {};
+    });
   },
 
   updateSettings: async (body: any) => {
@@ -236,15 +247,18 @@ export const db = {
         if (error) console.error('[DB] updateSettings insert error:', error.message);
       }
     }
+    clearCache('settings');
     log('updateSettings');
     return db.getSettings();
   },
 
   getProjects: async () => {
     if (!supabase) return [];
-    const { data, error } = await supabase.from('projects').select('*').order('created_at', { ascending: false });
-    if (error) console.error('[DB] getProjects error:', error.message);
-    return data || [];
+    return withCache('projects', async () => {
+      const { data, error } = await supabase!.from('projects').select('*').order('created_at', { ascending: false });
+      if (error) console.error('[DB] getProjects error:', error.message);
+      return data || [];
+    });
   },
 
   createProject: async (body: any) => {
@@ -261,6 +275,7 @@ export const db = {
       throw error;
     };
     const result = await safeInsert(body);
+    clearCache('projects');
     log('createProject', body.title || 'unknown');
     return result;
   },
@@ -279,13 +294,16 @@ export const db = {
       console.error('[DB] updateProject error:', error.message);
       return null;
     };
-    return safeUpdate(body);
+    const result = await safeUpdate(body);
+    clearCache('projects');
+    return result;
   },
 
   deleteProject: async (id: string) => {
     if (!supabase) return;
     const { error } = await supabase.from('projects').delete().eq('id', id);
     if (error) console.error('[DB] deleteProject error:', error.message);
+    clearCache('projects');
     log('deleteProject', id);
   },
 

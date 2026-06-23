@@ -56,6 +56,7 @@ export default function Hero() {
   const { data: fetchedLogos } = useQuery({
     queryKey: ['client-logos'],
     queryFn: () => clientLogosAPI.getAll().then((r) => r.data as { id: string; name: string; src: string; order: number }[]),
+    staleTime: 120_000,
   });
 
   const headline = settings?.hero_headline || "حين يجتمع الإبداع مع التفاصيل\nتولد تصاميم استثنائية.";

@@ -70,6 +70,14 @@ export default function App() {
     analyticsAPI.trackVisit().catch((err) => console.error('[APP] trackVisit error:', err?.message));
   }, []);
 
+  // Keep serverless function warm
+  useEffect(() => {
+    const warm = () => fetch('/api/_health').catch(() => {});
+    warm();
+    const id = setInterval(warm, 5 * 60_000);
+    return () => clearInterval(id);
+  }, []);
+
   return (
     <>
       {showSplash && <SplashScreen onComplete={() => setShowSplash(false)} />}

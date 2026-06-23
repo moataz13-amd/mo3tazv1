@@ -117,6 +117,29 @@ app.post('/api/_migrate', async (req, res) => {
   }
 });
 
+// ===== CDN caching for public GET endpoints =====
+const PUBLIC_CACHE = ['/api/projects', '/api/settings', '/api/services', '/api/skills', '/api/testimonials', '/api/experience', '/api/languages', '/api/client-logos'];
+app.use((req, res, next) => {
+  if (req.method === 'GET' && PUBLIC_CACHE.includes(req.path)) {
+    res.set('Cache-Control', 'public, max-age=30, s-maxage=120, stale-while-revalidate=60');
+  }
+  next();
+});
+
+// ===== Combined portfolio endpoint — all public data in one call =====
+app.get('/api/portfolio', async (_req, res) => {
+  try {
+    const [settings, projects, skills, services, testimonials, experience, languages, logos] = await Promise.all([
+      db.getSettings(), db.getProjects(), db.getSkills(), db.getServices(),
+      db.getTestimonials(), db.getExperience(), db.getLanguages(), db.getClientLogos(),
+    ]);
+    res.set('Cache-Control', 'public, max-age=30, s-maxage=120, stale-while-revalidate=60');
+    res.json({ settings, projects, skills, services, testimonials, experience, languages, clientLogos: logos });
+  } catch (err: any) {
+    res.status(500).json({ message: err.message });
+  }
+});
+
 // ===== Health check =====
 app.get(['/api/_health', '/api/health'], async (_req, res) => {
   try {

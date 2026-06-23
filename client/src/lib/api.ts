@@ -139,6 +139,10 @@ export const languagesAPI = {
   delete: (id: string) => api.delete(`/languages/${id}`),
 };
 
+export const portfolioAPI = {
+  getAll: () => api.get('/portfolio'),
+};
+
 export const clientLogosAPI = {
   getAll: () => api.get('/client-logos'),
   create: (data: FormData) =>

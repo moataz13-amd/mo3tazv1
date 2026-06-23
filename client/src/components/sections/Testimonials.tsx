@@ -65,6 +65,7 @@ export default function Testimonials() {
   const { data: testimonials } = useQuery({
     queryKey: ['testimonials'],
     queryFn: () => testimonialsAPI.getAll(true).then((r) => r.data as Testimonial[]),
+    staleTime: 120_000,
   });
 
   const all = (testimonials && testimonials.length > 0) ? testimonials : defaultTestimonials;

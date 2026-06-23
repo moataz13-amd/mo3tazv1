@@ -97,6 +97,7 @@ export default function Portfolio() {
   const { data: dbProjects } = useQuery({
     queryKey: ['projects'],
     queryFn: () => projectsAPI.getAll({ status: 'published' }).then((r) => r.data as Project[]),
+    staleTime: 120_000,
   });
 
   // Use DB projects if present, else fallback to defaults

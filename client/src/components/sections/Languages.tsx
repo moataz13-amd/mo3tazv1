@@ -30,6 +30,7 @@ export default function Languages() {
   const { data: dbLanguages = [] } = useQuery({
     queryKey: ['languages'],
     queryFn: () => languagesAPI.getAll().then((r) => r.data as Language[]),
+    staleTime: 120_000,
   });
 
   const languages = dbLanguages.length > 0

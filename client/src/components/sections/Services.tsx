@@ -46,6 +46,7 @@ export default function Services() {
   const { data: services } = useQuery({
     queryKey: ['services'],
     queryFn: () => servicesAPI.getAll().then((r) => r.data as Service[]),
+    staleTime: 120_000,
   });
 
   const allServices = (services && services.length > 0 ? services : defaultServices)

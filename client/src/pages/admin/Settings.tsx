@@ -76,9 +76,9 @@ export default function SettingsPage() {
         availability_response_time: settings.availability_response_time || '',
       });
 
-      setClientLogos(settings.client_logos || []);
-      setMarqueeRow1(settings.marquee_row1 || []);
-      setMarqueeRow2(settings.marquee_row2 || []);
+      setClientLogos(Array.isArray(settings.client_logos) ? settings.client_logos : []);
+      setMarqueeRow1(Array.isArray(settings.marquee_row1) ? settings.marquee_row1 : []);
+      setMarqueeRow2(Array.isArray(settings.marquee_row2) ? settings.marquee_row2 : []);
     }
   }, [settings, reset]);
 
@@ -148,9 +148,9 @@ export default function SettingsPage() {
         availability_response_time: settings.availability_response_time || '',
       });
 
-      setClientLogos(settings.client_logos || []);
-      setMarqueeRow1(settings.marquee_row1 || []);
-      setMarqueeRow2(settings.marquee_row2 || []);
+      setClientLogos(Array.isArray(settings.client_logos) ? settings.client_logos : []);
+      setMarqueeRow1(Array.isArray(settings.marquee_row1) ? settings.marquee_row1 : []);
+      setMarqueeRow2(Array.isArray(settings.marquee_row2) ? settings.marquee_row2 : []);
     }
   };
 

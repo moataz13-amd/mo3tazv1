@@ -3,9 +3,11 @@
   "version": "1.0.0",
   "private": true,
   "scripts": {
-    "dev": "concurrently \"npm run dev --prefix client\" \"npm run dev --prefix server\"",
-    "install:all": "npm install --prefix client --legacy-peer-deps && npm install --prefix server --legacy-peer-deps",
-    "build": "npm run install:all && npm run build --prefix client"
+    "dev": "concurrently \"npm run dev --prefix client\" \"npm run dev:api\"",
+    "dev:api": "npx tsx watch api/index.ts",
+    "install:all": "npm install --prefix client --legacy-peer-deps",
+    "build": "npm i && npm run install:all && npm run build --prefix client",
+    "typecheck": "npx tsc --noEmit"
   },
   "dependencies": {
     "@supabase/supabase-js": "^2.108.1",
@@ -21,6 +23,7 @@
     "morgan": "^1.11.0",
     "multer": "^2.1.1",
     "multer-storage-cloudinary": "^4.0.0",
+    "serverless-http": "^3.2.0",
     "uuid": "^14.0.0"
   },
   "devDependencies": {
@@ -30,6 +33,7 @@
     "@types/jsonwebtoken": "^9.0.10",
     "@types/node": "^25.9.3",
     "concurrently": "^8.2.2",
+    "tsx": "^4.19.0",
     "typescript": "^6.0.3"
   }
 }

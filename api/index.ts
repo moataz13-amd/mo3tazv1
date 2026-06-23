@@ -3,7 +3,7 @@ import cors from 'cors';
 import bcrypt from 'bcryptjs';
 import jwt from 'jsonwebtoken';
 import multer from 'multer';
-import { db, useSupabase, uploadToCloudinary, deleteFromCloudinary, useCloudinary } from './db';
+import { db, useSupabase, uploadToCloudinary, deleteFromCloudinary, useCloudinary, healthCheck } from './db';
 
 const app = express();
 app.use(cors({ origin: true, credentials: true }));
@@ -19,14 +19,22 @@ app.use((req, res, next) => {
     });
   } else { next(); }
 });
-app.use((_req, res, next) => {
+
+app.use((req, res, next) => {
   res.set('Cache-Control', 'no-store, no-cache, must-revalidate, proxy-revalidate');
   res.set('Pragma', 'no-cache'); res.set('Expires', '0'); res.set('Surrogate-Control', 'no-store');
   next();
 });
 
+app.use((req, res, next) => {
+  const start = Date.now();
+  res.on('finish', () => {
+    console.log(`${req.method} ${req.url} → ${res.statusCode} (${Date.now() - start}ms)`);
+  });
+  next();
+});
+
 const JWT_SECRET = process.env.JWT_SECRET || 'fallback-super-secret-key-1092';
-const generateId = () => String(Date.now()) + '-' + Math.random().toString(36).slice(2, 8);
 const getFileUrl = async (files: any, fieldName: string, fallback: string) => {
   if (!files || !Array.isArray(files)) return fallback;
   const file = files.find((f: any) => f.fieldname === fieldName);
@@ -52,17 +60,32 @@ const authenticate = (req: any, res: any, next: any) => {
   }
 };
 
+// ===== Health check =====
+app.get('/api/_health', async (_req, res) => {
+  try {
+    const status = await healthCheck();
+    res.json({
+      status: status.status,
+      timestamp: new Date().toISOString(),
+      uptime: process.uptime(),
+      node: process.version,
+      platform: process.platform,
+      supabase: status.supabase,
+      tables: status.tables,
+      env: status.env,
+      errors: status.errors.length ? status.errors : undefined,
+    });
+  } catch (e: any) {
+    res.status(500).json({ status: 'error', message: e.message });
+  }
+});
+
 // ===== Diagnostic endpoint =====
 app.get('/api/_debug', async (_req, res) => {
   let sbStatus = 'not configured';
   if (useSupabase) {
     try {
-      const { createClient } = await import('@supabase/supabase-js');
-      const sb = createClient(
-        process.env.SUPABASE_URL || '',
-        process.env.SUPABASE_SERVICE_ROLE_KEY || process.env.SUPABASE_ANON_KEY || ''
-      );
-      const { error: testErr } = await sb.from('messages').select('id').limit(1);
+      const { error: testErr } = await db.getSettings();
       sbStatus = testErr ? `error: ${testErr.message}` : 'connected';
     } catch (e: any) { sbStatus = `exception: ${e.message}`; }
   }
@@ -71,19 +94,16 @@ app.get('/api/_debug', async (_req, res) => {
     supabase: sbStatus,
     env: {
       NODE_ENV: process.env.NODE_ENV || '(not set)',
-      SUPABASE_URL: process.env.SUPABASE_URL ? '✅ set' : '❌ missing',
-      SUPABASE_SERVICE_ROLE_KEY: process.env.SUPABASE_SERVICE_ROLE_KEY ? '✅ set' : '❌ missing',
-      SUPABASE_ANON_KEY: process.env.SUPABASE_ANON_KEY ? '✅ set (anon only — RLS may block writes)' : '❌ missing',
-      CLOUDINARY_CLOUD_NAME: process.env.CLOUDINARY_CLOUD_NAME ? '✅ set' : '❌ missing',
-      CLOUDINARY_API_KEY: process.env.CLOUDINARY_API_KEY ? '✅ set' : '❌ missing',
-      CLOUDINARY_API_SECRET: process.env.CLOUDINARY_API_SECRET ? '✅ set' : '❌ missing',
+      SUPABASE_URL: process.env.SUPABASE_URL ? 'set' : 'missing',
+      SUPABASE_SERVICE_ROLE_KEY: process.env.SUPABASE_SERVICE_ROLE_KEY ? 'set' : 'missing',
+      CLOUDINARY_CLOUD_NAME: process.env.CLOUDINARY_CLOUD_NAME ? 'set' : 'missing',
+      CLOUDINARY_API_KEY: process.env.CLOUDINARY_API_KEY ? 'set' : 'missing',
+      CLOUDINARY_API_SECRET: process.env.CLOUDINARY_API_SECRET ? 'set' : 'missing',
     },
   });
 });
 
-// ============================================
 // AUTH
-// ============================================
 app.post('/api/auth/login', async (req, res) => {
   try {
     const { email, password } = req.body || {};
@@ -106,9 +126,7 @@ app.get('/api/auth/me', authenticate, async (req: any, res) => {
   } catch (err: any) { res.status(500).json({ message: err.message }); }
 });
 
-// ============================================
 // PROJECTS
-// ============================================
 app.get('/api/projects', async (_req, res) => {
   try { res.json(await db.getProjects()); }
   catch (err: any) { res.status(500).json({ message: err.message }); }
@@ -194,7 +212,8 @@ app.post('/api/services', authenticate, async (req: any, res) => {
   try {
     const features = req.body.features ? (typeof req.body.features === 'string' ? JSON.parse(req.body.features) : req.body.features) : [];
     const item = await db.createService({
-      title: req.body.title || '', description: req.body.description || '',       icon: await getFileUrl(req.files, 'service_image', req.body.icon || ''),
+      title: req.body.title || '', description: req.body.description || '',
+      icon: await getFileUrl(req.files, 'service_image', req.body.icon || ''),
       features, price: req.body.price || null, order: Number(req.body.order) || 1,
     });
     await db.logActivity('Service Added', `Added service: ${item.title}`);
@@ -326,7 +345,8 @@ app.post('/api/blog', authenticate, async (req: any, res) => {
     const tags = req.body.tags ? (typeof req.body.tags === 'string' ? JSON.parse(req.body.tags) : req.body.tags) : [];
     const item = await db.createBlogPost({
       title: req.body.title || '', slug: (req.body.title || '').toLowerCase().replace(/[^a-z0-9]+/g, '-').replace(/(^-|-$)+/g, ''),
-      excerpt: req.body.excerpt || '', content: req.body.content || '',       cover_image: await getFileUrl(req.files, 'cover_image', req.body.cover_image || ''),
+      excerpt: req.body.excerpt || '', content: req.body.content || '',
+      cover_image: await getFileUrl(req.files, 'cover_image', req.body.cover_image || ''),
       tags, status: req.body.status || 'published',
     });
     await db.logActivity('Blog Published', `Published article: ${item.title}`);
@@ -423,7 +443,7 @@ app.post('/api/media/upload', authenticate, async (req: any, res) => {
       if (result) { url = result.url; publicId = result.publicId; }
     }
     const file = {
-      id: generateId(), url, public_id: publicId,
+      id: String(Date.now()) + '-' + Math.random().toString(36).slice(2, 8), url, public_id: publicId,
       resource_type: fileData?.mimetype?.startsWith('video') ? 'video' : 'image',
       format: fileData?.mimetype?.split('/')[1] || 'png',
       size: fileData?.size || 0, created_at: new Date().toISOString(),
@@ -562,12 +582,13 @@ app.use((err: any, _req: express.Request, res: express.Response, _next: express.
   res.status(500).json({ message: err.message || 'Internal Server Error' });
 });
 
-// Vercel serverless handler
-export default function handler(req: any, res: any) {
-  // Log every request for debugging
-  const start = Date.now();
-  res.on('finish', () => {
-    console.log(`${req.method} ${req.url} → ${res.statusCode} (${Date.now() - start}ms)`);
+export default app;
+
+// Local development server
+const isServerless = process.env.NETLIFY === 'true' || process.env.VERCEL === '1';
+if (!isServerless) {
+  const PORT = process.env.PORT || 5000;
+  app.listen(PORT, () => {
+    console.log(`API server running on http://localhost:${PORT}`);
   });
-  app(req, res);
 }

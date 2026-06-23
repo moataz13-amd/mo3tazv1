@@ -42,10 +42,13 @@ export default function SettingsPage() {
   const updateMutation = useMutation({
     mutationFn: (data: FormData) => settingsAPI.update(data),
     onSuccess: () => {
+      localStorage.setItem('portfolio_marquee_row1', JSON.stringify(marqueeRow1));
+      localStorage.setItem('portfolio_marquee_row2', JSON.stringify(marqueeRow2));
       queryClient.invalidateQueries({ queryKey: ['settings'] });
-      toast.success('Settings updated successfully');
+      setHasUnsaved(false);
+      toast.success(t('settingsSaved'));
     },
-    onError: () => toast.error('Failed to update settings'),
+    onError: () => toast.error(t('settingsSaveFailed')),
   });
 
   const { register, handleSubmit, reset } = useForm();
@@ -149,8 +152,10 @@ export default function SettingsPage() {
       });
 
       setClientLogos(Array.isArray(settings.client_logos) ? settings.client_logos : []);
-      setMarqueeRow1(Array.isArray(settings.marquee_row1) ? settings.marquee_row1 : []);
-      setMarqueeRow2(Array.isArray(settings.marquee_row2) ? settings.marquee_row2 : []);
+      const ls1 = (() => { try { return JSON.parse(localStorage.getItem('portfolio_marquee_row1') || '[]'); } catch { return []; } })();
+      const ls2 = (() => { try { return JSON.parse(localStorage.getItem('portfolio_marquee_row2') || '[]'); } catch { return []; } })();
+      setMarqueeRow1(Array.isArray(settings.marquee_row1) && settings.marquee_row1.length ? settings.marquee_row1 : (ls1.length ? ls1 : []));
+      setMarqueeRow2(Array.isArray(settings.marquee_row2) && settings.marquee_row2.length ? settings.marquee_row2 : (ls2.length ? ls2 : []));
     }
   };
 

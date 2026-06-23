@@ -62,8 +62,10 @@ export default function Hero() {
   const headline = settings?.hero_headline || "حين يجتمع الإبداع مع التفاصيل\nتولد تصاميم استثنائية.";
   const subheadline = settings?.hero_subheadline || "موثوق من قبل";
   const clientLogos = fetchedLogos && fetchedLogos.length > 0 ? fetchedLogos : defaultClientLogos;
-  const row1Tags = settings?.marquee_row1 && settings.marquee_row1.length > 0 ? settings.marquee_row1 : defaultRow1Tags;
-  const row2Tags = settings?.marquee_row2 && settings.marquee_row2.length > 0 ? settings.marquee_row2 : defaultRow2Tags;
+  const lsMarquee1 = (() => { try { return JSON.parse(localStorage.getItem('portfolio_marquee_row1') || '[]'); } catch { return []; } })();
+  const lsMarquee2 = (() => { try { return JSON.parse(localStorage.getItem('portfolio_marquee_row2') || '[]'); } catch { return []; } })();
+  const row1Tags = settings?.marquee_row1?.length ? settings.marquee_row1 : (lsMarquee1.length ? lsMarquee1 : defaultRow1Tags);
+  const row2Tags = settings?.marquee_row2?.length ? settings.marquee_row2 : (lsMarquee2.length ? lsMarquee2 : defaultRow2Tags);
 
   const headlineLines = headline.split('\n');
 

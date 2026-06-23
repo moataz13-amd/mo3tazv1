@@ -77,48 +77,53 @@ app.get('/api/_debug', async (_req, res) => {
 
 // ===== Migration endpoint — runs ALTER TABLE to fix missing columns =====
 app.post('/api/_migrate', async (req, res) => {
-  const pw = req.body?.password;
-  if (!pw && !process.env.SUPABASE_DB_PASSWORD) {
-    return res.status(400).json({ error: 'Missing database password. Add SUPABASE_DB_PASSWORD to Vercel env or pass { "password": "..." } in the body.' });
-  }
-  const password = pw || process.env.SUPABASE_DB_PASSWORD;
   const supabaseUrl = process.env.SUPABASE_URL || '';
   const match = supabaseUrl.match(/https:\/\/([^.]+)/);
   if (!match) return res.status(500).json({ error: 'Invalid SUPABASE_URL' });
   const ref = match[1];
-  const host = `db.${ref}.supabase.co`;
+  const sql = `
+    ALTER TABLE IF EXISTS messages ADD COLUMN IF NOT EXISTS status VARCHAR(50) DEFAULT 'unread';
+    ALTER TABLE IF EXISTS projects ADD COLUMN IF NOT EXISTS category VARCHAR(100) DEFAULT 'web';
+    ALTER TABLE IF EXISTS projects ADD COLUMN IF NOT EXISTS status VARCHAR(50) DEFAULT 'published';
+    ALTER TABLE IF EXISTS projects ADD COLUMN IF NOT EXISTS internal_name VARCHAR(255);
+    ALTER TABLE IF EXISTS projects ADD COLUMN IF NOT EXISTS images TEXT[] DEFAULT '{}';
+    ALTER TABLE IF EXISTS projects ADD COLUMN IF NOT EXISTS tech_stack TEXT[] DEFAULT '{}';
+    ALTER TABLE IF EXISTS projects ADD COLUMN IF NOT EXISTS github_url TEXT;
+    ALTER TABLE IF EXISTS projects ADD COLUMN IF NOT EXISTS live_url TEXT;
+    ALTER TABLE IF EXISTS projects ADD COLUMN IF NOT EXISTS featured BOOLEAN DEFAULT false;
+    ALTER TABLE IF EXISTS projects ADD COLUMN IF NOT EXISTS long_description TEXT;
+    ALTER TABLE IF EXISTS projects ADD COLUMN IF NOT EXISTS video_url TEXT;
+    ALTER TABLE IF EXISTS projects ADD COLUMN IF NOT EXISTS updated_at TIMESTAMP WITH TIME ZONE DEFAULT CURRENT_TIMESTAMP;
+    ALTER TABLE IF EXISTS settings ADD COLUMN IF NOT EXISTS marquee_row1 JSONB DEFAULT '[]'::jsonb;
+    ALTER TABLE IF EXISTS settings ADD COLUMN IF NOT EXISTS marquee_row2 JSONB DEFAULT '[]'::jsonb;
+    ALTER TABLE IF EXISTS settings ADD COLUMN IF NOT EXISTS hero_headline TEXT;
+    ALTER TABLE IF EXISTS settings ADD COLUMN IF NOT EXISTS hero_subheadline VARCHAR(255);
+    ALTER TABLE IF EXISTS settings ADD COLUMN IF NOT EXISTS client_logos JSONB DEFAULT '[]'::jsonb;
+    ALTER TABLE IF EXISTS settings ADD COLUMN IF NOT EXISTS social_links JSONB DEFAULT '[]'::jsonb;
+    ALTER TABLE IF EXISTS settings ADD COLUMN IF NOT EXISTS availability_status VARCHAR(50) DEFAULT 'available';
+    NOTIFY pgrst, 'reload schema';
+  `;
 
-  const { Client } = await import('pg');
-  const client = new Client({ host, port: 5432, database: 'postgres', user: 'postgres', password, ssl: { rejectUnauthorized: false } });
-  try {
-    await client.connect();
-    await client.query(`
-      ALTER TABLE IF EXISTS messages ADD COLUMN IF NOT EXISTS status VARCHAR(50) DEFAULT 'unread';
-      ALTER TABLE IF EXISTS projects ADD COLUMN IF NOT EXISTS category VARCHAR(100) DEFAULT 'web';
-      ALTER TABLE IF EXISTS projects ADD COLUMN IF NOT EXISTS status VARCHAR(50) DEFAULT 'published';
-      ALTER TABLE IF EXISTS projects ADD COLUMN IF NOT EXISTS internal_name VARCHAR(255);
-      ALTER TABLE IF EXISTS projects ADD COLUMN IF NOT EXISTS images TEXT[] DEFAULT '{}';
-      ALTER TABLE IF EXISTS projects ADD COLUMN IF NOT EXISTS tech_stack TEXT[] DEFAULT '{}';
-      ALTER TABLE IF EXISTS projects ADD COLUMN IF NOT EXISTS github_url TEXT;
-      ALTER TABLE IF EXISTS projects ADD COLUMN IF NOT EXISTS live_url TEXT;
-      ALTER TABLE IF EXISTS projects ADD COLUMN IF NOT EXISTS featured BOOLEAN DEFAULT false;
-      ALTER TABLE IF EXISTS projects ADD COLUMN IF NOT EXISTS long_description TEXT;
-      ALTER TABLE IF EXISTS projects ADD COLUMN IF NOT EXISTS video_url TEXT;
-      ALTER TABLE IF EXISTS settings ADD COLUMN IF NOT EXISTS marquee_row1 JSONB DEFAULT '[]'::jsonb;
-      ALTER TABLE IF EXISTS settings ADD COLUMN IF NOT EXISTS marquee_row2 JSONB DEFAULT '[]'::jsonb;
-      ALTER TABLE IF EXISTS settings ADD COLUMN IF NOT EXISTS hero_headline TEXT;
-      ALTER TABLE IF EXISTS settings ADD COLUMN IF NOT EXISTS hero_subheadline VARCHAR(255);
-      ALTER TABLE IF EXISTS projects ADD COLUMN IF NOT EXISTS updated_at TIMESTAMP WITH TIME ZONE DEFAULT CURRENT_TIMESTAMP;
-      NOTIFY pgrst, 'reload schema';
-    `);
-    await client.end();
-    console.log('[MIGRATE] Schema columns added successfully for ref:', ref);
-    res.json({ success: true, message: 'All missing columns added. Schema cache reloaded.' });
-  } catch (err: any) {
-    console.error('[MIGRATE] Error:', err.message);
-    try { await client.end(); } catch {}
-    res.status(500).json({ error: err.message });
+  // Try using pg direct connection first (requires SUPABASE_DB_PASSWORD)
+  const pw = req.body?.password || process.env.SUPABASE_DB_PASSWORD;
+  if (pw) {
+    const { Client } = await import('pg');
+    const host = `db.${ref}.supabase.co`;
+    const client = new Client({ host, port: 5432, database: 'postgres', user: 'postgres', password: pw, ssl: { rejectUnauthorized: false } });
+    try {
+      await client.connect();
+      await client.query(sql);
+      await client.end();
+      console.log('[MIGRATE] Schema columns added via pg for ref:', ref);
+      return res.json({ success: true, message: 'All missing columns added. Schema cache reloaded.' });
+    } catch (err: any) {
+      console.error('[MIGRATE] pg failed:', err.message);
+      try { await client.end(); } catch {}
+      return res.status(500).json({ error: 'pg failed: ' + err.message + '. Try adding SUPABASE_DB_PASSWORD to Vercel env vars.' });
+    }
   }
+
+  return res.status(400).json({ error: 'No password provided. Add SUPABASE_DB_PASSWORD to Vercel env, or run the SQL manually in Supabase Dashboard > SQL Editor. The SQL is in server/schema.sql or click "Run migration".' });
 });
 
 // ===== CDN caching for public GET endpoints =====

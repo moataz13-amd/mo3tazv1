@@ -84,7 +84,7 @@ export default function AdminLayout() {
       <aside
         ref={sidebarRef}
         className={`${
-          adminSidebarOpen ? 'block' : 'hidden md:block'
+          adminSidebarOpen ? '' : 'max-md:hidden'
         } fixed md:relative top-0 bottom-0 ${
           adminLanguage === 'ar' ? 'right-0 border-l' : 'left-0 border-r'
         } z-30 transition-all duration-300 flex flex-col border-glass-border bg-[rgba(5,8,22,0.95)] backdrop-blur-xl ${

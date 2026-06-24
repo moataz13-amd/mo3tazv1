@@ -49,7 +49,7 @@ interface UIState {
 export const useUIStore = create<UIState>((set) => ({
   activeSection: 'home',
   sidebarOpen: true,
-  adminSidebarOpen: true,
+  adminSidebarOpen: typeof window !== 'undefined' ? window.innerWidth >= 768 : true,
   adminLanguage: (localStorage.getItem('admin_language') as 'en' | 'ar') || 'ar',
   setActiveSection: (section) => set({ activeSection: section }),
   setSidebarOpen: (open) => set({ sidebarOpen: open }),

@@ -674,6 +674,15 @@ app.use((err: any, _req: express.Request, res: express.Response, _next: express.
   res.status(500).json({ message: err.message || 'Internal Server Error' });
 });
 
+if (!process.env.VERCEL) {
+  const PORT = process.env.PORT || 5000;
+  app.listen(PORT, () => {
+    console.log(`========================================`);
+    console.log(`🚀 PORTFOLIO API SERVER RUNNING ON PORT ${PORT}`);
+    console.log(`========================================`);
+  });
+}
+
 // Vercel serverless handler
 export default function handler(req: any, res: any) {
   app(req, res);

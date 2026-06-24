@@ -77,8 +77,8 @@ export default function SettingsPage() {
       });
 
       setClientLogos(Array.isArray(settings.client_logos) ? settings.client_logos : []);
-      setMarqueeRow1(Array.isArray(settings.marquee_row1) ? settings.marquee_row1 : []);
-      setMarqueeRow2(Array.isArray(settings.marquee_row2) ? settings.marquee_row2 : []);
+      setMarqueeRow1(Array.isArray(settings.marquee_row1) && settings.marquee_row1.length ? settings.marquee_row1 : (() => { try { return JSON.parse(localStorage.getItem('portfolio_marquee_row1') || '[]'); } catch { return []; } })());
+      setMarqueeRow2(Array.isArray(settings.marquee_row2) && settings.marquee_row2.length ? settings.marquee_row2 : (() => { try { return JSON.parse(localStorage.getItem('portfolio_marquee_row2') || '[]'); } catch { return []; } })());
     }
   }, [settings, reset]);
 
@@ -450,6 +450,7 @@ export default function SettingsPage() {
                       type="text"
                       value={newTagText1}
                       onChange={(e) => setNewTagText1(e.target.value)}
+                      onKeyDown={(e) => { if (e.key === 'Enter') { e.preventDefault(); handleAddTag1(); } }}
                       placeholder={t('typeTagText')}
                       className="input-field text-xs bg-[#050816] flex-1"
                     />
@@ -508,6 +509,7 @@ export default function SettingsPage() {
                       type="text"
                       value={newTagText2}
                       onChange={(e) => setNewTagText2(e.target.value)}
+                      onKeyDown={(e) => { if (e.key === 'Enter') { e.preventDefault(); handleAddTag2(); } }}
                       placeholder={t('typeTagText')}
                       className="input-field text-xs bg-[#050816] flex-1"
                     />

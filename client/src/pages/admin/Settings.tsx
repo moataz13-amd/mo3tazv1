@@ -43,6 +43,7 @@ export default function SettingsPage() {
     mutationFn: (data: FormData) => settingsAPI.update(data),
     onSuccess: () => {
       queryClient.invalidateQueries({ queryKey: ['settings'] });
+      queryClient.invalidateQueries({ queryKey: ['client-logos'] });
       toast.success('Settings saved successfully');
     },
     onError: () => toast.error('Failed to save settings'),
@@ -114,6 +115,7 @@ export default function SettingsPage() {
     localStorage.setItem('portfolio_marquee_row2', mq2);
     formData.append('marquee_row1', mq1);
     formData.append('marquee_row2', mq2);
+    formData.append('client_logos', JSON.stringify(clientLogos));
 
     if (data.avatar && data.avatar[0]) {
       formData.append('avatar', data.avatar[0]);

@@ -223,6 +223,9 @@ ALTER TABLE settings ADD COLUMN IF NOT EXISTS seo_title VARCHAR(255);
 ALTER TABLE settings ADD COLUMN IF NOT EXISTS seo_description TEXT;
 
 -- Ensure projects columns exist
+ALTER TABLE projects ADD COLUMN IF NOT EXISTS cover_image TEXT;
+ALTER TABLE projects ADD COLUMN IF NOT EXISTS category VARCHAR(100) DEFAULT 'graphic';
+ALTER TABLE projects ADD COLUMN IF NOT EXISTS status VARCHAR(50) DEFAULT 'published';
 ALTER TABLE projects ADD COLUMN IF NOT EXISTS internal_name VARCHAR(255);
 ALTER TABLE projects ADD COLUMN IF NOT EXISTS long_description TEXT;
 ALTER TABLE projects ADD COLUMN IF NOT EXISTS images TEXT[] DEFAULT '{}';

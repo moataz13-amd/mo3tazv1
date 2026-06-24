@@ -10,7 +10,7 @@ import { settingsAPI, mediaAPI } from '../../lib/api';
 import { useAdminTranslation } from '../../lib/adminTranslations';
 import type { SiteSettings, ClientLogo, MarqueeTag } from '../../types';
 
-type ActiveTab = 'general' | 'hero' | 'marquees' | 'about' | 'contact' | 'seo';
+type ActiveTab = 'general' | 'hero' | 'marquees' | 'about' | 'contact' | 'seo' | 'database';
 
 export default function SettingsPage() {
   const { t } = useAdminTranslation();
@@ -33,6 +33,9 @@ export default function SettingsPage() {
 
   const [newTagText2, setNewTagText2] = useState('');
   const [newTagVariant2, setNewTagVariant2] = useState<'solid' | 'glass'>('solid');
+
+  const [dbPassword, setDbPassword] = useState('');
+  const [isMigrating, setIsMigrating] = useState(false);
 
   const { data: settings, isLoading } = useQuery({
     queryKey: ['settings'],
@@ -203,6 +206,32 @@ export default function SettingsPage() {
     setClientLogos(prev => prev.filter((_, i) => i !== idx));
   };
 
+  const handleMigration = async () => {
+    if (!dbPassword.trim()) {
+      toast.error('Please enter the database password.');
+      return;
+    }
+    try {
+      setIsMigrating(true);
+      const res = await fetch('/api/_migrate', {
+        method: 'POST',
+        headers: { 'Content-Type': 'application/json' },
+        body: JSON.stringify({ password: dbPassword })
+      });
+      const data = await res.json();
+      if (res.ok && data.success) {
+        toast.success(t('migrationSuccess'));
+        setDbPassword('');
+      } else {
+        toast.error(data.error || t('migrationFailed'));
+      }
+    } catch (err: any) {
+      toast.error(err.message || t('migrationFailed'));
+    } finally {
+      setIsMigrating(false);
+    }
+  };
+
   // Add marquee tag row 1
   const handleAddTag1 = () => {
     if (!newTagText1.trim()) return;
@@ -233,6 +262,7 @@ export default function SettingsPage() {
     { id: 'about', label: t('aboutStats'), icon: HelpCircle },
     { id: 'contact', label: t('contactDetails'), icon: PhoneCall },
     { id: 'seo', label: t('seoConfig'), icon: Search },
+    { id: 'database', label: t('databaseConfig'), icon: ShieldAlert },
   ];
 
   return (
@@ -631,7 +661,7 @@ export default function SettingsPage() {
             {activeTab === 'seo' && (
               <div className="glass-card p-6 space-y-5 animate-fadeIn">
                 <div className="flex items-center gap-2 pb-2 border-b border-glass-border">
-                  <ShieldAlert size={16} className="text-primary" />
+                  <Search size={16} className="text-primary" />
                   <h3 className="font-bold text-white text-sm">{t('seoConfig')}</h3>
                 </div>
 
@@ -643,6 +673,57 @@ export default function SettingsPage() {
                   <div>
                     <label className="block text-xs font-mono text-gray-400 mb-1.5">{t('metaDescription')}</label>
                     <textarea {...register('seo_description')} rows={3} className="input-field text-sm" placeholder="SEO Meta Description tag..." />
+                  </div>
+                </div>
+              </div>
+            )}
+
+            {/* Tab: Database */}
+            {activeTab === 'database' && (
+              <div className="glass-card p-6 space-y-5 animate-fadeIn">
+                <div className="flex items-center gap-2 pb-2 border-b border-glass-border">
+                  <ShieldAlert size={16} className="text-primary" />
+                  <h3 className="font-bold text-white text-sm">{t('dbMigration')}</h3>
+                </div>
+
+                <p className="text-xs text-gray-400 leading-relaxed">
+                  {t('dbMigrationDesc')}
+                </p>
+
+                <div className="space-y-4 pt-2">
+                  <div>
+                    <label className="block text-xs font-mono text-gray-400 mb-1.5">{t('dbPassword')}</label>
+                    <div className="flex gap-2">
+                      <input
+                        type="password"
+                        value={dbPassword}
+                        onChange={(e) => setDbPassword(e.target.value)}
+                        className="input-field text-sm flex-1"
+                        placeholder={t('dbPasswordPlaceholder')}
+                      />
+                      <button
+                        type="button"
+                        onClick={handleMigration}
+                        disabled={isMigrating || !dbPassword}
+                        className="neon-btn px-4 py-2 text-xs font-black disabled:opacity-50 disabled:cursor-not-allowed"
+                      >
+                        {isMigrating ? (
+                          <div className="w-3.5 h-3.5 border-2 border-black border-t-transparent rounded-full animate-spin" />
+                        ) : (
+                          t('runMigration')
+                        )}
+                      </button>
+                    </div>
+                  </div>
+
+                  <div className="border-t border-glass-border pt-4 mt-6">
+                    <h4 className="text-xs font-bold text-white mb-2">{t('manualMigration')}</h4>
+                    <p className="text-[11px] text-gray-400 mb-3">{t('manualMigrationDesc')}</p>
+                    <pre className="p-3 bg-black/60 rounded-xl border border-glass-border font-mono text-[10px] text-primary overflow-x-auto whitespace-pre-wrap select-all">
+                      {`ALTER TABLE projects ADD COLUMN IF NOT EXISTS cover_image TEXT;
+ALTER TABLE projects ADD COLUMN IF NOT EXISTS category VARCHAR(100) DEFAULT 'graphic';
+ALTER TABLE projects ADD COLUMN IF NOT EXISTS status VARCHAR(50) DEFAULT 'published';`}
+                    </pre>
                   </div>
                 </div>
               </div>

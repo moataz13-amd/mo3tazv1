@@ -183,6 +183,17 @@ export const adminTranslations = {
     resetFields: 'Reset Fields',
     commitSettings: 'Commit Settings',
     settingsUpdated: 'Settings updated successfully',
+    databaseConfig: 'Database & Migrations',
+    databaseConfigDesc: 'Execute database updates and view table schema migrations',
+    dbMigration: 'Database Migration',
+    dbMigrationDesc: 'If you updated your database or application, some table columns might be missing. You can apply the migration here.',
+    runMigration: 'Run Migration',
+    dbPassword: 'Supabase Database Password',
+    dbPasswordPlaceholder: 'Enter your database password...',
+    manualMigration: 'Manual Migration',
+    manualMigrationDesc: 'Alternatively, you can copy the SQL query below and run it in the SQL Editor of your Supabase Dashboard.',
+    migrationSuccess: 'Database schema migrated successfully!',
+    migrationFailed: 'Migration failed. Check password and try again.',
   },
   ar: {
     // Navigation / Sidebar
@@ -366,6 +377,17 @@ export const adminTranslations = {
     resetFields: 'استعادة القيم الأصلية',
     commitSettings: 'حفظ وإرسال الإعدادات',
     settingsUpdated: 'تم تحديث الإعدادات بنجاح',
+    databaseConfig: 'قاعدة البيانات والتحديثات',
+    databaseConfigDesc: 'تشغيل تحديثات قاعدة البيانات وعرض جداول البيانات والميجريشن',
+    dbMigration: 'تحديث هيكل قاعدة البيانات',
+    dbMigrationDesc: 'إذا كنت قد قمت بتحديث التطبيق للتو، قد تكون بعض الأعمدة ناقصة في قاعدة البيانات. يمكنك تطبيق التحديثات من هنا.',
+    runMigration: 'تشغيل التحديث',
+    dbPassword: 'كلمة مرور قاعدة بيانات Supabase',
+    dbPasswordPlaceholder: 'أدخل كلمة مرور قاعدة البيانات...',
+    manualMigration: 'التحديث اليدوي',
+    manualMigrationDesc: 'بدلاً من ذلك، يمكنك نسخ استعلام SQL أدناه وتشغيله في محرر SQL (SQL Editor) داخل لوحة تحكم Supabase الخاصة بك.',
+    migrationSuccess: 'تم تحديث هيكل قاعدة البيانات بنجاح!',
+    migrationFailed: 'فشل التحديث. يرجى التحقق من كلمة المرور والمحاولة مرة أخرى.',
   }
 };
 

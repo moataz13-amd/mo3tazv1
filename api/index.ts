@@ -89,7 +89,8 @@ app.post('/api/_migrate', async (req, res) => {
   const ref = match[1];
   const sql = `
     ALTER TABLE IF EXISTS messages ADD COLUMN IF NOT EXISTS status VARCHAR(50) DEFAULT 'unread';
-    ALTER TABLE IF EXISTS projects ADD COLUMN IF NOT EXISTS category VARCHAR(100) DEFAULT 'web';
+    ALTER TABLE IF EXISTS projects ADD COLUMN IF NOT EXISTS cover_image TEXT;
+    ALTER TABLE IF EXISTS projects ADD COLUMN IF NOT EXISTS category VARCHAR(100) DEFAULT 'graphic';
     ALTER TABLE IF EXISTS projects ADD COLUMN IF NOT EXISTS status VARCHAR(50) DEFAULT 'published';
     ALTER TABLE IF EXISTS projects ADD COLUMN IF NOT EXISTS internal_name VARCHAR(255);
     ALTER TABLE IF EXISTS projects ADD COLUMN IF NOT EXISTS images TEXT[] DEFAULT '{}';
@@ -242,8 +243,13 @@ app.put('/api/projects/:id', authenticate, async (req: any, res) => {
     const cover_image = await getFileUrl(req.files, 'cover_image', coverBody);
     if (cover_image) body.cover_image = cover_image;
     const existingImages = req.body.existing_images ? (typeof req.body.existing_images === 'string' ? JSON.parse(req.body.existing_images) : req.body.existing_images) : [];
-    const newImages = req.body.images ? (typeof req.body.images === 'string' ? JSON.parse(req.body.images) : req.body.images) : [];
-    body.images = [...existingImages, ...newImages];
+    // Upload new gallery image files from multipart form data
+    const newGalleryFiles = req.files?.filter((f: any) => f.fieldname === 'gallery_images') || [];
+    const uploadedGalleryUrls = await Promise.all(newGalleryFiles.map(async (f: any) => {
+      const r = await uploadFile(f.buffer, 'portfolio_assets');
+      return r?.url || '';
+    }));
+    body.images = [...existingImages, ...uploadedGalleryUrls.filter(Boolean)];
     const item = await db.updateProject(req.params.id, body);
     if (!item) return res.status(404).json({ message: 'Project not found' });
     await db.logActivity('Project Updated', `Modified showcase work: ${item.title}`);

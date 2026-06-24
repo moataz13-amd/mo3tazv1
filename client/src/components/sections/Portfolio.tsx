@@ -1,4 +1,4 @@
-import { useRef } from 'react';
+import { memo, useRef } from 'react';
 import { useNavigate } from 'react-router-dom';
 import { motion, useInView } from 'framer-motion';
 import { useQuery } from '@tanstack/react-query';
@@ -89,7 +89,7 @@ const defaultProjects: Project[] = [
   }
 ];
 
-export default function Portfolio() {
+const Portfolio = memo(function Portfolio() {
   const navigate = useNavigate();
   const ref = useRef(null);
   const isInView = useInView(ref, { once: true, margin: '-40px' });
@@ -153,6 +153,7 @@ export default function Portfolio() {
                   <img
                     src={project.cover_image}
                     alt={project.title}
+                    loading="lazy" decoding="async"
                     className="w-full h-full object-cover transition-transform duration-700 group-hover:scale-105"
                   />
                 </div>
@@ -201,4 +202,6 @@ export default function Portfolio() {
       </motion.div>
     </section>
   );
-}
+});
+
+export default Portfolio;

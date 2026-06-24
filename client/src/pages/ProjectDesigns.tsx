@@ -76,6 +76,7 @@ export default function ProjectDesigns() {
                   src={imgUrl}
                   alt={`${project.title} - ${index + 1}`}
                   className="w-full h-auto"
+                  loading="lazy" decoding="async"
                 />
                 <div className="absolute inset-0 bg-black/0 group-hover:bg-black/20 transition-all duration-300 flex items-center justify-center">
                   <span className="opacity-0 group-hover:opacity-100 transition-opacity text-white/80 text-sm font-bold bg-black/40 px-4 py-2 rounded-full backdrop-blur-sm">
@@ -128,6 +129,7 @@ export default function ProjectDesigns() {
                 src={images[lightboxIndex]}
                 alt="Enlarged design"
                 className="max-w-full max-h-[90vh] object-contain"
+                loading="lazy" decoding="async"
               />
             </motion.div>
 

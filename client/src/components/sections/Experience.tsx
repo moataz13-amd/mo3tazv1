@@ -1,4 +1,4 @@
-import { useRef, useState } from 'react';
+import { memo, useRef, useState } from 'react';
 import { motion, useInView } from 'framer-motion';
 import { useQuery } from '@tanstack/react-query';
 import { experienceAPI } from '../../lib/api';
@@ -165,7 +165,7 @@ function TimelineItem({ item, index }: { item: typeof defaultTimelineData[0]; in
   );
 }
 
-export default function Experience() {
+const Experience = memo(function Experience() {
   const [filter, setFilter] = useState<FilterType>('all');
   const ref = useRef(null);
   const isInView = useInView(ref, { once: true });
@@ -246,4 +246,6 @@ export default function Experience() {
       </motion.div>
     </section>
   );
-}
+});
+
+export default Experience;

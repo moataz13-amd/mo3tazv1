@@ -1,4 +1,4 @@
-import { useRef } from 'react';
+import { memo, useRef } from 'react';
 import { motion, useScroll, useTransform, useSpring } from 'framer-motion';
 import { ClipboardList, Calendar, Users } from 'lucide-react';
 
@@ -34,7 +34,7 @@ const statsData: StatItem[] = [
   },
 ];
 
-export default function Stats() {
+const Stats = memo(function Stats() {
   const containerRef = useRef<HTMLElement>(null);
 
   // useScroll to track scroll progress over the entire section
@@ -180,4 +180,6 @@ export default function Stats() {
       </div>
     </section>
   );
-}
+});
+
+export default Stats;

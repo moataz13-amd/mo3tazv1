@@ -1,4 +1,4 @@
-import { useState, useRef } from 'react';
+import { memo, useState, useRef } from 'react';
 import { motion, useInView } from 'framer-motion';
 import { useForm } from 'react-hook-form';
 import { zodResolver } from '@hookform/resolvers/zod';
@@ -17,7 +17,7 @@ const schema = z.object({
 
 type FormData = z.infer<typeof schema>;
 
-export default function Contact() {
+const Contact = memo(function Contact() {
   const ref = useRef(null);
   const isInView = useInView(ref, { once: true, margin: '-40px' });
   const settings = useSettingsStore((state) => state.settings);
@@ -382,4 +382,6 @@ export default function Contact() {
       </motion.div>
     </section>
   );
-}
+});
+
+export default Contact;

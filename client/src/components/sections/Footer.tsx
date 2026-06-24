@@ -1,7 +1,8 @@
+import { memo } from 'react';
 import { motion } from 'framer-motion';
 import { useSettingsStore } from '../../store';
 
-export default function Footer() {
+const Footer = memo(function Footer() {
   const settings = useSettingsStore((state) => state.settings);
 
   const handleScroll = (id: string) => {
@@ -208,4 +209,6 @@ export default function Footer() {
       </div>
     </footer>
   );
-}
+});
+
+export default Footer;

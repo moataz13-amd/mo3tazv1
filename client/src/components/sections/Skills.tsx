@@ -1,4 +1,4 @@
-import { useRef } from 'react';
+import { memo, useRef } from 'react';
 import { motion, useInView } from 'framer-motion';
 
 interface StepItem {
@@ -39,7 +39,7 @@ const processSteps: StepItem[] = [
   },
 ];
 
-export default function Skills() {
+const Skills = memo(function Skills() {
   const ref = useRef(null);
   const isInView = useInView(ref, { once: true, margin: '-40px' });
 
@@ -144,4 +144,6 @@ export default function Skills() {
     </motion.div>
   </section>
   );
-}
+});
+
+export default Skills;

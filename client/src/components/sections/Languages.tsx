@@ -1,4 +1,4 @@
-import { useRef } from 'react';
+import { memo, useRef } from 'react';
 import { motion, useInView } from 'framer-motion';
 import { useQuery } from '@tanstack/react-query';
 import { languagesAPI } from '../../lib/api';
@@ -23,7 +23,7 @@ const defaultLanguages = [
   },
 ];
 
-export default function Languages() {
+const Languages = memo(function Languages() {
   const ref = useRef(null);
   const isInView = useInView(ref, { once: true, margin: '-80px' });
 
@@ -118,4 +118,6 @@ export default function Languages() {
       </motion.div>
     </section>
   );
-}
+});
+
+export default Languages;

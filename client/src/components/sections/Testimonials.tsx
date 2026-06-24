@@ -1,4 +1,4 @@
-import { useRef, useState, useEffect } from 'react';
+import { memo, useRef, useState, useEffect } from 'react';
 import { motion, useInView, AnimatePresence } from 'framer-motion';
 import { useQuery } from '@tanstack/react-query';
 import { ChevronLeft, ChevronRight, Star } from 'lucide-react';
@@ -56,7 +56,7 @@ const defaultTestimonials: Testimonial[] = [
   },
 ];
 
-export default function Testimonials() {
+const Testimonials = memo(function Testimonials() {
   const ref = useRef(null);
   const isInView = useInView(ref, { once: true });
   const [current, setCurrent] = useState(0);
@@ -223,4 +223,6 @@ export default function Testimonials() {
       </motion.div>
     </section>
   );
-}
+});
+
+export default Testimonials;

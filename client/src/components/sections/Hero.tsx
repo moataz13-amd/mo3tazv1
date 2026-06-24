@@ -1,4 +1,4 @@
-import { useRef } from 'react';
+import { memo, useRef } from 'react';
 import { motion } from 'framer-motion';
 import { useQuery } from '@tanstack/react-query';
 import { useSettingsStore } from '../../store';
@@ -48,7 +48,7 @@ const CyanStar = () => (
   </svg>
 );
 
-export default function Hero() {
+const Hero = memo(function Hero() {
   const heroRef = useRef<HTMLDivElement>(null);
   const settings = useSettingsStore((state) => state.settings);
 
@@ -245,6 +245,7 @@ export default function Hero() {
                     src={logo.src}
                     alt={logo.name || 'Client Logo'}
                     className="h-full w-auto object-contain max-w-[120px]"
+                    loading="lazy" decoding="async"
                   />
                 </motion.div>
               ))}
@@ -311,4 +312,6 @@ export default function Hero() {
       />
     </section>
   );
-}
+});
+
+export default Hero;

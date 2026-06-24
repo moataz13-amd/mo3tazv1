@@ -1,9 +1,9 @@
-import { useRef } from 'react';
+import { memo, useRef } from 'react';
 import { motion, useInView } from 'framer-motion';
 import { MapPin } from 'lucide-react';
 import { useSettingsStore } from '../../store';
 
-export default function About() {
+const About = memo(function About() {
   const ref = useRef(null);
   const isInView = useInView(ref, { once: true, margin: '-80px' });
   const settings = useSettingsStore((state) => state.settings);
@@ -100,6 +100,7 @@ export default function About() {
                 src={avatar}
                 alt={name}
                 className="w-full h-auto object-contain transform scale-110 md:scale-120 transition-transform duration-500"
+                loading="lazy" decoding="async"
               />
             </div>
           </div>
@@ -232,4 +233,6 @@ export default function About() {
       </div>
     </section>
   );
-}
+});
+
+export default About;

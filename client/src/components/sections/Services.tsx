@@ -1,4 +1,4 @@
-import { useRef } from 'react';
+import { memo, useRef } from 'react';
 import { motion, useInView } from 'framer-motion';
 import { useQuery } from '@tanstack/react-query';
 import { servicesAPI } from '../../lib/api';
@@ -39,7 +39,7 @@ const defaultServices: Service[] = [
   },
 ];
 
-export default function Services() {
+const Services = memo(function Services() {
   const ref = useRef(null);
   const isInView = useInView(ref, { once: true, margin: '-40px' });
 
@@ -140,4 +140,6 @@ export default function Services() {
       </motion.div>
     </section>
   );
-}
+});
+
+export default Services;

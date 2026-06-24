@@ -133,7 +133,7 @@ app.post('/api/_migrate', async (req, res) => {
 const PUBLIC_CACHE = ['/api/projects', '/api/settings', '/api/services', '/api/skills', '/api/testimonials', '/api/experience', '/api/languages', '/api/client-logos'];
 app.use((req, res, next) => {
   if (req.method === 'GET' && PUBLIC_CACHE.includes(req.path)) {
-    res.set('Cache-Control', 'public, max-age=30, s-maxage=120, stale-while-revalidate=60');
+    res.set('Cache-Control', 'public, max-age=60, s-maxage=300, stale-while-revalidate=120, stale-if-error=86400');
   }
   next();
 });

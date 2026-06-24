@@ -1,4 +1,4 @@
-import { useEffect } from 'react';
+import { useEffect, useRef } from 'react';
 import { Link, Outlet, useLocation, useNavigate } from 'react-router-dom';
 import {
   LayoutDashboard,
@@ -8,6 +8,7 @@ import {
   Settings,
   LogOut,
   Menu,
+  X,
   ImagePlus,
   Image as ImageIcon
 } from 'lucide-react';
@@ -27,6 +28,7 @@ const adminNavItems = [
 export default function AdminLayout() {
   const location = useLocation();
   const navigate = useNavigate();
+  const sidebarRef = useRef<HTMLElement>(null);
   const { logout } = useAuthStore();
   const { adminSidebarOpen, setAdminSidebarOpen, adminLanguage, setAdminLanguage } = useUIStore();
   const { t } = useAdminTranslation();
@@ -38,6 +40,27 @@ export default function AdminLayout() {
 
   const currentNav = adminNavItems.find((item) => item.path === location.pathname);
   const currentTitle = currentNav ? t(currentNav.labelKey as any) : t('system');
+
+  const closeSidebar = () => setAdminSidebarOpen(false);
+
+  // Close sidebar on route change (mobile)
+  useEffect(() => {
+    const isMobile = window.innerWidth < 768;
+    if (isMobile) closeSidebar();
+  }, [location.pathname]);
+
+  // Close sidebar when clicking outside on mobile
+  useEffect(() => {
+    const handleClickOutside = (e: MouseEvent) => {
+      const isMobile = window.innerWidth < 768;
+      if (!isMobile || !adminSidebarOpen) return;
+      if (sidebarRef.current && !sidebarRef.current.contains(e.target as Node)) {
+        closeSidebar();
+      }
+    };
+    document.addEventListener('mousedown', handleClickOutside);
+    return () => document.removeEventListener('mousedown', handleClickOutside);
+  }, [adminSidebarOpen]);
 
   useEffect(() => {
     document.documentElement.style.fontSize = '17.5px';
@@ -52,9 +75,17 @@ export default function AdminLayout() {
       dir={adminLanguage === 'ar' ? 'rtl' : 'ltr'}
       style={{ fontFamily: "'Milan Display', 'Cairo', 'Inter', 'Outfit', sans-serif", fontSize: '17px' }}
     >
+      {/* Mobile Overlay Backdrop */}
+      {adminSidebarOpen && (
+        <div className="fixed inset-0 bg-black/50 z-20 md:hidden" onClick={closeSidebar} />
+      )}
+
       {/* Sidebar Panel */}
       <aside
-        className={`fixed md:relative top-0 bottom-0 ${
+        ref={sidebarRef}
+        className={`${
+          adminSidebarOpen ? 'block' : 'hidden md:block'
+        } fixed md:relative top-0 bottom-0 ${
           adminLanguage === 'ar' ? 'right-0 border-l' : 'left-0 border-r'
         } z-30 transition-all duration-300 flex flex-col border-glass-border bg-[rgba(5,8,22,0.95)] backdrop-blur-xl ${
           adminSidebarOpen ? 'w-64' : 'w-20'

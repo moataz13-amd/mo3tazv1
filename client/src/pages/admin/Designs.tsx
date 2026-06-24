@@ -1,8 +1,8 @@
-import { useState, useRef } from 'react';
+import { useState, useRef, useCallback } from 'react';
 import { useQuery, useMutation, useQueryClient } from '@tanstack/react-query';
 import { Plus, Trash2, X, Image as ImageIcon, Eye, UploadCloud, Filter } from 'lucide-react';
 import toast from 'react-hot-toast';
-import { projectsAPI, mediaAPI } from '../../lib/api';
+import { projectsAPI } from '../../lib/api';
 import { useAdminTranslation } from '../../lib/adminTranslations';
 import type { Project } from '../../types';
 
@@ -12,8 +12,8 @@ export default function DesignsManager() {
   const [selectedProjectId, setSelectedProjectId] = useState<string>('all');
   const [isModalOpen, setIsModalOpen] = useState(false);
   const [targetProjectId, setTargetProjectId] = useState<string>('');
-  const [selectedFile, setSelectedFile] = useState<File | null>(null);
-  const [previewUrl, setPreviewUrl] = useState<string | null>(null);
+  const [selectedFiles, setSelectedFiles] = useState<File[]>([]);
+  const [previewUrls, setPreviewUrls] = useState<string[]>([]);
   const [isUploading, setIsUploading] = useState(false);
   const [lightboxImage, setLightboxImage] = useState<string | null>(null);
   const fileInputRef = useRef<HTMLInputElement>(null);
@@ -45,36 +45,29 @@ export default function DesignsManager() {
 
   // Upload Mutation
   const uploadMutation = useMutation({
-    mutationFn: async ({ projectId, file }: { projectId: string; file: File }) => {
+    mutationFn: async ({ projectId, files }: { projectId: string; files: File[] }) => {
       const projectToUpdate = projects?.find(p => p.id === projectId);
       if (!projectToUpdate) throw new Error('Category not found');
 
-      // 1. Upload file to media API
-      const mediaFormData = new FormData();
-      mediaFormData.append('file', file);
-      const uploadRes = await mediaAPI.upload(mediaFormData);
-      const newImageUrl = uploadRes.data.url;
+      const formData = new FormData();
+      formData.append('title', projectToUpdate.title);
+      formData.append('category', projectToUpdate.category);
+      formData.append('description', projectToUpdate.description);
+      formData.append('featured', String(projectToUpdate.featured));
+      formData.append('tech_stack', JSON.stringify(projectToUpdate.tech_stack || []));
+      formData.append('existing_images', JSON.stringify(projectToUpdate.images || []));
 
-      // 2. Append new image URL to category
-      const projectFormData = new FormData();
-      projectFormData.append('title', projectToUpdate.title);
-      projectFormData.append('category', projectToUpdate.category);
-      projectFormData.append('description', projectToUpdate.description);
-      projectFormData.append('featured', String(projectToUpdate.featured));
-      projectFormData.append('tech_stack', JSON.stringify(projectToUpdate.tech_stack || []));
-      
-      const updatedImages = [...(projectToUpdate.images || []), newImageUrl];
-      projectFormData.append('existing_images', JSON.stringify(updatedImages));
+      files.forEach((file) => formData.append('gallery_images', file));
 
-      return projectsAPI.update(projectId, projectFormData);
+      return projectsAPI.update(projectId, formData);
     },
     onSuccess: () => {
       queryClient.invalidateQueries({ queryKey: ['projects'] });
-      toast.success('Design added successfully');
+      toast.success('Designs added successfully');
       closeModal();
     },
     onError: (err: any) => {
-      toast.error(err.message || 'Failed to upload design');
+      toast.error(err.message || 'Failed to upload designs');
     },
     onSettled: () => {
       setIsUploading(false);
@@ -114,25 +107,35 @@ export default function DesignsManager() {
     } else {
       setTargetProjectId('');
     }
-    setSelectedFile(null);
-    setPreviewUrl(null);
+    setSelectedFiles([]);
+    setPreviewUrls([]);
     setIsModalOpen(true);
   };
 
   const closeModal = () => {
     setIsModalOpen(false);
-    setSelectedFile(null);
-    setPreviewUrl(null);
+    setSelectedFiles([]);
+    setPreviewUrls([]);
     setIsCategoryDropdownOpen(false);
   };
 
   const handleFileChange = (e: React.ChangeEvent<HTMLInputElement>) => {
-    if (e.target.files && e.target.files[0]) {
-      const file = e.target.files[0];
-      setSelectedFile(file);
-      setPreviewUrl(URL.createObjectURL(file));
+    if (e.target.files && e.target.files.length > 0) {
+      const newFiles = Array.from(e.target.files);
+      setSelectedFiles((prev) => [...prev, ...newFiles]);
+      const newUrls = newFiles.map((f) => URL.createObjectURL(f));
+      setPreviewUrls((prev) => [...prev, ...newUrls]);
     }
+    e.target.value = '';
   };
+
+  const removeFile = useCallback((index: number) => {
+    setSelectedFiles((prev) => prev.filter((_, i) => i !== index));
+    setPreviewUrls((prev) => {
+      URL.revokeObjectURL(prev[index]);
+      return prev.filter((_, i) => i !== index);
+    });
+  }, []);
 
   const triggerFileSelect = () => {
     fileInputRef.current?.click();
@@ -144,13 +147,13 @@ export default function DesignsManager() {
       toast.error('Please select a category first.');
       return;
     }
-    if (!selectedFile) {
-      toast.error('Please select an image file to upload.');
+    if (selectedFiles.length === 0) {
+      toast.error('Please select at least one image to upload.');
       return;
     }
 
     setIsUploading(true);
-    uploadMutation.mutate({ projectId: targetProjectId, file: selectedFile });
+    uploadMutation.mutate({ projectId: targetProjectId, files: selectedFiles });
   };
 
   const handleDelete = (projectId: string, imageUrl: string) => {
@@ -359,22 +362,32 @@ export default function DesignsManager() {
                   ref={fileInputRef}
                   onChange={handleFileChange}
                   accept="image/*"
+                  multiple
                   className="hidden"
                 />
                 
-                {previewUrl ? (
-                  /* Image preview card */
-                  <div className="relative rounded-2xl overflow-hidden border border-glass-border aspect-video group bg-surface">
-                    <img src={previewUrl} className="object-contain w-full h-full" alt="Upload Preview" />
+                {previewUrls.length > 0 ? (
+                  <div className="space-y-2">
+                    <div className="grid grid-cols-3 gap-2">
+                      {previewUrls.map((url, i) => (
+                        <div key={i} className="relative rounded-xl overflow-hidden border border-glass-border aspect-square group bg-surface">
+                          <img src={url} className="object-cover w-full h-full" alt="" />
+                          <button
+                            type="button"
+                            onClick={() => removeFile(i)}
+                            className="absolute top-1 right-1 p-1 bg-black/70 text-white rounded-full hover:bg-red-500 transition-colors opacity-0 group-hover:opacity-100"
+                          >
+                            <X size={12} />
+                          </button>
+                        </div>
+                      ))}
+                    </div>
                     <button
                       type="button"
-                      onClick={() => {
-                        setSelectedFile(null);
-                        setPreviewUrl(null);
-                      }}
-                      className="absolute top-2 right-2 p-1.5 bg-black/60 text-white rounded-full hover:bg-black/80 transition-colors"
+                      onClick={triggerFileSelect}
+                      className="text-xs text-primary hover:underline font-bold"
                     >
-                      <X size={14} />
+                      + {t('addMoreImages')}
                     </button>
                   </div>
                 ) : (
@@ -404,7 +417,7 @@ export default function DesignsManager() {
                 </button>
                 <button
                   type="submit"
-                  disabled={isUploading || !selectedFile}
+                  disabled={isUploading || selectedFiles.length === 0}
                   className="neon-btn px-6 py-2.5 text-xs font-black flex items-center gap-1.5 disabled:opacity-50 disabled:cursor-not-allowed"
                 >
                   {isUploading ? (

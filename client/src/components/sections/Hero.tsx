@@ -1,4 +1,4 @@
-import { useRef, useState } from 'react';
+import { useRef } from 'react';
 import { motion } from 'framer-motion';
 import { useQuery } from '@tanstack/react-query';
 import { useSettingsStore } from '../../store';
@@ -62,17 +62,10 @@ export default function Hero() {
   const headline = settings?.hero_headline || "حين يجتمع الإبداع مع التفاصيل\nتولد تصاميم استثنائية.";
   const subheadline = settings?.hero_subheadline || "موثوق من قبل";
   const clientLogos = fetchedLogos && fetchedLogos.length > 0 ? fetchedLogos : defaultClientLogos;
-  const [storedMarquee, setStoredMarquee] = useState<{row1: any[]; row2: any[]}>(() => {
-    try {
-      return {
-        row1: JSON.parse(localStorage.getItem('portfolio_marquee_row1') || '[]'),
-        row2: JSON.parse(localStorage.getItem('portfolio_marquee_row2') || '[]'),
-      };
-    } catch { return { row1: [], row2: [] }; }
-  });
-  const row1Tags = settings?.marquee_row1?.length ? settings.marquee_row1 : (storedMarquee.row1.length ? storedMarquee.row1 : defaultRow1Tags);
-  const row2Tags = settings?.marquee_row2?.length ? settings.marquee_row2 : (storedMarquee.row2.length ? storedMarquee.row2 : defaultRow2Tags);
-  const marqueeDuration = Math.max(180, row1Tags.length * 30);
+  const lsRow1 = (() => { try { return JSON.parse(localStorage.getItem('portfolio_marquee_row1') || '[]'); } catch { return []; } })();
+  const lsRow2 = (() => { try { return JSON.parse(localStorage.getItem('portfolio_marquee_row2') || '[]'); } catch { return []; } })();
+  const row1Tags = settings?.marquee_row1?.length ? settings.marquee_row1 : (lsRow1.length ? lsRow1 : defaultRow1Tags);
+  const row2Tags = settings?.marquee_row2?.length ? settings.marquee_row2 : (lsRow2.length ? lsRow2 : defaultRow2Tags);
 
   const headlineLines = headline.split('\n');
 
@@ -262,7 +255,7 @@ export default function Hero() {
 
       {/* Infinite Marquee Service Carousel - Pushed below the fold */}
       {row1Tags.length > 0 && (
-        <div className="marquee-container mt-12 mb-16 w-full z-30" style={{ '--marquee-duration': `${marqueeDuration}s` } as React.CSSProperties}>
+        <div className="marquee-container mt-12 mb-16 w-full z-30">
           {/* Row 1: Left scrolling */}
           <div className="marquee-track marquee-track-left">
             {[...row1Tags, ...row1Tags, ...row1Tags, ...row1Tags].map((tag, idx) => (

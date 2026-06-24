@@ -64,8 +64,19 @@ const Hero = memo(function Hero() {
   const clientLogos = fetchedLogos && fetchedLogos.length > 0 ? fetchedLogos : defaultClientLogos;
   const lsRow1 = (() => { try { return JSON.parse(localStorage.getItem('portfolio_marquee_row1') || '[]'); } catch { return []; } })();
   const lsRow2 = (() => { try { return JSON.parse(localStorage.getItem('portfolio_marquee_row2') || '[]'); } catch { return []; } })();
-  const row1Tags = settings?.marquee_row1?.length ? settings.marquee_row1 : (lsRow1.length ? lsRow1 : defaultRow1Tags);
-  const row2Tags = settings?.marquee_row2?.length ? settings.marquee_row2 : (lsRow2.length ? lsRow2 : defaultRow2Tags);
+  const parseTags = (tags: any, fallback: any) => {
+    if (Array.isArray(tags)) return tags;
+    if (typeof tags === 'string') {
+      try {
+        const parsed = JSON.parse(tags);
+        if (Array.isArray(parsed)) return parsed;
+      } catch {}
+    }
+    return fallback;
+  };
+
+  const row1Tags = parseTags(settings?.marquee_row1, lsRow1.length ? lsRow1 : defaultRow1Tags);
+  const row2Tags = parseTags(settings?.marquee_row2, lsRow2.length ? lsRow2 : defaultRow2Tags);
 
   const headlineLines = headline.split('\n');
 

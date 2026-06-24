@@ -500,6 +500,16 @@ app.get('/api/settings', async (_req, res) => {
 app.put('/api/settings', authenticate, async (req: any, res) => {
   try {
     const body = { ...req.body };
+    const jsonFields = ['client_logos', 'marquee_row1', 'marquee_row2', 'social_links'];
+    for (const f of jsonFields) {
+      if (body[f] && typeof body[f] === 'string') {
+        try {
+          body[f] = JSON.parse(body[f]);
+        } catch (e) {
+          // Fallback to original value
+        }
+      }
+    }
     const avatar = await getFileUrl(req.files, 'avatar', null);
     if (avatar) body.avatar = avatar;
     const cv = await getFileUrl(req.files, 'cv', null);

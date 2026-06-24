@@ -525,11 +525,11 @@ body {
 }
 
 .marquee-track-left {
-  animation: marquee-scroll-left 300s linear infinite;
+  animation: marquee-scroll-left 45s linear infinite;
 }
 
 .marquee-track-right {
-  animation: marquee-scroll-right 300s linear infinite;
+  animation: marquee-scroll-right 45s linear infinite;
 }
 
 .marquee-track:hover {

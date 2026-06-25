@@ -82,6 +82,8 @@ export const adminTranslations = {
     addMoreImages: 'Add more images',
     areYouSureDeleteDesign: 'Are you sure you want to delete this design?',
     uploading: 'Uploading...',
+    compressing: 'Compressing...',
+    compressingImages: 'Compressing images...',
     zoomDesign: 'Zoom Design',
     deleteDesign: 'Delete Design',
 
@@ -277,6 +279,8 @@ export const adminTranslations = {
     addMoreImages: 'إضافة المزيد من الصور',
     areYouSureDeleteDesign: 'هل أنت متأكد من حذف هذا التصميم نهائياً؟',
     uploading: 'جاري الرفع...',
+    compressing: 'جاري الضغط...',
+    compressingImages: 'جاري ضغط الصور...',
     zoomDesign: 'تكبير وتكبير الصورة',
     deleteDesign: 'حذف التصميم',
 

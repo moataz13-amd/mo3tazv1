@@ -41,7 +41,7 @@ const getFileUrl = async (files: any, fieldName: string, fallback: string) => {
   if (!file) { console.log('[getFileUrl] no file for', fieldName, 'fallback:', fallback?.slice(0, 60)); return fallback; }
   if (file.path && (file.path.startsWith('http://') || file.path.startsWith('https://'))) return file.path;
   if (file.buffer) {
-    const result = await uploadFile(file.buffer, 'portfolio_assets');
+    const result = await uploadFile(file.buffer, 'portfolio_assets', file.mimetype);
     if (result) return result.url;
     console.log('[getFileUrl] uploadFile returned null');
   } else {
@@ -216,7 +216,7 @@ app.post('/api/projects', authenticate, async (req: any, res) => {
     const existingImages = req.body.images ? (typeof req.body.images === 'string' ? JSON.parse(req.body.images) : req.body.images) : [];
     const newImages = req.files?.filter((f: any) => f.fieldname === 'gallery_images') || [];
     const uploadedImages = await Promise.all(newImages.map(async (f: any) => {
-      const r = await uploadFile(f.buffer, 'portfolio_assets');
+      const r = await uploadFile(f.buffer, 'portfolio_assets', f.mimetype);
       return r?.url || '';
     }));
     const images = [...existingImages, ...uploadedImages.filter(Boolean)];
@@ -246,7 +246,7 @@ app.put('/api/projects/:id', authenticate, async (req: any, res) => {
     // Upload new gallery image files from multipart form data
     const newGalleryFiles = req.files?.filter((f: any) => f.fieldname === 'gallery_images') || [];
     const uploadedGalleryUrls = await Promise.all(newGalleryFiles.map(async (f: any) => {
-      const r = await uploadFile(f.buffer, 'portfolio_assets');
+      const r = await uploadFile(f.buffer, 'portfolio_assets', f.mimetype);
       return r?.url || '';
     }));
     body.images = [...existingImages, ...uploadedGalleryUrls.filter(Boolean)];
@@ -539,7 +539,7 @@ app.post('/api/media/upload', authenticate, async (req: any, res) => {
     let url = req.body.url;
     let publicId = `local-${Date.now()}`;
     if (fileData?.buffer) {
-      const result = await uploadFile(fileData.buffer, 'portfolio_assets');
+      const result = await uploadFile(fileData.buffer, 'portfolio_assets', fileData.mimetype);
       if (result) { url = result.url; publicId = result.publicId; }
     }
     const file = {

@@ -1,8 +1,8 @@
 import { useState, useRef, useCallback } from 'react';
 import { useQuery, useMutation, useQueryClient } from '@tanstack/react-query';
-import { Plus, Trash2, X, Image as ImageIcon, Eye, UploadCloud, Filter } from 'lucide-react';
+import { Plus, Trash2, X, Image as ImageIcon, Eye, UploadCloud, Filter, Loader2 } from 'lucide-react';
 import toast from 'react-hot-toast';
-import { projectsAPI } from '../../lib/api';
+import { projectsAPI, compressImage } from '../../lib/api';
 import { useAdminTranslation } from '../../lib/adminTranslations';
 import type { Project } from '../../types';
 
@@ -15,6 +15,8 @@ export default function DesignsManager() {
   const [selectedFiles, setSelectedFiles] = useState<File[]>([]);
   const [previewUrls, setPreviewUrls] = useState<string[]>([]);
   const [isUploading, setIsUploading] = useState(false);
+  const [uploadProgress, setUploadProgress] = useState(0);
+  const [compressing, setCompressing] = useState(false);
   const [lightboxImage, setLightboxImage] = useState<string | null>(null);
   const fileInputRef = useRef<HTMLInputElement>(null);
   const [isCategoryDropdownOpen, setIsCategoryDropdownOpen] = useState(false);
@@ -49,6 +51,17 @@ export default function DesignsManager() {
       const projectToUpdate = projects?.find(p => p.id === projectId);
       if (!projectToUpdate) throw new Error('Category not found');
 
+      setCompressing(true);
+      const compressedBlobs = await Promise.all(
+        files.map(async (file, i) => {
+          setUploadProgress(Math.round((i / files.length) * 40));
+          const blob = await compressImage(file);
+          return new File([blob], file.name.replace(/\.[^.]+$/, '.webp'), { type: 'image/webp' });
+        })
+      );
+      setCompressing(false);
+      setUploadProgress(50);
+
       const formData = new FormData();
       formData.append('title', projectToUpdate.title);
       formData.append('category', projectToUpdate.category);
@@ -57,20 +70,22 @@ export default function DesignsManager() {
       formData.append('tech_stack', JSON.stringify(projectToUpdate.tech_stack || []));
       formData.append('existing_images', JSON.stringify(projectToUpdate.images || []));
 
-      files.forEach((file) => formData.append('gallery_images', file));
+      compressedBlobs.forEach((file) => formData.append('gallery_images', file));
 
+      setUploadProgress(70);
       return projectsAPI.update(projectId, formData);
     },
     onSuccess: () => {
+      setUploadProgress(100);
       queryClient.invalidateQueries({ queryKey: ['projects'] });
-      toast.success('Designs added successfully');
-      closeModal();
+      setTimeout(() => { toast.success('Designs added successfully'); }, 100);
     },
     onError: (err: any) => {
       toast.error(err.message || 'Failed to upload designs');
     },
     onSettled: () => {
       setIsUploading(false);
+      setUploadProgress(0);
     }
   });
 
@@ -369,18 +384,25 @@ export default function DesignsManager() {
                 {previewUrls.length > 0 ? (
                   <div className="space-y-2">
                     <div className="grid grid-cols-3 gap-2">
-                      {previewUrls.map((url, i) => (
-                        <div key={i} className="relative rounded-xl overflow-hidden border border-glass-border aspect-square group bg-surface">
-                          <img src={url} className="object-cover w-full h-full" alt="" />
-                          <button
-                            type="button"
-                            onClick={() => removeFile(i)}
-                            className="absolute top-1 right-1 p-1 bg-black/70 text-white rounded-full hover:bg-red-500 transition-colors opacity-0 group-hover:opacity-100"
-                          >
-                            <X size={12} />
-                          </button>
-                        </div>
-                      ))}
+                      {previewUrls.map((url, i) => {
+                        const file = selectedFiles[i];
+                        const sizeMB = file ? (file.size / 1024 / 1024).toFixed(1) : '';
+                        return (
+                          <div key={i} className="relative rounded-xl overflow-hidden border border-glass-border aspect-square group bg-surface">
+                            <img src={url} className="object-cover w-full h-full" alt="" />
+                            <div className="absolute bottom-0 inset-x-0 bg-gradient-to-t from-black/80 to-transparent p-1.5">
+                              <p className="text-[9px] text-white/70 font-mono">{sizeMB} MB</p>
+                            </div>
+                            <button
+                              type="button"
+                              onClick={() => removeFile(i)}
+                              className="absolute top-1 right-1 p-1 bg-black/70 text-white rounded-full hover:bg-red-500 transition-colors opacity-0 group-hover:opacity-100"
+                            >
+                              <X size={12} />
+                            </button>
+                          </div>
+                        );
+                      })}
                     </div>
                     <button
                       type="button"
@@ -403,6 +425,20 @@ export default function DesignsManager() {
                     </div>
                   </div>
                 )}
+
+                {isUploading && (
+                  <div className="space-y-1">
+                    <div className="w-full bg-surface rounded-full h-2 overflow-hidden">
+                      <div
+                        className="h-full bg-primary transition-all duration-300 rounded-full"
+                        style={{ width: `${uploadProgress}%` }}
+                      />
+                    </div>
+                    <p className="text-[10px] text-gray-400 font-mono text-right">
+                      {compressing ? t('compressingImages') : `${uploadProgress}%`}
+                    </p>
+                  </div>
+                )}
               </div>
 
               {/* Submit Buttons */}
@@ -422,13 +458,15 @@ export default function DesignsManager() {
                 >
                   {isUploading ? (
                     <>
-                      <div className="w-3.5 h-3.5 border-2 border-black border-t-transparent rounded-full animate-spin" />
-                      {t('uploading')}
+                      <Loader2 size={14} className="animate-spin" />
+                      {compressing ? t('compressing') : t('uploading')}
                     </>
                   ) : (
                     <>
                       <UploadCloud size={14} />
-                      {t('uploadDesign')}
+                      {selectedFiles.length > 1
+                        ? `${t('uploadDesign')} (${selectedFiles.length})`
+                        : t('uploadDesign')}
                     </>
                   )}
                 </button>

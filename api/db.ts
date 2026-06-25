@@ -110,7 +110,7 @@ export async function deleteFromCloudinary(publicId: string) {
   }
 }
 
-export async function uploadFile(buffer: Buffer, folder = 'portfolio_assets'): Promise<{ url: string; publicId: string } | null> {
+export async function uploadFile(buffer: Buffer, folder = 'portfolio_assets', mimeType?: string): Promise<{ url: string; publicId: string } | null> {
   const result = await uploadToCloudinary(buffer, folder);
   if (result) return result;
   if (!supabase) {
@@ -120,9 +120,10 @@ export async function uploadFile(buffer: Buffer, folder = 'portfolio_assets'): P
     return { url: dataUrl, publicId: `b64-${Date.now()}` };
   }
   try {
-    const ext = 'png';
+    const ext = mimeType?.split('/')[1] || 'webp';
     const fileName = `${folder}/${Date.now()}-${Math.random().toString(36).slice(2, 8)}.${ext}`;
-    const { data, error } = await supabase.storage.from('portfolio').upload(fileName, buffer, { contentType: `image/${ext}`, upsert: false });
+    const contentType = mimeType || 'image/webp';
+    const { data, error } = await supabase.storage.from('portfolio').upload(fileName, buffer, { contentType, upsert: false });
     if (!error) {
       const { data: urlData } = supabase.storage.from('portfolio').getPublicUrl(fileName);
       console.log('[DB] Supabase Storage upload success:', fileName);

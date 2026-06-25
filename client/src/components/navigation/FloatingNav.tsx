@@ -28,11 +28,30 @@ export default function FloatingNav({ projectTitle }: { projectTitle?: string })
           el.scrollIntoView({ behavior: 'smooth', block: 'start' });
         }
         setActiveSection(id);
+      } else if (id !== 'home') {
+        const observer = new MutationObserver(() => {
+          const found = document.getElementById(id);
+          if (found) {
+            observer.disconnect();
+            if ((window as any).lenis) {
+              (window as any).lenis.scrollTo(found, { offset: -20, duration: 1.2 });
+            } else {
+              found.scrollIntoView({ behavior: 'smooth', block: 'start' });
+            }
+            setActiveSection(id);
+          }
+        });
+        observer.observe(document.body, { childList: true, subtree: true });
+        setTimeout(() => observer.disconnect(), 10000);
       }
     };
     if (isProjectPage) {
       navigate('/');
-      setTimeout(doScroll, 300);
+      setTimeout(doScroll, 800);
+    } else if (id === 'home') {
+      window.scrollTo({ top: 0, behavior: 'smooth' });
+      if ((window as any).lenis) (window as any).lenis.scrollTo(0, { duration: 1.2 });
+      setActiveSection(id);
     } else {
       doScroll();
     }

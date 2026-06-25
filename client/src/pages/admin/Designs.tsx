@@ -2,7 +2,7 @@ import { useState, useRef, useCallback } from 'react';
 import { useQuery, useMutation, useQueryClient } from '@tanstack/react-query';
 import { Plus, Trash2, X, Image as ImageIcon, Eye, UploadCloud, Filter, Loader2 } from 'lucide-react';
 import toast from 'react-hot-toast';
-import { projectsAPI, compressImage } from '../../lib/api';
+import { projectsAPI, mediaAPI, compressImage } from '../../lib/api';
 import { useAdminTranslation } from '../../lib/adminTranslations';
 import type { Project } from '../../types';
 
@@ -45,34 +45,55 @@ export default function DesignsManager() {
     ? allDesigns
     : allDesigns.filter(d => d.projectId === selectedProjectId);
 
+  const uploadFilesToMedia = async (files: File[]): Promise<string[]> => {
+    setCompressing(true);
+    const compressed: File[] = [];
+    for (let i = 0; i < files.length; i++) {
+      setUploadProgress(Math.round(((i) / files.length) * 20));
+      const blob = await compressImage(files[i]);
+      const f = new File([blob], files[i].name.replace(/\.[^.]+$/, '.webp'), { type: 'image/webp' });
+      compressed.push(f);
+    }
+    setCompressing(false);
+    setUploadProgress(25);
+
+    const urls: string[] = [];
+    let failedCount = 0;
+    for (let i = 0; i < compressed.length; i++) {
+      const fd = new FormData();
+      fd.append('file', compressed[i]);
+      try {
+        const res = await mediaAPI.upload(fd);
+        urls.push(res.data.url);
+      } catch {
+        failedCount++;
+        toast.error(`Failed to upload "${compressed[i].name}"`);
+      }
+      setUploadProgress(25 + Math.round(((i + 1) / compressed.length) * 60));
+    }
+    if (failedCount > 0) toast.error(`${failedCount} file(s) failed to upload`);
+    if (urls.length === 0) throw new Error('All files failed to upload');
+    return urls;
+  };
+
   // Upload Mutation
   const uploadMutation = useMutation({
     mutationFn: async ({ projectId, files }: { projectId: string; files: File[] }) => {
       const projectToUpdate = projects?.find(p => p.id === projectId);
       if (!projectToUpdate) throw new Error('Category not found');
 
-      setCompressing(true);
-      const compressedBlobs = await Promise.all(
-        files.map(async (file, i) => {
-          setUploadProgress(Math.round((i / files.length) * 40));
-          const blob = await compressImage(file);
-          return new File([blob], file.name.replace(/\.[^.]+$/, '.webp'), { type: 'image/webp' });
-        })
-      );
-      setCompressing(false);
-      setUploadProgress(50);
+      const newUrls = await uploadFilesToMedia(files);
 
+      const updatedImages = [...(projectToUpdate.images || []), ...newUrls];
       const formData = new FormData();
       formData.append('title', projectToUpdate.title);
       formData.append('category', projectToUpdate.category);
       formData.append('description', projectToUpdate.description);
       formData.append('featured', String(projectToUpdate.featured));
       formData.append('tech_stack', JSON.stringify(projectToUpdate.tech_stack || []));
-      formData.append('existing_images', JSON.stringify(projectToUpdate.images || []));
+      formData.append('existing_images', JSON.stringify(updatedImages));
 
-      compressedBlobs.forEach((file) => formData.append('gallery_images', file));
-
-      setUploadProgress(70);
+      setUploadProgress(90);
       return projectsAPI.update(projectId, formData);
     },
     onSuccess: () => {

@@ -98,33 +98,38 @@ function TimelineItem({ item, index }: { item: typeof defaultTimelineData[0]; in
       {/* Card */}
       <div className="flex-1">
         <div
-          className="glass-card p-5 hover:border-opacity-60 transition-all group"
-          style={{ borderColor: `${item.color}30` }}
+          className="p-5 transition-all duration-150 group relative"
+          style={{
+            background: '#00E5FF',
+            border: '2px solid #000000',
+            borderRadius: '24px',
+            color: '#000000',
+            boxShadow: '6px 6px 0px #000000',
+          }}
         >
           <div className="flex items-start gap-3 mb-3">
             <span className="text-2xl">{item.icon}</span>
             <div className="flex-1">
               <div className="flex items-center justify-between gap-2 flex-wrap">
-                <h3 className="font-bold text-white group-hover:text-primary transition-colors">
+                <h3 className="font-bold text-black group-hover:translate-x-0.5 transition-transform">
                   {item.title}
                 </h3>
                 <span
-                  className="text-xs font-mono px-2 py-0.5 rounded-full"
+                  className="text-xs font-black px-2 py-0.5 rounded-full"
                   style={{
-                    background: `${item.color}20`,
-                    border: `1px solid ${item.color}40`,
-                    color: item.color,
+                    background: '#000000',
+                    color: '#00E5FF',
                   }}
                 >
                   {item.period}
                 </span>
               </div>
-              <p className="text-sm mt-0.5" style={{ color: 'rgba(0,191,255,0.7)' }}>
+              <p className="text-sm mt-0.5 font-bold text-black/70">
                 {item.organization}
               </p>
             </div>
           </div>
-          <p className="text-sm mb-3" style={{ color: 'rgba(255,255,255,0.55)', lineHeight: 1.6 }}>
+          <p className="text-sm mb-3 font-medium text-black/70" style={{ lineHeight: 1.6 }}>
             {item.description}
           </p>
           {item.tags && item.tags.length > 0 && (
@@ -132,11 +137,10 @@ function TimelineItem({ item, index }: { item: typeof defaultTimelineData[0]; in
               {item.tags.map((tag) => (
                 <span
                   key={tag}
-                  className="text-[10px] px-2 py-0.5 rounded-md font-mono"
+                  className="text-[10px] px-2 py-0.5 rounded-md font-black"
                   style={{
-                    background: `${item.color}10`,
-                    border: `1px solid ${item.color}25`,
-                    color: `${item.color}cc`,
+                    background: '#000000',
+                    color: '#00E5FF',
                   }}
                 >
                   {tag}

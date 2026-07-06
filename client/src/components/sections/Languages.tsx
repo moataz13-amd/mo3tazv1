@@ -46,19 +46,25 @@ const Languages = memo(function Languages() {
         transition={{ duration: 0.7 }}
         className="max-w-5xl mx-auto"
       >
-        <div className="glass-card p-8">
+        <div className="p-8" style={{
+          background: '#00E5FF',
+          border: '2px solid #000000',
+          borderRadius: '24px',
+          color: '#000000',
+          boxShadow: '6px 6px 0px #000000',
+        }}>
           <div className="flex items-center gap-3 mb-6">
             <div
               className="w-8 h-8 rounded-lg flex items-center justify-center text-sm"
-              style={{ background: 'rgba(0,191,255,0.15)', border: '1px solid rgba(0,191,255,0.3)' }}
+              style={{ background: '#000000' }}
             >
               🌐
             </div>
             <div>
-              <h3 className="font-bold text-white" style={{ fontFamily: 'Outfit' }}>
-                Language <span className="gradient-text">Proficiency</span>
+              <h3 className="font-black text-black">
+                Language <span className="text-black">Proficiency</span>
               </h3>
-              <p className="text-xs" style={{ color: 'rgba(255,255,255,0.4)' }}>
+              <p className="text-xs font-bold text-black/70">
                 Communication capabilities
               </p>
             </div>
@@ -71,44 +77,45 @@ const Languages = memo(function Languages() {
                 initial={{ opacity: 0, x: i % 2 === 0 ? -20 : 20 }}
                 animate={isInView ? { opacity: 1, x: 0 } : {}}
                 transition={{ delay: i * 0.2, duration: 0.6 }}
-                className="p-5 rounded-2xl group hover:border-opacity-60 transition-all"
+                className="p-5 transition-all duration-150 group"
                 style={{
-                  background: `${lang.color}08`,
-                  border: `1px solid ${lang.color}25`,
+                  background: '#00E5FF',
+                  border: '2px solid #000000',
+                  borderRadius: '24px',
+                  color: '#000000',
+                  boxShadow: '6px 6px 0px #000000',
                 }}
               >
                 <div className="flex items-center justify-between mb-4">
                   <div className="flex items-center gap-3">
                     <span className="text-3xl">{lang.flag}</span>
                     <div>
-                      <div className="font-bold text-white">{lang.name}</div>
-                      <div className="text-xs" style={{ color: lang.color }}>
+                      <div className="font-bold text-black">{lang.name}</div>
+                      <div className="text-xs font-black text-black/70">
                         {lang.level}
                       </div>
                     </div>
                   </div>
                   <div
-                    className="text-2xl font-bold font-mono"
-                    style={{ color: lang.color }}
+                    className="text-2xl font-black font-mono text-black"
                   >
                     {lang.proficiency}%
                   </div>
                 </div>
 
-                <div className="progress-bar-track mb-3">
+                <div className="relative w-full h-3 rounded-full overflow-hidden mb-3" style={{ background: '#000000' }}>
                   <motion.div
                     className="h-full rounded-full relative"
                     initial={{ width: 0 }}
                     animate={isInView ? { width: `${lang.proficiency}%` } : { width: 0 }}
                     transition={{ delay: i * 0.2 + 0.4, duration: 1.5, ease: 'easeOut' }}
                     style={{
-                      background: `linear-gradient(90deg, ${lang.color}, ${lang.color}80)`,
-                      boxShadow: `0 0 10px ${lang.color}60`,
+                      background: '#00E5FF',
                     }}
                   />
                 </div>
 
-                <p className="text-xs" style={{ color: 'rgba(255,255,255,0.45)' }}>
+                <p className="text-xs font-medium text-black/70">
                   {lang.description}
                 </p>
               </motion.div>

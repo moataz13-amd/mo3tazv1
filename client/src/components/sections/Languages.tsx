@@ -79,31 +79,31 @@ const Languages = memo(function Languages() {
                 transition={{ delay: i * 0.2, duration: 0.6 }}
                 className="p-5 transition-all duration-150 group"
                 style={{
-                  background: '#00E5FF',
-                  border: '2px solid #000000',
+                  background: '#000000',
+                  border: '2px solid #00E5FF',
                   borderRadius: '24px',
-                  color: '#000000',
-                  boxShadow: '6px 6px 0px #000000',
+                  color: '#00E5FF',
+                  boxShadow: '4px 4px 0px #00E5FF',
                 }}
               >
                 <div className="flex items-center justify-between mb-4">
                   <div className="flex items-center gap-3">
                     <span className="text-3xl">{lang.flag}</span>
                     <div>
-                      <div className="font-bold text-black">{lang.name}</div>
-                      <div className="text-xs font-black text-black/70">
+                      <div className="font-bold text-white">{lang.name}</div>
+                      <div className="text-xs font-black text-[#00E5FF]">
                         {lang.level}
                       </div>
                     </div>
                   </div>
                   <div
-                    className="text-2xl font-black font-mono text-black"
+                    className="text-2xl font-black font-mono text-[#00E5FF]"
                   >
                     {lang.proficiency}%
                   </div>
                 </div>
 
-                <div className="relative w-full h-3 rounded-full overflow-hidden mb-3" style={{ background: '#000000' }}>
+                <div className="relative w-full h-3 rounded-full overflow-hidden mb-3" style={{ background: 'rgba(0,229,255,0.2)' }}>
                   <motion.div
                     className="h-full rounded-full relative"
                     initial={{ width: 0 }}
@@ -115,7 +115,7 @@ const Languages = memo(function Languages() {
                   />
                 </div>
 
-                <p className="text-xs font-medium text-black/70">
+                <p className="text-xs font-medium text-white/60">
                   {lang.description}
                 </p>
               </motion.div>

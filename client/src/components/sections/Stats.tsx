@@ -103,59 +103,56 @@ const Stats = memo(function Stats() {
                 whileInView={{ opacity: 1, y: 0 }}
                 viewport={{ once: true }}
                 transition={{ duration: 0.6, delay: index * 0.15 }}
-                // Outer container with hidden overflow and padding for border stroke
-                className="relative p-[1.5px] overflow-hidden rounded-[36px] bg-transparent flex items-center justify-center w-full h-[380px] group"
+                className="w-full h-[380px] flex items-center justify-center group"
               >
-                {/* Rotating Conic Gradient Border background (Continuous spinning in all directions) */}
+                {/* Card with button style */}
                 <div
-                  className="absolute top-1/2 left-1/2 -translate-x-1/2 -translate-y-1/2 w-[250%] h-[250%] rounded-full bg-[conic-gradient(from_0deg,#26EFFD,#4F46E5,#26EFFD,#4F46E5,#26EFFD,#4F46E5,#26EFFD,#4F46E5,#26EFFD)] animate-[spin_3s_linear_infinite]"
-                  style={{ pointerEvents: 'none' }}
-                />
-
-                {/* Inner Card content container */}
-                <div className="relative z-10 w-full h-full bg-[#0A0F24]/90 backdrop-blur-xl rounded-[34px] flex flex-col items-center justify-center p-8 gap-6 text-center">
-                  
-                  {/* Icon Circle Container with Scroll Animation */}
+                  className="relative w-full h-full flex flex-col items-center justify-center p-8 gap-6 text-center"
+                  style={{
+                    background: '#00E5FF',
+                    border: '2px solid #000000',
+                    borderRadius: '24px',
+                    color: '#000000',
+                    boxShadow: '6px 6px 0px #000000',
+                  }}
+                >
+                  {/* Icon Circle Container */}
                   <div className="relative w-20 h-20 flex items-center justify-center">
                     
-                    {/* SVG Progress Circle linked to scroll */}
+                    {/* SVG Progress Circle */}
                     <svg className="absolute inset-0 w-full h-full transform -rotate-90" viewBox="0 0 100 100">
-                      {/* Faint track border */}
                       <circle
                         cx="50"
                         cy="50"
                         r="40"
-                        stroke="rgba(38, 239, 253, 0.08)"
+                        stroke="rgba(0,0,0,0.15)"
                         strokeWidth="6"
                         fill="transparent"
                       />
-                      
-                      {/* Active stroke colored border */}
                       <motion.circle
                         cx="50"
                         cy="50"
                         r="40"
-                        stroke="#26EFFD"
+                        stroke="#000000"
                         strokeWidth="6"
                         fill="transparent"
                         strokeDasharray={strokeDasharray}
                         style={{
                           strokeDashoffset: strokeDashoffset,
-                          // Spin the stroke slightly for extra dynamism
                           rotate: circleRotation,
                         }}
                       />
                     </svg>
 
                     {/* Icon container */}
-                    <div className="relative z-10 w-16 h-16 rounded-full bg-[#060a17] flex items-center justify-center shadow-inner border border-white/5">
-                      <IconComponent className="w-7 h-7 text-[#26EFFD]" />
+                    <div className="relative z-10 w-16 h-16 rounded-full bg-black flex items-center justify-center">
+                      <IconComponent className="w-7 h-7 text-[#00E5FF]" />
                     </div>
                   </div>
 
                   {/* Value/Number */}
                   <h3
-                    className="text-5xl md:text-6xl font-black text-white tracking-tight"
+                    className="text-5xl md:text-6xl font-black text-black tracking-tight"
                     style={{
                       fontFamily: "'Milan Display', 'Outfit', 'Inter', sans-serif",
                     }}
@@ -165,7 +162,7 @@ const Stats = memo(function Stats() {
 
                   {/* Description Label */}
                   <p
-                    className="text-lg md:text-xl font-bold text-gray-300"
+                    className="text-lg md:text-xl font-bold text-black/70"
                     style={{
                       fontFamily: "'Sahara Bold', 'Inter', sans-serif",
                     }}

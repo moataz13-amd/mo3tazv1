@@ -12,7 +12,6 @@ import Skills from '../components/sections/Skills';
 import PortfolioSection from '../components/sections/Portfolio';
 import Stats from '../components/sections/Stats';
 import Services from '../components/sections/Services';
-import Experience from '../components/sections/Experience';
 import Contact from '../components/sections/Contact';
 import Footer from '../components/sections/Footer';
 
@@ -71,7 +70,6 @@ export default function Portfolio() {
         <About />
         <Services />
         <Skills />
-        <Experience />
         <PortfolioSection />
         <Stats />
         <Contact />

@@ -40,25 +40,41 @@ interface UIState {
   sidebarOpen: boolean;
   adminSidebarOpen: boolean;
   adminLanguage: 'en' | 'ar';
+  theme: 'light' | 'dark';
   setActiveSection: (section: string) => void;
   setSidebarOpen: (open: boolean) => void;
   setAdminSidebarOpen: (open: boolean) => void;
   setAdminLanguage: (lang: 'en' | 'ar') => void;
+  toggleTheme: () => void;
+  setTheme: (theme: 'light' | 'dark') => void;
 }
 
-export const useUIStore = create<UIState>((set) => ({
-  activeSection: 'home',
-  sidebarOpen: true,
-  adminSidebarOpen: typeof window !== 'undefined' ? window.innerWidth >= 768 : true,
-  adminLanguage: (localStorage.getItem('admin_language') as 'en' | 'ar') || 'ar',
-  setActiveSection: (section) => set({ activeSection: section }),
-  setSidebarOpen: (open) => set({ sidebarOpen: open }),
-  setAdminSidebarOpen: (open) => set({ adminSidebarOpen: open }),
-  setAdminLanguage: (lang) => {
-    localStorage.setItem('admin_language', lang);
-    set({ adminLanguage: lang });
-  },
-}));
+function getInitialAdminLanguage(): 'en' | 'ar' {
+  try {
+    const stored = localStorage.getItem('admin_language');
+    if (stored === 'en' || stored === 'ar') return stored;
+  } catch {}
+  return 'ar';
+}
+
+export const useUIStore = create<UIState>()(
+  persist(
+    (set) => ({
+      activeSection: 'home',
+      sidebarOpen: true,
+      adminSidebarOpen: typeof window !== 'undefined' ? window.innerWidth >= 768 : true,
+      adminLanguage: getInitialAdminLanguage(),
+      theme: 'dark',
+      setActiveSection: (section) => set({ activeSection: section }),
+      setSidebarOpen: (open) => set({ sidebarOpen: open }),
+      setAdminSidebarOpen: (open) => set({ adminSidebarOpen: open }),
+      setAdminLanguage: (lang) => set({ adminLanguage: lang }),
+      toggleTheme: () => set((s) => ({ theme: s.theme === 'dark' ? 'light' : 'dark' })),
+      setTheme: (theme) => set({ theme }),
+    }),
+    { name: 'portfolio-ui' }
+  )
+);
 
 
 // ============================================

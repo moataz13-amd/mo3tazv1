@@ -1,6 +1,6 @@
 import { lazy, Suspense, useEffect, useState } from 'react';
 import { Routes, Route, Navigate } from 'react-router-dom';
-import { useAuthStore } from './store';
+import { useAuthStore, useUIStore } from './store';
 import { analyticsAPI } from './lib/api';
 import SplashScreen from './components/SplashScreen';
 
@@ -64,6 +64,12 @@ const ProtectedRoute = ({ children }: { children: React.ReactNode }) => {
 
 export default function App() {
   const [showSplash, setShowSplash] = useState(true);
+  const theme = useUIStore((s) => s.theme);
+
+  // Apply theme to root html element
+  useEffect(() => {
+    document.documentElement.setAttribute('data-theme', theme);
+  }, [theme]);
 
   // Track page visit on mount
   useEffect(() => {

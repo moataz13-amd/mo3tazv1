@@ -71,9 +71,9 @@ export default function AdminLayout() {
 
   return (
     <div
-      className="min-h-screen bg-[#050816] text-white flex transition-all duration-300"
+      className="min-h-screen text-white flex transition-all duration-300"
       dir={adminLanguage === 'ar' ? 'rtl' : 'ltr'}
-      style={{ fontFamily: "'Milan Display', 'Cairo', 'Inter', 'Outfit', sans-serif", fontSize: '17px' }}
+      style={{ background: 'var(--bg)', fontFamily: "'Milan Display', 'Cairo', 'Inter', 'Outfit', sans-serif", fontSize: '17px' }}
     >
       {/* Mobile Overlay Backdrop */}
       {adminSidebarOpen && (

@@ -48,7 +48,7 @@ export default function Login() {
   }, []);
 
   return (
-    <div className="min-h-screen relative flex items-center justify-center bg-[#050816] px-6 py-12 overflow-hidden" style={{ fontFamily: "'Milan Display', 'Cairo', 'Inter', 'Outfit', sans-serif", fontSize: '17px' }}>
+    <div className="min-h-screen relative flex items-center justify-center px-6 py-12 overflow-hidden" style={{ background: 'var(--bg)', fontFamily: "'Milan Display', 'Cairo', 'Inter', 'Outfit', sans-serif", fontSize: '17px' }}>
       {/* Glow Effects */}
       <div className="absolute top-1/4 left-1/4 w-96 h-96 rounded-full blur-[120px] opacity-20 bg-primary" />
       <div className="absolute bottom-1/4 right-1/4 w-96 h-96 rounded-full blur-[120px] opacity-20 bg-secondary" />

@@ -1,7 +1,7 @@
 import { useEffect, useState } from 'react';
 import { useNavigate } from 'react-router-dom';
 import { motion, AnimatePresence } from 'framer-motion';
-import { Menu, X, ArrowRight } from 'lucide-react';
+import { Menu, X, ArrowRight, Sun, Moon } from 'lucide-react';
 import { useUIStore } from '../../store';
 
 const navItems = [
@@ -13,7 +13,7 @@ const navItems = [
 
 export default function FloatingNav({ projectTitle }: { projectTitle?: string }) {
   const navigate = useNavigate();
-  const { activeSection, setActiveSection } = useUIStore();
+  const { activeSection, setActiveSection, toggleTheme, theme } = useUIStore();
   const [scrolled, setScrolled] = useState(false);
   const [mobileMenuOpen, setMobileMenuOpen] = useState(false);
   const isProjectPage = !!projectTitle;
@@ -198,6 +198,21 @@ export default function FloatingNav({ projectTitle }: { projectTitle?: string })
             })}
           </div>
 
+          {/* Theme Toggle */}
+          <button
+            onClick={toggleTheme}
+            className="p-2 rounded-full cursor-pointer transition-colors"
+            style={{
+              color: 'rgba(180, 220, 220, 0.65)',
+              background: 'rgba(255,255,255,0.05)',
+              border: '1px solid rgba(255,255,255,0.1)',
+            }}
+            onMouseEnter={(e) => { e.currentTarget.style.color = '#00E5FF'; }}
+            onMouseLeave={(e) => { e.currentTarget.style.color = 'rgba(180, 220, 220, 0.65)'; }}
+          >
+            {theme === 'dark' ? <Sun size={16} /> : <Moon size={16} />}
+          </button>
+
           {/* CTA Button — left side in RTL (لنتحدث) */}
           <motion.button
             whileHover={{ scale: 1.02, x: 2, y: 2 }}
@@ -357,6 +372,24 @@ export default function FloatingNav({ projectTitle }: { projectTitle?: string })
                     </motion.button>
                   );
                 })}
+                <div className="border-t border-white/10 my-2 pt-2">
+                  <motion.button
+                    initial={{ opacity: 0, x: -20 }}
+                    animate={{ opacity: 1, x: 0 }}
+                    transition={{ delay: 7 * 0.05, type: 'spring', damping: 20 }}
+                    onClick={() => { toggleTheme(); setMobileMenuOpen(false); }}
+                    className="w-full text-right px-5 py-3.5 rounded-2xl transition-all duration-200 cursor-pointer flex items-center gap-3"
+                    style={{
+                      color: 'rgba(180, 220, 220, 0.7)',
+                      fontFamily: "'Sahara Bold', 'Inter', sans-serif",
+                      fontSize: '17px',
+                      fontWeight: 700,
+                    }}
+                  >
+                    {theme === 'dark' ? <Sun size={18} /> : <Moon size={18} />}
+                    {theme === 'dark' ? 'الوضع النهاري' : 'الوضع الليلي'}
+                  </motion.button>
+                </div>
               </div>
             </motion.div>
           </>

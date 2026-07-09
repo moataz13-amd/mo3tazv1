@@ -32,7 +32,7 @@ export default function ProjectDesigns() {
 
   if (loading) {
     return (
-      <div className="min-h-screen flex items-center justify-center bg-[#050816]">
+      <div className="min-h-screen flex items-center justify-center" style={{ background: 'var(--bg)' }}>
         <div className="spinner mx-auto mb-4" />
       </div>
     );
@@ -44,7 +44,7 @@ export default function ProjectDesigns() {
   const hasImages = images.length > 0;
 
   return (
-    <div className="min-h-screen bg-[#050816] text-white" dir="rtl">
+    <div className="min-h-screen text-white" style={{ background: 'var(--bg)' }} dir="rtl">
       <FloatingNav projectTitle={project.title} />
 
       {/* Content */}

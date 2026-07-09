@@ -197,21 +197,7 @@ const Experience = memo(function Experience() {
         transition={{ duration: 0.7 }}
         className="max-w-4xl mx-auto"
       >
-        {/* Header */}
-        <div className="text-center mb-10">
-          <div
-            className="inline-flex items-center gap-2 px-4 py-1.5 rounded-full mb-4 text-xs font-mono"
-            style={{ background: 'rgba(0,191,255,0.08)', border: '1px solid rgba(0,191,255,0.2)', color: '#00BFFF' }}
-          >
-            ◫ TIMELINE
-          </div>
-          <h2 className="text-3xl md:text-4xl font-bold text-white mb-2" style={{ fontFamily: 'Outfit' }}>
-            My <span className="gradient-text">Journey</span>
-          </h2>
-          <p className="text-sm" style={{ color: 'rgba(255,255,255,0.5)' }}>
-            Education, experience, and certifications
-          </p>
-        </div>
+
 
         {/* Filter tabs */}
         <div className="flex flex-wrap gap-2 justify-center mb-10">

@@ -177,7 +177,7 @@ const Hero = memo(function Hero() {
         <div
           className="absolute inset-0"
           style={{
-            background: 'linear-gradient(to bottom, transparent 0%, transparent 40%, rgba(5,8,22,0.5) 70%, #050816 100%)',
+            background: 'linear-gradient(to bottom, transparent 0%, transparent 40%, rgba(5,8,22,0.5) 70%, var(--bg) 100%)',
           }}
         />
       </div>

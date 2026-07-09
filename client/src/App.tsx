@@ -25,7 +25,7 @@ const AdminClientLogos = lazy(() => import('./pages/admin/ClientLogos'));
 
 // Loading screen
 const LoadingScreen = () => (
-  <div className="min-h-screen flex items-center justify-center" style={{ background: '#050816' }}>
+  <div className="min-h-screen flex items-center justify-center" style={{ background: 'var(--bg)' }}>
     <div className="text-center">
       <div className="spinner mx-auto mb-4" />
       <p className="text-primary text-sm font-mono tracking-widest animate-pulse">INITIALIZING...</p>
@@ -50,7 +50,7 @@ const ProtectedRoute = ({ children }: { children: React.ReactNode }) => {
 
   if (!isHydrated) {
     return (
-      <div className="min-h-screen flex items-center justify-center" style={{ background: '#050816' }}>
+      <div className="min-h-screen flex items-center justify-center" style={{ background: 'var(--bg)' }}>
         <div className="text-center">
           <div className="spinner mx-auto mb-4" />
           <p className="text-primary text-sm font-mono tracking-widest animate-pulse">RESTORING SESSION...</p>

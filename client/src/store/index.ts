@@ -40,13 +40,10 @@ interface UIState {
   sidebarOpen: boolean;
   adminSidebarOpen: boolean;
   adminLanguage: 'en' | 'ar';
-  theme: 'light' | 'dark';
   setActiveSection: (section: string) => void;
   setSidebarOpen: (open: boolean) => void;
   setAdminSidebarOpen: (open: boolean) => void;
   setAdminLanguage: (lang: 'en' | 'ar') => void;
-  toggleTheme: () => void;
-  setTheme: (theme: 'light' | 'dark') => void;
 }
 
 function getInitialAdminLanguage(): 'en' | 'ar' {
@@ -64,13 +61,10 @@ export const useUIStore = create<UIState>()(
       sidebarOpen: true,
       adminSidebarOpen: typeof window !== 'undefined' ? window.innerWidth >= 768 : true,
       adminLanguage: getInitialAdminLanguage(),
-      theme: 'dark',
       setActiveSection: (section) => set({ activeSection: section }),
       setSidebarOpen: (open) => set({ sidebarOpen: open }),
       setAdminSidebarOpen: (open) => set({ adminSidebarOpen: open }),
       setAdminLanguage: (lang) => set({ adminLanguage: lang }),
-      toggleTheme: () => set((s) => ({ theme: s.theme === 'dark' ? 'light' : 'dark' })),
-      setTheme: (theme) => set({ theme }),
     }),
     { name: 'portfolio-ui' }
   )

@@ -209,9 +209,9 @@ const Experience = memo(function Experience() {
               onClick={() => setFilter(f.id)}
               className="px-4 py-1.5 rounded-lg text-sm font-medium transition-all"
               style={{
-                background: filter === f.id ? 'rgba(0,191,255,0.2)' : 'rgba(255,255,255,0.05)',
-                border: filter === f.id ? '1px solid rgba(0,191,255,0.5)' : '1px solid rgba(255,255,255,0.08)',
-                color: filter === f.id ? '#00BFFF' : 'rgba(255,255,255,0.5)',
+                background: filter === f.id ? 'rgba(0,191,255,0.2)' : 'var(--glass-bg)',
+                border: filter === f.id ? '1px solid rgba(0,191,255,0.5)' : 'var(--glass-border)',
+                color: filter === f.id ? 'var(--primary)' : 'var(--text-muted)',
               }}
             >
               {f.label}

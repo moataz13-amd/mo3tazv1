@@ -112,7 +112,7 @@ const Testimonials = memo(function Testimonials() {
           <h2 className="text-3xl md:text-4xl font-bold text-white mb-2" style={{ fontFamily: 'Outfit' }}>
             What Clients <span className="gradient-text">Say</span>
           </h2>
-          <p className="text-sm" style={{ color: 'rgba(255,255,255,0.5)' }}>
+           <p className="text-sm" style={{ color: 'var(--text-muted)' }}>
             Real feedback from real partnerships
           </p>
         </div>
@@ -145,7 +145,7 @@ const Testimonials = memo(function Testimonials() {
               </div>
 
               {/* Quote */}
-              <p className="text-lg mb-6" style={{ color: 'rgba(255,255,255,0.8)', lineHeight: 1.8, fontStyle: 'italic' }}>
+              <p className="text-lg mb-6" style={{ color: 'var(--text-primary)', lineHeight: 1.8, fontStyle: 'italic' }}>
                 "{t.content}"
               </p>
 
@@ -174,7 +174,7 @@ const Testimonials = memo(function Testimonials() {
                   {t.project_type && (
                     <div
                       className="text-xs mt-0.5 font-mono"
-                      style={{ color: 'rgba(255,255,255,0.3)' }}
+                      style={{ color: 'var(--text-muted)' }}
                     >
                       {t.project_type}
                     </div>
@@ -196,7 +196,7 @@ const Testimonials = memo(function Testimonials() {
                   style={{
                     width: i === current ? '24px' : '8px',
                     height: '8px',
-                    background: i === current ? '#00BFFF' : 'rgba(255,255,255,0.2)',
+                    background: i === current ? '#00BFFF' : 'var(--glass-dot)',
                     boxShadow: i === current ? '0 0 10px #00BFFF' : 'none',
                   }}
                 />

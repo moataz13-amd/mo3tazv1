@@ -275,9 +275,9 @@ const Hero = memo(function Hero() {
                 <div
                   className="px-6 py-2 rounded-full text-sm select-none flex-shrink-0"
                   style={{
-                    background: tag.variant === 'solid' ? '#00E5FF' : 'rgba(255, 255, 255, 0.08)',
-                    color: tag.variant === 'solid' ? '#000000' : '#26EFFD',
-                    border: tag.variant === 'solid' ? 'none' : '1px solid rgba(38, 239, 253, 0.3)',
+                    background: tag.variant === 'solid' ? 'var(--primary)' : 'var(--card-bg)',
+                    color: tag.variant === 'solid' ? '#000000' : 'var(--primary)',
+                    border: tag.variant === 'solid' ? 'none' : '1px solid var(--primary)',
                     fontFamily: "'Sahara Bold', 'Inter', sans-serif",
                     fontSize: '15px',
                   }}
@@ -297,9 +297,9 @@ const Hero = memo(function Hero() {
                   <div
                     className="px-6 py-2 rounded-full text-sm select-none flex-shrink-0"
                     style={{
-                      background: tag.variant === 'solid' ? '#00E5FF' : 'rgba(255, 255, 255, 0.08)',
-                      color: tag.variant === 'solid' ? '#000000' : '#26EFFD',
-                      border: tag.variant === 'solid' ? 'none' : '1px solid rgba(38, 239, 253, 0.3)',
+                      background: tag.variant === 'solid' ? 'var(--primary)' : 'var(--card-bg)',
+                      color: tag.variant === 'solid' ? '#000000' : 'var(--primary)',
+                      border: tag.variant === 'solid' ? 'none' : '1px solid var(--primary)',
                       fontFamily: "'Sahara Bold', 'Inter', sans-serif",
                       fontSize: '15px',
                     }}

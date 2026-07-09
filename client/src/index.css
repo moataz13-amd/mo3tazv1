@@ -91,6 +91,10 @@
   --text-muted: rgba(255, 255, 255, 0.6);
   --neon-glow: 0 0 20px rgba(0, 229, 255, 0.4), 0 0 60px rgba(0, 229, 255, 0.15);
   --glass-blur: blur(20px);
+  --glass-bg: rgba(255,255,255,0.05);
+  --glass-bg-hover: rgba(255,255,255,0.08);
+  --glass-border: rgba(255,255,255,0.08);
+  --glass-dot: rgba(255,255,255,0.2);
   --transition: all 0.3s cubic-bezier(0.4, 0, 0.2, 1);
 }
 
@@ -109,6 +113,10 @@
   --text-muted: rgba(15, 23, 42, 0.5);
   --neon-glow: 0 0 20px rgba(0, 153, 170, 0.3), 0 0 60px rgba(0, 153, 170, 0.1);
   --glass-blur: blur(20px);
+  --glass-bg: rgba(0,0,0,0.03);
+  --glass-bg-hover: rgba(0,0,0,0.06);
+  --glass-border: rgba(0,0,0,0.08);
+  --glass-dot: rgba(0,0,0,0.15);
   --transition: all 0.3s cubic-bezier(0.4, 0, 0.2, 1);
 }
 
@@ -125,8 +133,18 @@
 [data-theme="light"] .bg-white\/5 { background: rgba(0,0,0,0.03) !important; }
 [data-theme="light"] .bg-white\/10 { background: rgba(0,0,0,0.05) !important; }
 [data-theme="light"] .bg-white\/20 { background: rgba(0,0,0,0.08) !important; }
+[data-theme="light"] .text-white\/30 { color: rgba(15,23,42,0.3) !important; }
+[data-theme="light"] .text-white\/40 { color: rgba(15,23,42,0.4) !important; }
+[data-theme="light"] .text-white\/50 { color: rgba(15,23,42,0.5) !important; }
+[data-theme="light"] .text-white\/60 { color: rgba(15,23,42,0.6) !important; }
+[data-theme="light"] .text-white\/70 { color: rgba(15,23,42,0.7) !important; }
+[data-theme="light"] .text-white\/80 { color: rgba(15,23,42,0.8) !important; }
+[data-theme="light"] .text-white\/90 { color: rgba(15,23,42,0.9) !important; }
 
-[data-theme="light"] section p { color: var(--text-secondary); }
+/* Force light mode text on section paragraphs */
+[data-theme="light"] section p,
+[data-theme="light"] .text-description { color: var(--text-secondary) !important; }
+
 [data-theme="light"] .description-text { color: var(--text-secondary) !important; }
 
 html {

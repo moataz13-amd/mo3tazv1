@@ -203,7 +203,7 @@ const Footer = memo(function Footer() {
         {/* Copyright Footer */}
         <div className="w-full pt-8 border-t border-black/10 flex flex-col md:flex-row gap-4 items-center justify-between text-xs font-black opacity-70" style={{ fontFamily: "'Sahara Bold', 'Inter', sans-serif" }}>
           <span>معتز جمعة. جميع الحقوق محفوظة</span>
-          <span>تصميم و تطوير... معتز جمعة</span>
+          <span>تطوير و تصميم شركة 3m techs</span>
         </div>
 
       </div>

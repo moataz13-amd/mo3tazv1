@@ -749,10 +749,13 @@ select.input-field option {
 .admin-content-shell > div:not(.admin-dashboard-frame) {
   border: 1px solid rgba(201, 214, 231, 0.72);
   border-radius: 30px;
-  background: var(--admin-panel);
+  background:
+    linear-gradient(180deg, #dce7f4 0%, #c9d8ea 100%);
   color: var(--admin-ink);
   padding: 1rem;
+  min-height: calc(100vh - 8.5rem);
   box-shadow: 0 30px 80px rgba(0, 0, 0, 0.28);
+  overflow: hidden;
 }
 
 @media (min-width: 768px) {
@@ -762,17 +765,32 @@ select.input-field option {
 }
 
 .admin-content-shell > div:not(.admin-dashboard-frame) > div:first-child {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  gap: 1rem;
   margin: -1rem -1rem 1rem;
-  padding: 1rem 1.15rem;
+  min-height: 92px;
+  padding: 1.15rem 1.35rem;
   border-radius: 26px 26px 0 0;
-  background: var(--admin-ink);
+  background:
+    linear-gradient(135deg, #17213c 0%, #121b34 100%);
   color: #ffffff;
+  border-bottom: 1px solid rgba(255, 255, 255, 0.08);
 }
 
 @media (min-width: 768px) {
   .admin-content-shell > div:not(.admin-dashboard-frame) > div:first-child {
     margin: -1.35rem -1.35rem 1.25rem;
-    padding: 1.2rem 1.5rem;
+    min-height: 104px;
+    padding: 1.35rem 1.7rem;
+  }
+}
+
+@media (max-width: 640px) {
+  .admin-content-shell > div:not(.admin-dashboard-frame) > div:first-child {
+    align-items: stretch;
+    flex-direction: column;
   }
 }
 
@@ -780,10 +798,14 @@ select.input-field option {
 .admin-content-shell > div:not(.admin-dashboard-frame) > div:first-child h2 {
   color: #ffffff !important;
   letter-spacing: 0 !important;
+  line-height: 1.15;
 }
 
 .admin-content-shell > div:not(.admin-dashboard-frame) > div:first-child p {
   color: #aab8d1 !important;
+  margin-top: 0.35rem;
+  max-width: 48rem;
+  line-height: 1.6;
 }
 
 .admin-content-shell .glass-card,
@@ -797,6 +819,11 @@ select.input-field option {
   backdrop-filter: none !important;
   -webkit-backdrop-filter: none !important;
   overflow: hidden;
+}
+
+.admin-content-shell > div:not(.admin-dashboard-frame) > .glass-card,
+.admin-content-shell > div:not(.admin-dashboard-frame) > form > .glass-card {
+  border-radius: 22px !important;
 }
 
 .admin-content-shell .glass-card:hover,
@@ -869,12 +896,26 @@ select.input-field option {
   border-bottom: 1px solid var(--admin-line);
 }
 
+.admin-content-shell .project-card.aspect-square {
+  border: 6px solid #ffffff !important;
+  border-radius: 20px !important;
+  box-shadow: 0 16px 30px rgba(60, 86, 120, 0.18) !important;
+}
+
+.admin-content-shell .project-card.aspect-square img {
+  border-radius: 14px;
+}
+
 .admin-content-shell .input-field {
   background: #f8fbff !important;
   color: var(--admin-ink) !important;
   border: 1px solid #cfdae8 !important;
   border-radius: 14px !important;
   box-shadow: inset 0 1px 0 rgba(255, 255, 255, 0.75);
+}
+
+.admin-content-shell label {
+  color: #53657f;
 }
 
 .admin-content-shell .input-field:focus {
@@ -918,6 +959,7 @@ select.input-field option {
   box-shadow: 0 12px 24px rgba(34, 211, 214, 0.28) !important;
   font-family: 'Milan Display', 'Cairo', 'Inter', sans-serif !important;
   font-weight: 900 !important;
+  min-height: 2.35rem;
 }
 
 .admin-content-shell .neon-btn:hover,
@@ -929,6 +971,13 @@ select.input-field option {
 
 .admin-content-shell .border-glass-border {
   border-color: var(--admin-line) !important;
+}
+
+.admin-content-shell > div:not(.admin-dashboard-frame) > .glass-card.flex,
+.admin-content-shell > div:not(.admin-dashboard-frame) > .glass-card[class*="justify-between"] {
+  background: #ffffff !important;
+  border-radius: 18px !important;
+  padding: 1rem 1.25rem !important;
 }
 
 .admin-content-shell .bg-surface,
@@ -945,6 +994,7 @@ select.input-field option {
 
 .admin-content-shell table {
   color: var(--admin-ink);
+  min-width: 720px;
 }
 
 .admin-content-shell thead tr {

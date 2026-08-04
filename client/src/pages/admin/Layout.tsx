@@ -194,7 +194,7 @@ export default function AdminLayout() {
 
         {/* Panel Content wrapper with padding & scroll */}
         <main className="admin-main flex-1 overflow-y-auto p-4 md:p-7 relative">
-          <div className="admin-content-shell relative z-10 max-w-7xl mx-auto space-y-8">
+          <div className="admin-content-shell relative z-10 w-full max-w-[1600px] mx-auto space-y-8">
             <Outlet />
           </div>
         </main>

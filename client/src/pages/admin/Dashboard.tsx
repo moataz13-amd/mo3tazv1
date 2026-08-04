@@ -277,7 +277,7 @@ export default function Dashboard() {
   }));
 
   return (
-    <div className="rounded-[30px] border border-[#c9d6e7]/70 bg-[#dce7f4] p-3 text-[#17213c] shadow-[0_30px_80px_rgba(0,0,0,0.28)] md:p-5">
+    <div className="admin-dashboard-frame rounded-[30px] border border-[#c9d6e7]/70 bg-[#dce7f4] p-3 text-[#17213c] shadow-[0_30px_80px_rgba(0,0,0,0.28)] md:p-5">
       <div className="overflow-hidden rounded-[26px] border border-white/70 bg-[#c7d6e8] shadow-[inset_0_1px_0_rgba(255,255,255,0.7)]">
         <div className="flex flex-col gap-4 bg-[#17213c] px-4 py-4 text-white md:flex-row md:items-center md:justify-between md:px-7">
           <div className="flex items-center gap-3">

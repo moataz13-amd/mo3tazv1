@@ -708,6 +708,365 @@ select.input-field option {
   color: var(--text) !important;
 }
 
+/* ============================================
+   ADMIN PORTFOLIO DASHBOARD THEME
+   ============================================ */
+.admin-shell {
+  --admin-ink: #17213c;
+  --admin-muted: #687895;
+  --admin-soft: #8aa0bd;
+  --admin-page: #b9cbe0;
+  --admin-panel: #dce7f4;
+  --admin-card: #ffffff;
+  --admin-line: #d8e2ef;
+  --admin-track: #e8eef6;
+  --admin-cyan: #22d3d6;
+  --admin-blue: #1f6fb2;
+  --admin-navy: #111a32;
+  --admin-violet: #8b5cf6;
+  background:
+    linear-gradient(180deg, #050816 0%, #071020 48%, #050816 100%);
+}
+
+.admin-sidebar-panel {
+  background: #050816 !important;
+  border-color: rgba(34, 211, 214, 0.16) !important;
+  box-shadow: 20px 0 60px rgba(0, 0, 0, 0.24);
+}
+
+.admin-topbar {
+  background: rgba(5, 8, 22, 0.86) !important;
+  border-color: rgba(34, 211, 214, 0.16) !important;
+  box-shadow: 0 16px 40px rgba(0, 0, 0, 0.18);
+}
+
+.admin-main {
+  background:
+    linear-gradient(180deg, rgba(185, 203, 224, 0.08), rgba(185, 203, 224, 0.02)),
+    #050816;
+}
+
+.admin-content-shell > div:not(.admin-dashboard-frame) {
+  border: 1px solid rgba(201, 214, 231, 0.72);
+  border-radius: 30px;
+  background: var(--admin-panel);
+  color: var(--admin-ink);
+  padding: 1rem;
+  box-shadow: 0 30px 80px rgba(0, 0, 0, 0.28);
+}
+
+@media (min-width: 768px) {
+  .admin-content-shell > div:not(.admin-dashboard-frame) {
+    padding: 1.35rem;
+  }
+}
+
+.admin-content-shell > div:not(.admin-dashboard-frame) > div:first-child {
+  margin: -1rem -1rem 1rem;
+  padding: 1rem 1.15rem;
+  border-radius: 26px 26px 0 0;
+  background: var(--admin-ink);
+  color: #ffffff;
+}
+
+@media (min-width: 768px) {
+  .admin-content-shell > div:not(.admin-dashboard-frame) > div:first-child {
+    margin: -1.35rem -1.35rem 1.25rem;
+    padding: 1.2rem 1.5rem;
+  }
+}
+
+.admin-content-shell > div:not(.admin-dashboard-frame) > div:first-child h1,
+.admin-content-shell > div:not(.admin-dashboard-frame) > div:first-child h2 {
+  color: #ffffff !important;
+  letter-spacing: 0 !important;
+}
+
+.admin-content-shell > div:not(.admin-dashboard-frame) > div:first-child p {
+  color: #aab8d1 !important;
+}
+
+.admin-content-shell .glass-card,
+.admin-content-shell .project-card,
+.admin-content-shell .section-panel {
+  background: var(--admin-card) !important;
+  color: var(--admin-ink);
+  border: 1px solid rgba(216, 226, 239, 0.95) !important;
+  border-radius: 20px !important;
+  box-shadow: 0 16px 34px rgba(60, 86, 120, 0.16) !important;
+  backdrop-filter: none !important;
+  -webkit-backdrop-filter: none !important;
+  overflow: hidden;
+}
+
+.admin-content-shell .glass-card:hover,
+.admin-content-shell .project-card:hover {
+  border-color: rgba(31, 111, 178, 0.32) !important;
+  box-shadow: 0 24px 46px rgba(60, 86, 120, 0.2) !important;
+  transform: translateY(-2px);
+}
+
+.admin-content-shell .glass-card::before,
+.admin-content-shell .stat-card::before {
+  display: none !important;
+}
+
+.admin-content-shell .glass-card h1,
+.admin-content-shell .glass-card h2,
+.admin-content-shell .glass-card h3,
+.admin-content-shell .glass-card h4,
+.admin-content-shell .project-card h1,
+.admin-content-shell .project-card h2,
+.admin-content-shell .project-card h3,
+.admin-content-shell .project-card h4,
+.admin-content-shell .modal-content h1,
+.admin-content-shell .modal-content h2,
+.admin-content-shell .modal-content h3,
+.admin-content-shell .modal-content h4 {
+  color: var(--admin-ink) !important;
+  letter-spacing: 0 !important;
+}
+
+.admin-content-shell .glass-card .text-white {
+  color: var(--admin-ink) !important;
+}
+
+.admin-content-shell .project-card .absolute h1,
+.admin-content-shell .project-card .absolute h2,
+.admin-content-shell .project-card .absolute h3,
+.admin-content-shell .project-card .absolute h4,
+.admin-content-shell .project-card .absolute .text-white,
+.admin-content-shell .glass-card .absolute .text-white {
+  color: #ffffff !important;
+}
+
+.admin-content-shell .glass-card p,
+.admin-content-shell .project-card p,
+.admin-content-shell .modal-content p {
+  color: var(--admin-muted);
+}
+
+.admin-content-shell .glass-card .text-gray-300,
+.admin-content-shell .glass-card .text-gray-400,
+.admin-content-shell .glass-card .text-gray-500,
+.admin-content-shell .project-card .text-gray-300,
+.admin-content-shell .project-card .text-gray-400,
+.admin-content-shell .project-card .text-gray-500,
+.admin-content-shell .modal-content .text-gray-300,
+.admin-content-shell .modal-content .text-gray-400,
+.admin-content-shell .modal-content .text-gray-500 {
+  color: var(--admin-muted) !important;
+}
+
+.admin-content-shell .glass-card .text-primary,
+.admin-content-shell .project-card .text-primary,
+.admin-content-shell .modal-content .text-primary {
+  color: var(--admin-blue) !important;
+}
+
+.admin-content-shell .project-card-image {
+  background: #edf4fb !important;
+  border-bottom: 1px solid var(--admin-line);
+}
+
+.admin-content-shell .input-field {
+  background: #f8fbff !important;
+  color: var(--admin-ink) !important;
+  border: 1px solid #cfdae8 !important;
+  border-radius: 14px !important;
+  box-shadow: inset 0 1px 0 rgba(255, 255, 255, 0.75);
+}
+
+.admin-content-shell .input-field:focus {
+  border-color: var(--admin-blue) !important;
+  box-shadow: 0 0 0 4px rgba(31, 111, 178, 0.12) !important;
+  background: #ffffff !important;
+}
+
+.admin-content-shell .input-field::placeholder {
+  color: #97a7bd !important;
+}
+
+.admin-content-shell select.input-field {
+  background-color: #f8fbff !important;
+}
+
+.admin-content-shell select.input-field option {
+  background: #ffffff !important;
+  color: var(--admin-ink) !important;
+}
+
+.admin-content-shell input[type="file"] {
+  background: #f8fbff !important;
+  color: var(--admin-muted) !important;
+  border-color: #cfdae8 !important;
+}
+
+.admin-content-shell input[type="file"]::file-selector-button {
+  background: var(--admin-blue) !important;
+  color: #ffffff !important;
+  border-color: var(--admin-blue) !important;
+  box-shadow: none !important;
+}
+
+.admin-content-shell .neon-btn,
+.admin-content-shell .neon-btn-solid {
+  background: var(--admin-cyan) !important;
+  color: var(--admin-ink) !important;
+  border: 0 !important;
+  border-radius: 9999px !important;
+  box-shadow: 0 12px 24px rgba(34, 211, 214, 0.28) !important;
+  font-family: 'Milan Display', 'Cairo', 'Inter', sans-serif !important;
+  font-weight: 900 !important;
+}
+
+.admin-content-shell .neon-btn:hover,
+.admin-content-shell .neon-btn-solid:hover {
+  background: #36eef0 !important;
+  box-shadow: 0 16px 30px rgba(34, 211, 214, 0.36) !important;
+  transform: translateY(-1px) !important;
+}
+
+.admin-content-shell .border-glass-border {
+  border-color: var(--admin-line) !important;
+}
+
+.admin-content-shell .bg-surface,
+.admin-content-shell .bg-surface\/50,
+.admin-content-shell .bg-surface\/30,
+.admin-content-shell .bg-surface\/5 {
+  background-color: #edf4fb !important;
+}
+
+.admin-content-shell [class*="bg-[#050816]"],
+.admin-content-shell [class*="bg-[#0b1224]"] {
+  background-color: #edf4fb !important;
+}
+
+.admin-content-shell table {
+  color: var(--admin-ink);
+}
+
+.admin-content-shell thead tr {
+  border-color: var(--admin-line) !important;
+  color: var(--admin-muted) !important;
+}
+
+.admin-content-shell tbody {
+  border-color: var(--admin-line) !important;
+}
+
+.admin-content-shell tbody tr {
+  border-color: var(--admin-line) !important;
+}
+
+.admin-content-shell tbody tr:hover {
+  background: #f2f6fb !important;
+}
+
+.admin-content-shell .progress-bar-track,
+.admin-content-shell .h-1\.5.rounded-full.bg-surface,
+.admin-content-shell .w-full.bg-surface.rounded-full {
+  background: var(--admin-track) !important;
+  border-color: transparent !important;
+}
+
+.admin-content-shell .progress-bar-fill {
+  background: linear-gradient(90deg, var(--admin-blue), var(--admin-cyan)) !important;
+  box-shadow: none !important;
+}
+
+.admin-content-shell .modal-overlay {
+  background: rgba(5, 8, 22, 0.64);
+  backdrop-filter: blur(10px);
+}
+
+.admin-content-shell .modal-content {
+  background: #ffffff !important;
+  color: var(--admin-ink) !important;
+  border: 1px solid var(--admin-line) !important;
+  border-radius: 24px !important;
+  box-shadow: 0 30px 80px rgba(0, 0, 0, 0.34) !important;
+}
+
+.admin-content-shell .modal-content > div:first-child {
+  border-color: var(--admin-line) !important;
+}
+
+.admin-content-shell .spinner {
+  border-color: rgba(31, 111, 178, 0.12);
+  border-top-color: var(--admin-blue);
+}
+
+.admin-content-shell .shadow-neon-sm,
+.admin-content-shell .shadow-neon {
+  box-shadow: 0 12px 24px rgba(34, 211, 214, 0.18) !important;
+}
+
+.admin-content-shell .recharts-text {
+  fill: var(--admin-muted) !important;
+}
+
+.admin-content-shell .rounded-2xl {
+  border-radius: 18px;
+}
+
+.admin-content-shell .rounded-xl {
+  border-radius: 14px;
+}
+
+.admin-login {
+  --admin-ink: #17213c;
+  --admin-muted: #687895;
+  --admin-line: #d8e2ef;
+  --admin-blue: #1f6fb2;
+  --admin-cyan: #22d3d6;
+  background:
+    linear-gradient(180deg, rgba(185, 203, 224, 0.08), rgba(185, 203, 224, 0.02)),
+    #050816;
+}
+
+.admin-login .glass-card {
+  background: #ffffff !important;
+  color: var(--admin-ink);
+  border: 1px solid var(--admin-line) !important;
+  border-radius: 24px !important;
+  box-shadow: 0 30px 80px rgba(0, 0, 0, 0.34) !important;
+  backdrop-filter: none !important;
+  -webkit-backdrop-filter: none !important;
+}
+
+.admin-login .glass-card::before {
+  display: none !important;
+}
+
+.admin-login .input-field {
+  background: #f8fbff !important;
+  color: var(--admin-ink) !important;
+  border: 1px solid #cfdae8 !important;
+  border-radius: 14px !important;
+}
+
+.admin-login .input-field:focus {
+  border-color: var(--admin-blue) !important;
+  box-shadow: 0 0 0 4px rgba(31, 111, 178, 0.12) !important;
+  background: #ffffff !important;
+}
+
+.admin-login .input-field::placeholder {
+  color: #97a7bd !important;
+}
+
+.admin-login .neon-btn-solid {
+  background: var(--admin-cyan) !important;
+  color: var(--admin-ink) !important;
+  border: 0 !important;
+  border-radius: 9999px !important;
+  box-shadow: 0 12px 24px rgba(34, 211, 214, 0.28) !important;
+  font-family: 'Milan Display', 'Cairo', 'Inter', sans-serif !important;
+  font-weight: 900 !important;
+}
+
 /* Premium File Input Styling */
 input[type="file"] {
   background: var(--card-bg) !important;
@@ -749,4 +1108,3 @@ input[type="file"]::file-selector-button:hover {
   50% { background-position: 0% center; }
   100% { background-position: -200% center; }
 }
-

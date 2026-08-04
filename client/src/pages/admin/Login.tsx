@@ -48,17 +48,10 @@ export default function Login() {
   }, []);
 
   return (
-    <div className="min-h-screen relative flex items-center justify-center px-6 py-12 overflow-hidden" style={{ background: 'var(--bg)', fontFamily: "'Milan Display', 'Cairo', 'Inter', 'Outfit', sans-serif", fontSize: '17px' }}>
-      {/* Glow Effects */}
-      <div className="absolute top-1/4 left-1/4 w-96 h-96 rounded-full blur-[120px] opacity-20 bg-primary" />
-      <div className="absolute bottom-1/4 right-1/4 w-96 h-96 rounded-full blur-[120px] opacity-20 bg-secondary" />
-
-      {/* Grid Overlay */}
-      <div className="absolute inset-0 bg-[radial-gradient(ellipse_at_center,rgba(0,0,0,0)_0%,rgba(5,8,22,0.8)_85%)] pointer-events-none" />
-
+    <div className="admin-login min-h-screen relative flex items-center justify-center px-6 py-12 overflow-hidden" style={{ fontFamily: "'Milan Display', 'Cairo', 'Inter', 'Outfit', sans-serif", fontSize: '17px' }}>
       <div className="w-full max-w-md relative z-10">
         <div className="text-center mb-8 flex flex-col items-center">
-          <div className="mb-4">
+          <div className="mb-4 rounded-[22px] border border-white/10 bg-white/5 px-6 py-5">
             <img
               src="/Mo3taz..svg"
               alt="MO3TAZ."
@@ -68,7 +61,7 @@ export default function Login() {
               }}
             />
           </div>
-          <p className="text-[10px] text-primary/60 font-mono tracking-widest uppercase">
+          <p className="text-[10px] text-[#aab8d1] font-mono tracking-widest uppercase">
             System Control Panel
           </p>
         </div>
@@ -76,11 +69,11 @@ export default function Login() {
         <div className="glass-card p-8">
           <form onSubmit={handleSubmit(onSubmit)} className="space-y-6">
             <div>
-              <label className="block text-xs font-semibold text-primary mb-2 uppercase tracking-widest">
+              <label className="block text-xs font-semibold text-[#1f6fb2] mb-2 uppercase tracking-widest">
                 Email
               </label>
               <div className="relative">
-                <Mail className="absolute left-3.5 top-1/2 -translate-y-1/2 w-4 h-4 text-gray-500" />
+                <Mail className="absolute left-3.5 top-1/2 -translate-y-1/2 w-4 h-4 text-[#687895]" />
                 <input
                   {...register('email')}
                   type="email"
@@ -96,11 +89,11 @@ export default function Login() {
             </div>
 
             <div>
-              <label className="block text-xs font-semibold text-primary mb-2 uppercase tracking-widest">
+              <label className="block text-xs font-semibold text-[#1f6fb2] mb-2 uppercase tracking-widest">
                 Password
               </label>
               <div className="relative">
-                <Key className="absolute left-3.5 top-1/2 -translate-y-1/2 w-4 h-4 text-gray-500" />
+                <Key className="absolute left-3.5 top-1/2 -translate-y-1/2 w-4 h-4 text-[#687895]" />
                 <input
                   {...register('password')}
                   type="password"
@@ -133,7 +126,7 @@ export default function Login() {
         </div>
 
         <div className="text-center mt-6">
-          <p className="text-xs text-gray-500 font-mono">
+          <p className="text-xs text-[#aab8d1] font-mono">
             AUTHORIZED PERSONNEL ONLY &bull; SECURE DATABASE SYSTEM
           </p>
         </div>

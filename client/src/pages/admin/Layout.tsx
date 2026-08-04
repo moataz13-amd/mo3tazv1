@@ -71,7 +71,7 @@ export default function AdminLayout() {
 
   return (
     <div
-      className="min-h-screen text-white flex transition-all duration-300"
+      className="admin-shell min-h-screen text-white flex transition-all duration-300"
       dir={adminLanguage === 'ar' ? 'rtl' : 'ltr'}
       style={{ background: 'var(--bg)', fontFamily: "'Milan Display', 'Cairo', 'Inter', 'Outfit', sans-serif", fontSize: '17px' }}
     >
@@ -83,7 +83,7 @@ export default function AdminLayout() {
       {/* Sidebar Panel */}
       <aside
         ref={sidebarRef}
-        className={`${
+        className={`admin-sidebar-panel ${
           adminSidebarOpen ? '' : 'max-md:hidden'
         } fixed md:relative top-0 bottom-0 ${
           adminLanguage === 'ar' ? 'right-0 border-l' : 'left-0 border-r'
@@ -121,23 +121,23 @@ export default function AdminLayout() {
               <Link
                 key={item.path}
                 to={item.path}
-                className={`flex items-center gap-3 px-3 py-2.5 transition-all duration-150 group relative border-2 ${
+                className={`flex items-center gap-3 px-3 py-2.5 transition-all duration-150 group relative border ${
                   isActive
-                    ? 'bg-[#00E5FF] text-black border-black shadow-[4px_4px_0px_#000000] font-black rounded-xl'
-                    : 'text-gray-400 border-transparent hover:text-black hover:bg-[#00E5FF] hover:border-black hover:shadow-[4px_4px_0px_#000000] rounded-xl hover:translate-x-0.5 hover:translate-y-0.5'
+                    ? 'bg-[#22d3d6] text-[#17213c] border-[#22d3d6] shadow-[0_12px_24px_rgba(34,211,214,0.24)] font-black rounded-2xl'
+                    : 'text-[#aab8d1] border-transparent hover:text-white hover:bg-white/10 hover:border-white/10 rounded-2xl'
                 }`}
               >
                 <Icon
                   size={18}
                   className={`flex-shrink-0 transition-transform group-hover:scale-110 ${
-                    isActive ? 'text-black' : 'text-gray-400 group-hover:text-black'
+                    isActive ? 'text-[#17213c]' : 'text-[#aab8d1] group-hover:text-white'
                   }`}
                 />
                 {adminSidebarOpen && <span className="whitespace-nowrap font-black tracking-wide text-sm uppercase">{itemLabel}</span>}
 
                 {/* Tooltip for collapsed mode */}
                 {!adminSidebarOpen && (
-                  <div className={`absolute ${adminLanguage === 'ar' ? 'right-16' : 'left-16'} px-2 py-1 bg-[#00E5FF] border border-black text-black rounded-lg text-xs font-mono opacity-0 group-hover:opacity-100 transition-opacity pointer-events-none z-50 whitespace-nowrap shadow-[2px_2px_0px_#000000]`}>
+                  <div className={`absolute ${adminLanguage === 'ar' ? 'right-16' : 'left-16'} px-3 py-1.5 bg-[#22d3d6] text-[#17213c] rounded-xl text-xs font-bold opacity-0 group-hover:opacity-100 transition-opacity pointer-events-none z-50 whitespace-nowrap shadow-[0_12px_24px_rgba(34,211,214,0.24)]`}>
                     {itemLabel}
                   </div>
                 )}
@@ -150,13 +150,13 @@ export default function AdminLayout() {
         <div className="p-3 border-t border-glass-border">
           <button
             onClick={handleLogout}
-            className="w-full flex items-center gap-3 px-3 py-2.5 transition-all duration-150 border-2 border-transparent text-red-400 hover:text-black hover:bg-red-500 hover:border-black hover:shadow-[4px_4px_0px_#000000] rounded-xl cursor-pointer group relative hover:translate-x-0.5 hover:translate-y-0.5"
+            className="w-full flex items-center gap-3 px-3 py-2.5 transition-all duration-150 border border-transparent text-red-300 hover:text-white hover:bg-red-500/15 hover:border-red-400/25 rounded-2xl cursor-pointer group relative"
           >
             <LogOut size={18} className="flex-shrink-0 group-hover:scale-110 transition-transform" />
             {adminSidebarOpen && <span className="whitespace-nowrap font-black tracking-wide text-xs uppercase">{t('exitSystem')}</span>}
 
             {!adminSidebarOpen && (
-              <div className={`absolute ${adminLanguage === 'ar' ? 'right-16' : 'left-16'} px-2 py-1 bg-red-500 border border-black text-black rounded-lg text-xs font-mono opacity-0 group-hover:opacity-100 transition-opacity pointer-events-none z-50 whitespace-nowrap shadow-[2px_2px_0px_#000000]`}>
+              <div className={`absolute ${adminLanguage === 'ar' ? 'right-16' : 'left-16'} px-3 py-1.5 bg-red-500 text-white rounded-xl text-xs font-bold opacity-0 group-hover:opacity-100 transition-opacity pointer-events-none z-50 whitespace-nowrap shadow-[0_12px_24px_rgba(239,68,68,0.24)]`}>
                 {t('exitSystem')}
               </div>
             )}
@@ -167,11 +167,11 @@ export default function AdminLayout() {
       {/* Main Content Area */}
       <div className="flex-1 flex flex-col min-w-0 overflow-hidden">
         {/* Top bar (Global Header) */}
-        <header className="h-16 border-b border-glass-border flex items-center justify-between px-6 bg-[rgba(5,8,22,0.5)] backdrop-blur-xl">
+        <header className="admin-topbar h-16 border-b border-glass-border flex items-center justify-between px-6 bg-[rgba(5,8,22,0.5)] backdrop-blur-xl">
           <div className="flex items-center gap-4">
             <button
               onClick={() => setAdminSidebarOpen(!adminSidebarOpen)}
-              className="p-2 border border-glass-border hover:bg-surface text-primary rounded-xl cursor-pointer transition-colors duration-150"
+              className="p-2 border border-white/10 hover:bg-white/10 text-[#22d3d6] rounded-2xl cursor-pointer transition-colors duration-150"
             >
               <Menu size={18} />
             </button>
@@ -193,11 +193,8 @@ export default function AdminLayout() {
         </header>
 
         {/* Panel Content wrapper with padding & scroll */}
-        <main className="flex-1 overflow-y-auto p-6 md:p-8 relative">
-          <div className="absolute top-1/4 left-1/4 w-96 h-96 rounded-full blur-[150px] opacity-10 bg-primary pointer-events-none" />
-          <div className="absolute bottom-1/4 right-1/4 w-96 h-96 rounded-full blur-[150px] opacity-10 bg-secondary pointer-events-none" />
-
-          <div className="relative z-10 max-w-6xl mx-auto space-y-8">
+        <main className="admin-main flex-1 overflow-y-auto p-4 md:p-7 relative">
+          <div className="admin-content-shell relative z-10 max-w-7xl mx-auto space-y-8">
             <Outlet />
           </div>
         </main>
@@ -205,4 +202,3 @@ export default function AdminLayout() {
     </div>
   );
 }
-

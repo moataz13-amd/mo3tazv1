@@ -1117,6 +1117,224 @@ select.input-field option {
   font-weight: 900 !important;
 }
 
+/* Dark admin pass */
+.admin-shell,
+.admin-login {
+  --admin-ink: #eef6ff;
+  --admin-muted: #9fb0c8;
+  --admin-soft: #6f86a8;
+  --admin-page: #050816;
+  --admin-panel: #081126;
+  --admin-card: #0f1a32;
+  --admin-line: rgba(154, 179, 215, 0.18);
+  --admin-track: #17243d;
+  --admin-cyan: #22d3d6;
+  --admin-blue: #47a8ff;
+  --admin-navy: #101a31;
+  --admin-violet: #9b7cff;
+}
+
+.admin-main,
+.admin-login {
+  background:
+    radial-gradient(circle at 18% 0%, rgba(34, 211, 214, 0.09), transparent 30%),
+    linear-gradient(180deg, #050816 0%, #081126 52%, #050816 100%) !important;
+}
+
+.admin-content-shell > div:not(.admin-dashboard-frame),
+.admin-dashboard-frame {
+  background:
+    linear-gradient(180deg, rgba(18, 29, 55, 0.96), rgba(8, 17, 38, 0.98)) !important;
+  color: var(--admin-ink) !important;
+  border-color: rgba(154, 179, 215, 0.16) !important;
+  box-shadow: 0 30px 80px rgba(0, 0, 0, 0.42) !important;
+}
+
+.admin-content-shell > div:not(.admin-dashboard-frame) > div:first-child,
+.admin-dashboard-frame > div > div:first-child {
+  background:
+    linear-gradient(135deg, #111b34 0%, #17213c 100%) !important;
+  border-color: rgba(154, 179, 215, 0.14) !important;
+}
+
+.admin-content-shell > div:not(.admin-dashboard-frame) > div:first-child p,
+.admin-dashboard-frame > div > div:first-child p {
+  color: #aab8d1 !important;
+}
+
+.admin-content-shell .glass-card,
+.admin-content-shell .project-card,
+.admin-content-shell .section-panel,
+.admin-content-shell > div:not(.admin-dashboard-frame) > .glass-card.flex,
+.admin-content-shell > div:not(.admin-dashboard-frame) > .glass-card[class*="justify-between"],
+.admin-dashboard-frame .bg-white,
+.admin-dashboard-frame [class*="bg-[#edf4fb]"],
+.admin-dashboard-frame [class*="bg-[#f2f6fb]"] {
+  background: var(--admin-card) !important;
+  color: var(--admin-ink) !important;
+  border-color: var(--admin-line) !important;
+  box-shadow: 0 18px 38px rgba(0, 0, 0, 0.28) !important;
+}
+
+.admin-content-shell .glass-card:hover,
+.admin-content-shell .project-card:hover {
+  border-color: rgba(34, 211, 214, 0.38) !important;
+  box-shadow: 0 24px 48px rgba(0, 0, 0, 0.34) !important;
+}
+
+.admin-content-shell .project-card-image,
+.admin-content-shell .bg-surface,
+.admin-content-shell .bg-surface\/50,
+.admin-content-shell .bg-surface\/30,
+.admin-content-shell .bg-surface\/5,
+.admin-content-shell [class*="bg-[#050816]"],
+.admin-content-shell [class*="bg-[#0b1224]"],
+.admin-dashboard-frame [class*="bg-[#e8eef6]"],
+.admin-dashboard-frame [class*="bg-[#dbe5f2]"] {
+  background-color: #121d37 !important;
+}
+
+.admin-content-shell .project-card.aspect-square {
+  border-color: #13213f !important;
+}
+
+.admin-content-shell .glass-card h1,
+.admin-content-shell .glass-card h2,
+.admin-content-shell .glass-card h3,
+.admin-content-shell .glass-card h4,
+.admin-content-shell .project-card h1,
+.admin-content-shell .project-card h2,
+.admin-content-shell .project-card h3,
+.admin-content-shell .project-card h4,
+.admin-content-shell .modal-content h1,
+.admin-content-shell .modal-content h2,
+.admin-content-shell .modal-content h3,
+.admin-content-shell .modal-content h4,
+.admin-content-shell .glass-card .text-white,
+.admin-dashboard-frame h1,
+.admin-dashboard-frame h2,
+.admin-dashboard-frame h3,
+.admin-dashboard-frame h4,
+.admin-dashboard-frame .text-\[\#17213c\] {
+  color: var(--admin-ink) !important;
+}
+
+.admin-content-shell .glass-card p,
+.admin-content-shell .project-card p,
+.admin-content-shell .modal-content p,
+.admin-content-shell .glass-card .text-gray-300,
+.admin-content-shell .glass-card .text-gray-400,
+.admin-content-shell .glass-card .text-gray-500,
+.admin-content-shell .project-card .text-gray-300,
+.admin-content-shell .project-card .text-gray-400,
+.admin-content-shell .project-card .text-gray-500,
+.admin-content-shell .modal-content .text-gray-300,
+.admin-content-shell .modal-content .text-gray-400,
+.admin-content-shell .modal-content .text-gray-500,
+.admin-dashboard-frame .text-\[\#687895\],
+.admin-dashboard-frame .text-\[\#8aa0bd\] {
+  color: var(--admin-muted) !important;
+}
+
+.admin-content-shell .glass-card .text-primary,
+.admin-content-shell .project-card .text-primary,
+.admin-content-shell .modal-content .text-primary,
+.admin-dashboard-frame .text-\[\#1f6fb2\] {
+  color: var(--admin-cyan) !important;
+}
+
+.admin-content-shell .input-field,
+.admin-login .input-field {
+  background: #0b162d !important;
+  color: var(--admin-ink) !important;
+  border-color: rgba(154, 179, 215, 0.22) !important;
+  box-shadow: inset 0 1px 0 rgba(255, 255, 255, 0.04) !important;
+}
+
+.admin-content-shell .input-field:focus,
+.admin-login .input-field:focus {
+  border-color: var(--admin-cyan) !important;
+  background: #0f1d37 !important;
+  box-shadow: 0 0 0 4px rgba(34, 211, 214, 0.11) !important;
+}
+
+.admin-content-shell .input-field::placeholder,
+.admin-login .input-field::placeholder {
+  color: #6f86a8 !important;
+}
+
+.admin-content-shell select.input-field option {
+  background: #0b162d !important;
+  color: var(--admin-ink) !important;
+}
+
+.admin-content-shell select.input-field {
+  background-color: #0b162d !important;
+  color: var(--admin-ink) !important;
+  border-color: rgba(154, 179, 215, 0.22) !important;
+}
+
+.admin-content-shell input[type="file"] {
+  background: #0b162d !important;
+  color: var(--admin-muted) !important;
+  border-color: rgba(154, 179, 215, 0.22) !important;
+}
+
+.admin-content-shell label {
+  color: #aab8d1 !important;
+}
+
+.admin-content-shell table {
+  color: var(--admin-ink) !important;
+}
+
+.admin-content-shell thead tr,
+.admin-content-shell tbody,
+.admin-content-shell tbody tr {
+  border-color: var(--admin-line) !important;
+}
+
+.admin-content-shell tbody tr:hover {
+  background: rgba(34, 211, 214, 0.06) !important;
+}
+
+.admin-content-shell .modal-content,
+.admin-login .glass-card {
+  background: #0f1a32 !important;
+  color: var(--admin-ink) !important;
+  border-color: var(--admin-line) !important;
+  box-shadow: 0 30px 80px rgba(0, 0, 0, 0.46) !important;
+}
+
+.admin-dashboard-frame > div {
+  background: #0b162d !important;
+  border-color: var(--admin-line) !important;
+}
+
+.admin-dashboard-frame [class*="bg-[#c7d6e8]"],
+.admin-dashboard-frame [class*="bg-[#dce7f4]"] {
+  background: #0b162d !important;
+}
+
+.admin-dashboard-frame [class*="bg-[#0f4d7a]"] {
+  background: linear-gradient(180deg, #0d4269, #0b3152) !important;
+}
+
+.admin-dashboard-frame [class*="bg-[#17213c]"] {
+  background: #111b34 !important;
+}
+
+.admin-dashboard-frame [class*="text-[#4a5c78]"],
+.admin-dashboard-frame [class*="text-[#aab8d1]"],
+.admin-dashboard-frame [class*="text-[#b9d1e7]"] {
+  color: #aab8d1 !important;
+}
+
+.admin-dashboard-frame [class*="border-[#c9d6e7]"],
+.admin-dashboard-frame .border-white\/70 {
+  border-color: rgba(154, 179, 215, 0.16) !important;
+}
+
 /* Premium File Input Styling */
 input[type="file"] {
   background: var(--card-bg) !important;

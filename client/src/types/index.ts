@@ -23,7 +23,7 @@ export interface Project {
   tech_stack: string[];
   github_url?: string;
   live_url?: string;
-  category: 'web' | 'ui-ux' | 'graphic' | 'branding' | 'other';
+  category: 'web' | 'ui-ux' | 'graphic' | 'branding' | 'mockup' | 'other';
   featured: boolean;
   status: 'draft' | 'published';
   created_at: string;
@@ -212,5 +212,5 @@ export interface MediaFile {
   created_at: string;
 }
 
-export type ProjectCategory = 'all' | 'web' | 'ui-ux' | 'graphic' | 'branding';
+export type ProjectCategory = 'all' | 'web' | 'ui-ux' | 'graphic' | 'branding' | 'mockup';
 export type SkillCategory = 'frontend' | 'backend' | 'database' | 'ui-ux' | 'graphic';

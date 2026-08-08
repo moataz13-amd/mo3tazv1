@@ -246,6 +246,7 @@ export default function ProjectsManager() {
                   <select {...register('category')} className="input-field text-sm bg-[#050816]">
                     <option value="graphic">{t('graphicDesign')}</option>
                     <option value="branding">{t('brandingStrategy')}</option>
+                    <option value="mockup">{t('mockupShowcase')}</option>
                     <option value="ui-ux">{t('uiUxDesign')}</option>
                     <option value="web">{t('webDevelopment')}</option>
                   </select>

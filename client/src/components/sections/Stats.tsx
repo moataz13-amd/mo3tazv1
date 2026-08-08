@@ -119,7 +119,7 @@ const Stats = memo(function Stats() {
                   }}
                 >
                   {/* Icon Circle Container */}
-                  <div className="relative w-22 h-22 flex items-center justify-center mb-6">
+                  <div className="relative w-28 h-28 sm:w-32 sm:h-32 flex items-center justify-center mb-6">
                     {/* SVG Progress Circle Ring */}
                     <svg className="absolute inset-0 w-full h-full transform -rotate-90" viewBox="0 0 100 100">
                       <circle
@@ -127,7 +127,7 @@ const Stats = memo(function Stats() {
                         cy="50"
                         r="42"
                         stroke="rgba(38, 239, 253, 0.25)"
-                        strokeWidth="3.5"
+                        strokeWidth="4"
                         fill="transparent"
                       />
                       <motion.circle
@@ -135,7 +135,7 @@ const Stats = memo(function Stats() {
                         cy="50"
                         r="42"
                         stroke="#26EFFD"
-                        strokeWidth="3.5"
+                        strokeWidth="4"
                         fill="transparent"
                         strokeDasharray={strokeDasharray}
                         style={{
@@ -147,7 +147,7 @@ const Stats = memo(function Stats() {
 
                     {/* Icon badge */}
                     <div className="relative z-10 w-full h-full flex items-center justify-center text-[#26EFFD]">
-                      <IconComponent className="w-8 h-8 text-[#26EFFD]" />
+                      <IconComponent className="w-10 h-10 sm:w-11 sm:h-11 text-[#26EFFD]" />
                     </div>
                   </div>
 

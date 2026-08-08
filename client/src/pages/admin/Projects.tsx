@@ -394,7 +394,7 @@ export default function ProjectsManager() {
                   />
                 </div>
                 <div>
-                  <label className="block text-xs font-bold text-gray-300 mb-1.5">{t('internalName')}</label>
+                  <label className="block text-xs font-bold text-gray-300 mb-1.5">{t('internalName')} <span className="text-gray-500 font-normal">(اختياري)</span></label>
                   <input
                     {...register('internal_name')}
                     className="w-full bg-[#050816] border border-white/15 focus:border-[#26EFFD] focus:ring-1 focus:ring-[#26EFFD] rounded-xl px-4 py-2.5 text-xs text-white placeholder-gray-500 outline-none transition-all"
@@ -462,13 +462,12 @@ export default function ProjectsManager() {
 
               {/* Description */}
               <div>
-                <label className="block text-xs font-bold text-gray-300 mb-1.5">{t('descriptionAr')}</label>
+                <label className="block text-xs font-bold text-gray-300 mb-1.5">{t('descriptionAr')} <span className="text-gray-500 font-normal">(اختياري)</span></label>
                 <textarea
                   {...register('description')}
                   rows={2}
                   className="w-full bg-[#050816] border border-white/15 focus:border-[#26EFFD] focus:ring-1 focus:ring-[#26EFFD] rounded-xl px-4 py-2.5 text-xs text-white placeholder-gray-500 outline-none transition-all resize-none"
                   placeholder="e.g. تصاميم مستوحاة من ثقافة البوب آرت..."
-                  required
                 />
               </div>
 

@@ -1,56 +1,61 @@
 import { memo, useRef } from 'react';
 import { motion, useScroll, useTransform, useSpring } from 'framer-motion';
-import { ClipboardList, Calendar, Users } from 'lucide-react';
+import { ClipboardCheck, Calendar, Users } from 'lucide-react';
+import { useSettingsStore } from '../../store';
 
 interface StatItem {
   id: number;
   value: string;
   label: string;
   icon: React.ComponentType<{ className?: string }>;
-  progressTarget: number; // Percentage of the circle stroke (e.g. 0.75 for 75%)
+  progressTarget: number;
 }
-
-const statsData: StatItem[] = [
-  {
-    id: 1,
-    value: '+75',
-    label: 'مشروع تم تنفيذه',
-    icon: ClipboardList,
-    progressTarget: 0.75,
-  },
-  {
-    id: 2,
-    value: '+2',
-    label: 'سنوات خبرة',
-    icon: Calendar,
-    progressTarget: 0.45,
-  },
-  {
-    id: 3,
-    value: '+25',
-    label: 'عملاء راضِ',
-    icon: Users,
-    progressTarget: 0.80,
-  },
-];
 
 const Stats = memo(function Stats() {
   const containerRef = useRef<HTMLElement>(null);
+  const settings = useSettingsStore((state) => state.settings);
 
-  // useScroll to track scroll progress over the entire section
+  const stat1Val = settings?.stat2_value || '+75';
+  const stat1Lbl = settings?.stat2_label || 'مشروع تم تنفيذه';
+  
+  const stat3Val = settings?.stat1_value || '+4';
+  const stat3Lbl = settings?.stat1_label || 'عملاء راضون';
+
+  const statsData: StatItem[] = [
+    {
+      id: 1,
+      value: stat1Val.startsWith('+') ? stat1Val : `+${stat1Val}`,
+      label: stat1Lbl.includes('مشروع') ? stat1Lbl : 'مشروع تم تنفيذه',
+      icon: ClipboardCheck,
+      progressTarget: 0.85,
+    },
+    {
+      id: 2,
+      value: '+2',
+      label: 'سنوات خبرة',
+      icon: Calendar,
+      progressTarget: 0.65,
+    },
+    {
+      id: 3,
+      value: stat3Val.startsWith('+') ? stat3Val : `+${stat3Val}`,
+      label: stat3Lbl.includes('عملاء') || stat3Lbl.includes('شركات') ? 'عملاء راضون' : stat3Lbl,
+      icon: Users,
+      progressTarget: 0.90,
+    },
+  ];
+
   const { scrollYProgress } = useScroll({
     target: containerRef,
     offset: ['start end', 'end start'],
   });
 
-  // Create a smooth spring-based scroll progress
   const smoothProgress = useSpring(scrollYProgress, {
-    damping: 15,
+    damping: 18,
     mass: 0.2,
-    stiffness: 80,
+    stiffness: 90,
   });
 
-  // Transform scroll progress to continuous rotation for the circle outlines (e.g. rotate up to 360 degrees)
   const circleRotation = useTransform(smoothProgress, [0, 1], [0, 360]);
 
   return (
@@ -60,7 +65,10 @@ const Stats = memo(function Stats() {
       className="py-16 md:py-24 px-6 relative z-10 overflow-hidden"
       dir="rtl"
     >
-      <div className="max-w-5xl mx-auto flex flex-col gap-12">
+      {/* Background radial glow */}
+      <div className="absolute top-1/2 left-1/2 -translate-x-1/2 -translate-y-1/2 w-[1000px] h-[600px] bg-[radial-gradient(ellipse_at_center,rgba(38,239,253,0.05)_0%,transparent_70%)] pointer-events-none" />
+
+      <div className="max-w-5xl mx-auto flex flex-col gap-12 relative z-10">
         {/* Section Heading */}
         <motion.div
           initial={{ opacity: 0, y: 20 }}
@@ -70,71 +78,65 @@ const Stats = memo(function Stats() {
           className="text-center"
         >
           <h2
-            className="text-4xl md:text-5xl lg:text-6xl font-black text-white leading-tight"
+            className="text-3xl sm:text-4xl md:text-5xl lg:text-6xl font-black text-white leading-tight"
             style={{
               fontFamily: "'Milan Display', 'Sahara Bold', 'Inter', sans-serif",
               fontWeight: 900,
             }}
           >
-            أثر <span style={{ color: '#26EFFD' }}>يُرى ويُقاس</span>
+            أثر يُرى ويُقاس
           </h2>
         </motion.div>
 
         {/* Stats Cards Grid */}
-        <div className="grid grid-cols-1 md:grid-cols-3 gap-8 md:gap-10">
+        <div className="grid grid-cols-1 md:grid-cols-3 gap-6 md:gap-8">
           {statsData.map((item, index) => {
             const IconComponent = item.icon;
-
-            // Specific stroke dashoffset for each card based on scroll progress
-            // Total stroke length is 2 * Math.PI * 40 = 251.2
-            const strokeDasharray = 251.2;
+            const strokeDasharray = 263.8;
             
-            // Calculate progress value: starts at fully offset (empty) and draws up to its progressTarget as scroll enters
             const strokeDashoffset = useTransform(
               smoothProgress,
-              [0.1, 0.6], // Animates between 10% and 60% of scroll progress into the viewport
+              [0.1, 0.6],
               [strokeDasharray, strokeDasharray - strokeDasharray * item.progressTarget]
             );
 
             return (
               <motion.div
                 key={item.id}
-                initial={{ opacity: 0, y: 50 }}
+                initial={{ opacity: 0, y: 40 }}
                 whileInView={{ opacity: 1, y: 0 }}
                 viewport={{ once: true }}
                 transition={{ duration: 0.6, delay: index * 0.15 }}
-                className="w-full h-[380px] flex items-center justify-center group"
+                className="w-full flex items-center justify-center group"
               >
-                {/* Card with button style */}
+                {/* 100% Matched Card Design */}
                 <div
-                  className="relative w-full h-full flex flex-col items-center justify-center p-8 gap-6 text-center"
+                  className="relative w-full h-[370px] sm:h-[390px] md:h-[410px] flex flex-col items-center justify-center p-8 text-center transition-all duration-300 hover:scale-[1.02]"
                   style={{
-                    background: '#00E5FF',
-                    border: '2px solid #000000',
-                    borderRadius: '24px',
-                    color: '#000000',
-                    boxShadow: '6px 6px 0px #000000',
+                    background: 'linear-gradient(180deg, #091326 0%, #040712 100%)',
+                    border: '3px solid #26EFFD',
+                    borderRadius: '42px',
+                    boxShadow: '0 0 35px rgba(38, 239, 253, 0.4), inset 0 0 20px rgba(38, 239, 253, 0.15)',
                   }}
                 >
                   {/* Icon Circle Container */}
-                  <div className="relative w-20 h-20 flex items-center justify-center">
-                    
-                    {/* SVG Progress Circle */}
+                  <div className="relative w-22 h-22 flex items-center justify-center mb-6">
+                    {/* SVG Progress Circle Ring */}
                     <svg className="absolute inset-0 w-full h-full transform -rotate-90" viewBox="0 0 100 100">
                       <circle
                         cx="50"
                         cy="50"
-                        r="40"
-                        stroke="rgba(0,0,0,0.15)"
-                        strokeWidth="6"
+                        r="42"
+                        stroke="rgba(38, 239, 253, 0.25)"
+                        strokeWidth="3.5"
                         fill="transparent"
                       />
                       <motion.circle
                         cx="50"
                         cy="50"
-                        r="40"
-                        stroke="#000000"
-                        strokeWidth="6"
+                        r="42"
+                        stroke="#26EFFD"
+                        strokeWidth="3.5"
                         fill="transparent"
                         strokeDasharray={strokeDasharray}
                         style={{
@@ -144,27 +146,30 @@ const Stats = memo(function Stats() {
                       />
                     </svg>
 
-                    {/* Icon container */}
-                    <div className="relative z-10 w-16 h-16 rounded-full bg-black flex items-center justify-center">
-                      <IconComponent className="w-7 h-7 text-[#00E5FF]" />
+                    {/* Icon badge */}
+                    <div className="relative z-10 w-15 h-15 rounded-full bg-[#050814] border border-[#26EFFD]/50 flex items-center justify-center text-[#26EFFD] shadow-[0_0_18px_rgba(38,239,253,0.35)]">
+                      <IconComponent className="w-7 h-7 text-[#26EFFD]" />
                     </div>
                   </div>
 
-                  {/* Value/Number */}
-                  <h3
-                    className="text-5xl md:text-6xl font-black text-black tracking-tight"
-                    style={{
-                      fontFamily: "'Milan Display', 'Outfit', 'Inter', sans-serif",
-                    }}
-                  >
-                    {item.value}
-                  </h3>
+                  {/* Value / Number with Cyan Underline */}
+                  <div className="border-b-[2.5px] border-[#26EFFD] pb-1 px-4 mb-5 inline-block">
+                    <h3
+                      className="text-4xl sm:text-5xl md:text-6xl font-extrabold text-white tracking-tight"
+                      style={{
+                        fontFamily: "Georgia, 'Times New Roman', serif",
+                        letterSpacing: '-0.02em',
+                      }}
+                    >
+                      {item.value}
+                    </h3>
+                  </div>
 
                   {/* Description Label */}
                   <p
-                    className="text-lg md:text-xl font-bold text-black/70"
+                    className="text-base sm:text-lg font-black text-white leading-relaxed"
                     style={{
-                      fontFamily: "'Sahara Bold', 'Inter', sans-serif",
+                      fontFamily: "'Sahara Bold', 'Milan Display', 'Inter', sans-serif",
                     }}
                   >
                     {item.label}

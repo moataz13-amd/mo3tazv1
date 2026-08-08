@@ -2,10 +2,10 @@ import { lazy, Suspense, useEffect, useState } from 'react';
 import { Routes, Route, Navigate } from 'react-router-dom';
 import { useAuthStore } from './store';
 import { analyticsAPI } from './lib/api';
+import Portfolio from './pages/Portfolio';
 import SplashScreen from './components/SplashScreen';
 
-// Lazy-load pages for code splitting
-const Portfolio = lazy(() => import('./pages/Portfolio'));
+// Lazy-load secondary and admin pages for code splitting
 const ProjectDesigns = lazy(() => import('./pages/ProjectDesigns'));
 const AdminLogin = lazy(() => import('./pages/admin/Login'));
 const AdminLayout = lazy(() => import('./pages/admin/Layout'));
@@ -63,11 +63,21 @@ const ProtectedRoute = ({ children }: { children: React.ReactNode }) => {
 };
 
 export default function App() {
-  const [showSplash, setShowSplash] = useState(true);
+  const [showSplash, setShowSplash] = useState(() => {
+    return !sessionStorage.getItem('splash_shown');
+  });
 
-  // Track page visit on mount
+  const handleSplashComplete = () => {
+    sessionStorage.setItem('splash_shown', 'true');
+    setShowSplash(false);
+  };
+
+  // Deferred non-blocking analytics tracking
   useEffect(() => {
-    analyticsAPI.trackVisit().catch((err) => console.error('[APP] trackVisit error:', err?.message));
+    const timer = setTimeout(() => {
+      analyticsAPI.trackVisit().catch(() => {});
+    }, 1500);
+    return () => clearTimeout(timer);
   }, []);
 
   // Keep serverless function warm
@@ -80,7 +90,7 @@ export default function App() {
 
   return (
     <>
-      {showSplash && <SplashScreen onComplete={() => setShowSplash(false)} />}
+      {showSplash && <SplashScreen onComplete={handleSplashComplete} />}
       <Suspense fallback={<LoadingScreen />}>
         <Routes>
           {/* Public Portfolio */}

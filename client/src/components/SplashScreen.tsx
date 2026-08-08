@@ -6,8 +6,8 @@ export default function SplashScreen({ onComplete }: { onComplete: () => void })
 
   const finishLoading = useCallback(() => {
     setProgress(100);
-    setTimeout(() => setFadeOut(true), 400);
-    setTimeout(() => onComplete(), 1000);
+    setFadeOut(true);
+    setTimeout(() => onComplete(), 200);
   }, [onComplete]);
 
   useEffect(() => {
@@ -16,57 +16,48 @@ export default function SplashScreen({ onComplete }: { onComplete: () => void })
 
     // Track real resource loading
     const trackLoading = () => {
-      // Phase 1: Quick jump to ~30% (DOM ready)
-      setProgress(15);
+      setProgress(40);
 
-      // Phase 2: Incrementally increase based on time + resource checks
-      let current = 15;
+      let current = 40;
       progressInterval = setInterval(() => {
         if (completed) return;
-
-        // Accelerate progress based on document state
         const docReady = document.readyState === 'complete';
-        const increment = docReady ? 8 : 3;
+        const increment = docReady ? 25 : 10;
 
-        current = Math.min(current + increment + Math.random() * 4, docReady ? 98 : 75);
+        current = Math.min(current + increment, 100);
         setProgress(Math.round(current));
 
-        if (current >= 98 && docReady) {
+        if (current >= 100 || docReady) {
           completed = true;
           clearInterval(progressInterval);
           finishLoading();
         }
-      }, 120);
+      }, 50);
 
-      // Listen for full page load
       if (document.readyState === 'complete') {
-        setTimeout(() => {
+        if (!completed) {
+          completed = true;
+          clearInterval(progressInterval);
+          finishLoading();
+        }
+      } else {
+        window.addEventListener('load', () => {
           if (!completed) {
             completed = true;
             clearInterval(progressInterval);
             finishLoading();
           }
-        }, 800);
-      } else {
-        window.addEventListener('load', () => {
-          setTimeout(() => {
-            if (!completed) {
-              completed = true;
-              clearInterval(progressInterval);
-              finishLoading();
-            }
-          }, 600);
-        });
+        }, { once: true });
       }
 
-      // Safety timeout - max 4 seconds
+      // Safety timeout - max 1.5 seconds
       setTimeout(() => {
         if (!completed) {
           completed = true;
           clearInterval(progressInterval);
           finishLoading();
         }
-      }, 4000);
+      }, 1500);
     };
 
     trackLoading();

@@ -1,7 +1,7 @@
 import { useState, useMemo } from 'react';
 import { useQuery, useMutation, useQueryClient } from '@tanstack/react-query';
 import { useForm } from 'react-hook-form';
-import { Plus, Trash2, Edit, X, Save, Star, ExternalLink, Image as ImageIcon, UploadCloud, Layers, Monitor } from 'lucide-react';
+import { Plus, Trash2, Edit, X, Save, Star, ExternalLink, Image as ImageIcon, UploadCloud, Layers, Monitor, ArrowUpDown } from 'lucide-react';
 import toast from 'react-hot-toast';
 import { projectsAPI } from '../../lib/api';
 import type { Project } from '../../types';
@@ -18,26 +18,36 @@ export default function ProjectsManager() {
   const [coverImagePreview, setCoverImagePreview] = useState<string | null>(null);
   const [newGalleryPreviews, setNewGalleryPreviews] = useState<string[]>([]);
   const [activeTab, setActiveTab] = useState<FilterTab>('all');
+  const [sortOrder, setSortOrder] = useState<'asc' | 'desc'>('asc');
 
   const { data: projects, isLoading } = useQuery({
     queryKey: ['projects'],
     queryFn: () => projectsAPI.getAll().then((r) => r.data as Project[]),
   });
 
-  // Filtered projects based on active tab
+  // Filtered + sorted projects based on active tab and sort order
   const filteredProjects = useMemo(() => {
     if (!Array.isArray(projects)) return [];
+    let filtered: Project[];
     switch (activeTab) {
       case 'mockup':
-        return projects.filter((p) => p.category === 'mockup' || p.category === 'branding');
+        filtered = projects.filter((p) => p.category === 'mockup' || p.category === 'branding');
+        break;
       case 'featured':
-        return projects.filter((p) => p.featured);
+        filtered = projects.filter((p) => p.featured);
+        break;
       case 'other':
-        return projects.filter((p) => p.category !== 'mockup' && p.category !== 'branding');
+        filtered = projects.filter((p) => p.category !== 'mockup' && p.category !== 'branding');
+        break;
       default:
-        return projects;
+        filtered = [...projects];
     }
-  }, [projects, activeTab]);
+    return filtered.sort((a, b) => {
+      const timeA = new Date(a.created_at || 0).getTime();
+      const timeB = new Date(b.created_at || 0).getTime();
+      return sortOrder === 'asc' ? timeA - timeB : timeB - timeA;
+    });
+  }, [projects, activeTab, sortOrder]);
 
   // Count badges
   const mockupCount = useMemo(() => {
@@ -213,7 +223,7 @@ export default function ProjectsManager() {
         </button>
       </div>
 
-      {/* Filter Tabs */}
+      {/* Filter Tabs + Sort */}
       <div className="flex items-center gap-2 flex-wrap">
         {filterTabs.map((tab) => (
           <button
@@ -240,6 +250,15 @@ export default function ProjectsManager() {
             )}
           </button>
         ))}
+
+        {/* Sort Toggle */}
+        <button
+          onClick={() => setSortOrder((prev) => (prev === 'asc' ? 'desc' : 'asc'))}
+          className="flex items-center gap-1.5 px-4 py-2 rounded-full text-xs font-bold border border-white/10 text-gray-400 hover:border-[#26EFFD]/50 hover:text-white transition-all cursor-pointer select-none mr-auto"
+        >
+          <ArrowUpDown size={14} />
+          <span>{sortOrder === 'asc' ? 'الأقدم أولاً' : 'الأحدث أولاً'}</span>
+        </button>
       </div>
 
       {/* Info Banner when Mockup tab is active */}

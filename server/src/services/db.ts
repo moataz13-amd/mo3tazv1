@@ -346,7 +346,7 @@ export const db = {
   getProjects: async () => {
     if (!USE_MOCK) {
       try {
-        const { data, error } = await supabase.from('projects').select('*').order('created_at', { ascending: false });
+        const { data, error } = await supabase.from('projects').select('*').order('created_at', { ascending: true });
         if (!error && data) return data;
         console.warn('Supabase getProjects failed, falling back to mock:', error?.message);
       } catch (e: any) {

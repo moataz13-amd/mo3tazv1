@@ -217,22 +217,14 @@ const CarouselCard = memo(function CarouselCard({
           decoding="async"
         />
 
-        {/* Gradient overlay */}
+        {/* Clean overlay – only at the bottom for text readability */}
         <div
           className="absolute inset-0 flex flex-col justify-end p-4 sm:p-6 md:p-10 lg:p-12"
           style={{
-            background: 'linear-gradient(to top, rgba(0,0,0,0.92) 0%, rgba(0,0,0,0.3) 50%, transparent 100%)',
+            background: 'linear-gradient(to top, rgba(0,0,0,0.75) 0%, rgba(0,0,0,0.15) 35%, transparent 60%)',
           }}
         >
           <div className="flex flex-col gap-1 max-w-2xl pb-10 sm:pb-0">
-            {project.category && (
-              <span
-                className="text-[10px] sm:text-xs md:text-sm font-bold tracking-wider uppercase"
-                style={{ color: '#26EFFD' }}
-              >
-                {project.category}
-              </span>
-            )}
             <h3
               className="text-lg sm:text-2xl md:text-3xl lg:text-4xl font-extrabold text-white leading-tight"
               style={{ fontFamily: "'Sahara Bold', 'Milan Display', sans-serif" }}
@@ -246,33 +238,34 @@ const CarouselCard = memo(function CarouselCard({
             )}
           </div>
 
-          {/* View button – rendered if active card and show_details_btn is true */}
+          {/* View button – only when show_details_btn is explicitly true */}
           {(() => {
-            const showDetails = project.show_details_btn !== false && (project as any).show_details_btn !== 'false';
+            const raw = (project as any).show_details_btn;
+            const showBtn = raw === true || raw === 'true';
             return (
               <AnimatePresence>
-                {isActive && showDetails && (
-              <motion.div
-                initial={{ opacity: 0, y: 12 }}
-                animate={{ opacity: 1, y: 0 }}
-                exit={{ opacity: 0, y: 8 }}
-                transition={{ duration: 0.3, ease: 'easeOut' }}
-                className="absolute bottom-3 left-3 sm:bottom-6 sm:left-6 md:bottom-10 md:left-10 z-30"
-              >
-                <button
-                  onClick={handleViewClick}
-                  className="px-4 py-1.5 sm:px-6 sm:py-2 md:px-8 md:py-2.5 bg-white text-black border-2 border-black rounded-full font-black text-[11px] sm:text-xs md:text-sm shadow-[2px_2px_0px_#000] sm:shadow-[3px_3px_0px_#000] hover:bg-[#26EFFD] active:scale-95 cursor-pointer flex items-center gap-1.5"
-                  style={{
-                    fontFamily: "'Sahara Bold', 'Inter', sans-serif",
-                    transition: 'box-shadow 0.15s, background 0.2s, transform 0.1s',
-                  }}
-                >
-                  <span>عرض التفاصيل</span>
-                  <ExternalLink size={12} className="sm:w-3.5 sm:h-3.5" />
-                </button>
-              </motion.div>
-            )}
-          </AnimatePresence>
+                {isActive && showBtn && (
+                  <motion.div
+                    initial={{ opacity: 0, y: 12 }}
+                    animate={{ opacity: 1, y: 0 }}
+                    exit={{ opacity: 0, y: 8 }}
+                    transition={{ duration: 0.3, ease: 'easeOut' }}
+                    className="absolute bottom-3 left-3 sm:bottom-6 sm:left-6 md:bottom-10 md:left-10 z-30"
+                  >
+                    <button
+                      onClick={handleViewClick}
+                      className="px-4 py-1.5 sm:px-6 sm:py-2 md:px-8 md:py-2.5 bg-white text-black border-2 border-black rounded-full font-black text-[11px] sm:text-xs md:text-sm shadow-[2px_2px_0px_#000] sm:shadow-[3px_3px_0px_#000] hover:bg-[#26EFFD] active:scale-95 cursor-pointer flex items-center gap-1.5"
+                      style={{
+                        fontFamily: "'Sahara Bold', 'Inter', sans-serif",
+                        transition: 'box-shadow 0.15s, background 0.2s, transform 0.1s',
+                      }}
+                    >
+                      <span>عرض التفاصيل</span>
+                      <ExternalLink size={12} className="sm:w-3.5 sm:h-3.5" />
+                    </button>
+                  </motion.div>
+                )}
+              </AnimatePresence>
             );
           })()}
         </div>

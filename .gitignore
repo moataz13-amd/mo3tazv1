@@ -12,3 +12,10 @@ __pycache__
 
 data
 
+# Environment variables
+.env
+.env.example
+.env.local
+
+# Other
+venv

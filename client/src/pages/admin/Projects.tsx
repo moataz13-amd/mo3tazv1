@@ -169,6 +169,7 @@ export default function ProjectsManager() {
       category: data.category || 'graphic',
       description: data.description || '',
       featured: data.featured,
+      show_details_btn: data.show_details_btn,
       github_url: data.github_url || '',
       live_url: data.live_url || '',
       techStack,

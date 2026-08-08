@@ -140,10 +140,12 @@ const CarouselCard = memo(function CarouselCard({
   onNext: () => void;
   onNavigate: (p: Project) => void;
 }) {
-  // GPU-optimised transform values – only transform/opacity, no layout shifts
-  const xPercent = offset === 0 ? 0 : offset < 0 ? -55 : 55;
-  const cardScale = isActive ? 1 : 0.78;
-  const cardOpacity = isActive ? 1 : 0.4;
+  // Responsive transform values for mobile vs desktop
+  const isSmallScreen = typeof window !== 'undefined' && window.innerWidth < 640;
+  const xOffset = isSmallScreen ? 44 : 55;
+  const xPercent = offset === 0 ? 0 : offset < 0 ? -xOffset : xOffset;
+  const cardScale = isActive ? 1 : isSmallScreen ? 0.82 : 0.78;
+  const cardOpacity = isActive ? 1 : 0.45;
   const zIndex = isActive ? 20 : 10;
 
   const handleClick = useCallback(() => {
@@ -174,9 +176,9 @@ const CarouselCard = memo(function CarouselCard({
         ease: [0.25, 0.1, 0.25, 1],   // cubic-bezier – buttery smooth
         duration: 0.55,
       }}
-      className={`absolute top-0 w-full max-w-[960px] h-full rounded-[32px] md:rounded-[42px] overflow-hidden select-none ${
+      className={`absolute top-0 w-full max-w-[960px] h-full rounded-[20px] sm:rounded-[32px] md:rounded-[42px] overflow-hidden select-none ${
         isActive
-          ? 'border-2 border-[#26EFFD] shadow-[0_0_40px_rgba(38,239,253,0.3),0_8px_24px_rgba(0,0,0,0.7)] cursor-default'
+          ? 'border-2 border-[#26EFFD] shadow-[0_0_30px_rgba(38,239,253,0.35),0_8px_24px_rgba(0,0,0,0.7)] cursor-default'
           : 'border border-white/10 cursor-pointer'
       }`}
       style={{
@@ -195,33 +197,32 @@ const CarouselCard = memo(function CarouselCard({
           className="w-full h-full object-cover"
           loading="lazy"
           decoding="async"
-          style={{ willChange: 'auto' }}
         />
 
         {/* Gradient overlay */}
         <div
-          className="absolute inset-0 flex flex-col justify-end p-6 md:p-10 lg:p-12"
+          className="absolute inset-0 flex flex-col justify-end p-4 sm:p-6 md:p-10 lg:p-12"
           style={{
-            background: 'linear-gradient(to top, rgba(0,0,0,0.88) 0%, rgba(0,0,0,0.2) 45%, transparent 100%)',
+            background: 'linear-gradient(to top, rgba(0,0,0,0.92) 0%, rgba(0,0,0,0.3) 50%, transparent 100%)',
           }}
         >
-          <div className="flex flex-col gap-1.5 max-w-2xl">
+          <div className="flex flex-col gap-1 max-w-2xl pb-10 sm:pb-0">
             {project.category && (
               <span
-                className="text-xs md:text-sm font-bold tracking-wider uppercase"
+                className="text-[10px] sm:text-xs md:text-sm font-bold tracking-wider uppercase"
                 style={{ color: '#26EFFD' }}
               >
                 {project.category}
               </span>
             )}
             <h3
-              className="text-xl md:text-3xl lg:text-4xl font-extrabold text-white leading-tight"
+              className="text-lg sm:text-2xl md:text-3xl lg:text-4xl font-extrabold text-white leading-tight"
               style={{ fontFamily: "'Sahara Bold', 'Milan Display', sans-serif" }}
             >
               {project.title}
             </h3>
             {project.description && (
-              <p className="text-gray-300 text-xs md:text-sm line-clamp-2 mt-0.5">
+              <p className="text-gray-300 text-[11px] sm:text-xs md:text-sm line-clamp-1 sm:line-clamp-2 mt-0.5">
                 {project.description}
               </p>
             )}
@@ -235,18 +236,18 @@ const CarouselCard = memo(function CarouselCard({
                 animate={{ opacity: 1, y: 0 }}
                 exit={{ opacity: 0, y: 8 }}
                 transition={{ duration: 0.3, ease: 'easeOut' }}
-                className="absolute bottom-6 left-6 md:bottom-10 md:left-10 z-30"
+                className="absolute bottom-3 left-3 sm:bottom-6 sm:left-6 md:bottom-10 md:left-10 z-30"
               >
                 <button
                   onClick={handleViewClick}
-                  className="px-6 md:px-8 py-2 md:py-2.5 bg-white text-black border-2 border-black rounded-full font-black text-xs md:text-sm shadow-[3px_3px_0px_#000] hover:shadow-[1px_1px_0px_#000] hover:bg-[#26EFFD] active:scale-95 cursor-pointer flex items-center gap-2"
+                  className="px-4 py-1.5 sm:px-6 sm:py-2 md:px-8 md:py-2.5 bg-white text-black border-2 border-black rounded-full font-black text-[11px] sm:text-xs md:text-sm shadow-[2px_2px_0px_#000] sm:shadow-[3px_3px_0px_#000] hover:bg-[#26EFFD] active:scale-95 cursor-pointer flex items-center gap-1.5"
                   style={{
                     fontFamily: "'Sahara Bold', 'Inter', sans-serif",
                     transition: 'box-shadow 0.15s, background 0.2s, transform 0.1s',
                   }}
                 >
                   <span>عرض التفاصيل</span>
-                  <ExternalLink size={14} />
+                  <ExternalLink size={12} className="sm:w-3.5 sm:h-3.5" />
                 </button>
               </motion.div>
             )}
@@ -364,14 +365,14 @@ const Carousel3DSection = memo(function Carousel3DSection({
           </h2>
         </div>
 
-        {/* 3D Stage – fixed aspect 960×540 */}
+        {/* 3D Stage – proportional aspect scaling on mobile */}
         <div
-          className="relative w-full flex items-center justify-center min-h-[320px] md:min-h-[520px] lg:min-h-[580px] py-4"
+          className="relative w-full flex items-center justify-center min-h-[240px] sm:min-h-[360px] md:min-h-[520px] lg:min-h-[580px] py-2 sm:py-4"
           onMouseEnter={handleMouseEnter}
           onMouseLeave={handleMouseLeave}
         >
           <div
-            className="relative w-full max-w-[960px] h-[270px] sm:h-[360px] md:h-[480px] lg:h-[540px] flex items-center justify-center"
+            className="relative w-full max-w-[960px] h-[230px] sm:h-[340px] md:h-[480px] lg:h-[540px] flex items-center justify-center"
             style={{ perspective: '1200px' }}
           >
             {visibleCards.map(({ project, offset, isActive }) => (
@@ -389,10 +390,10 @@ const Carousel3DSection = memo(function Carousel3DSection({
         </div>
 
         {/* Navigation Buttons + Dashed Line */}
-        <div className="w-full max-w-[960px] mx-auto flex items-center justify-between gap-4 mt-2">
+        <div className="w-full max-w-[960px] mx-auto flex items-center justify-between gap-3 sm:gap-4 mt-1 sm:mt-2">
           <button
             onClick={handlePrev}
-            className="px-8 md:px-12 py-2.5 md:py-3 rounded-full bg-[#050B14]/80 backdrop-blur-md border-2 border-[#26EFFD] text-[#26EFFD] font-bold text-sm md:text-base shadow-[0_0_20px_rgba(38,239,253,0.2)] hover:shadow-[0_0_30px_rgba(38,239,253,0.4)] hover:bg-[#26EFFD]/10 active:scale-95 cursor-pointer select-none"
+            className="px-5 sm:px-8 md:px-12 py-2 sm:py-2.5 md:py-3 rounded-full bg-[#050B14]/80 backdrop-blur-md border-2 border-[#26EFFD] text-[#26EFFD] font-bold text-xs sm:text-sm md:text-base shadow-[0_0_15px_rgba(38,239,253,0.2)] hover:shadow-[0_0_30px_rgba(38,239,253,0.4)] hover:bg-[#26EFFD]/10 active:scale-95 cursor-pointer select-none"
             style={{
               fontFamily: "'Sahara Bold', 'Inter', sans-serif",
               transition: 'box-shadow 0.2s, background 0.2s, transform 0.1s',
@@ -407,7 +408,7 @@ const Carousel3DSection = memo(function Carousel3DSection({
 
           <button
             onClick={handleNext}
-            className="px-8 md:px-12 py-2.5 md:py-3 rounded-full bg-[#050B14]/80 backdrop-blur-md border-2 border-[#26EFFD] text-[#26EFFD] font-bold text-sm md:text-base shadow-[0_0_20px_rgba(38,239,253,0.2)] hover:shadow-[0_0_30px_rgba(38,239,253,0.4)] hover:bg-[#26EFFD]/10 active:scale-95 cursor-pointer select-none"
+            className="px-5 sm:px-8 md:px-12 py-2 sm:py-2.5 md:py-3 rounded-full bg-[#050B14]/80 backdrop-blur-md border-2 border-[#26EFFD] text-[#26EFFD] font-bold text-xs sm:text-sm md:text-base shadow-[0_0_15px_rgba(38,239,253,0.2)] hover:shadow-[0_0_30px_rgba(38,239,253,0.4)] hover:bg-[#26EFFD]/10 active:scale-95 cursor-pointer select-none"
             style={{
               fontFamily: "'Sahara Bold', 'Inter', sans-serif",
               transition: 'box-shadow 0.2s, background 0.2s, transform 0.1s',

@@ -1,6 +1,6 @@
-import { memo, useState, useEffect, useRef, useCallback } from 'react';
+import { memo, useState, useEffect, useRef, useCallback, useMemo } from 'react';
 import { useNavigate } from 'react-router-dom';
-import { motion, useInView } from 'framer-motion';
+import { motion, useInView, AnimatePresence } from 'framer-motion';
 import { useQuery } from '@tanstack/react-query';
 import { ExternalLink } from 'lucide-react';
 import { projectsAPI } from '../../lib/api';
@@ -122,8 +122,142 @@ const defaultProjects: Project[] = [
   }
 ];
 
-const AUTOPLAY_DURATION = 5000; // 5 seconds timer
+const AUTOPLAY_DURATION = 5000;
 
+/* ─── Single Card (memoized to avoid needless re-render) ─── */
+const CarouselCard = memo(function CarouselCard({
+  project,
+  offset,
+  isActive,
+  onPrev,
+  onNext,
+  onNavigate,
+}: {
+  project: Project;
+  offset: number;
+  isActive: boolean;
+  onPrev: () => void;
+  onNext: () => void;
+  onNavigate: (p: Project) => void;
+}) {
+  // GPU-optimised transform values – only transform/opacity, no layout shifts
+  const xPercent = offset === 0 ? 0 : offset < 0 ? -55 : 55;
+  const cardScale = isActive ? 1 : 0.78;
+  const cardOpacity = isActive ? 1 : 0.4;
+  const zIndex = isActive ? 20 : 10;
+
+  const handleClick = useCallback(() => {
+    if (offset === -1) onPrev();
+    else if (offset === 1) onNext();
+  }, [offset, onPrev, onNext]);
+
+  const handleViewClick = useCallback(
+    (e: React.MouseEvent) => {
+      e.stopPropagation();
+      onNavigate(project);
+    },
+    [project, onNavigate],
+  );
+
+  return (
+    <motion.div
+      layout={false}
+      onClick={handleClick}
+      initial={false}
+      animate={{
+        x: `${xPercent}%`,
+        scale: cardScale,
+        opacity: cardOpacity,
+      }}
+      transition={{
+        type: 'tween',
+        ease: [0.25, 0.1, 0.25, 1],   // cubic-bezier – buttery smooth
+        duration: 0.55,
+      }}
+      className={`absolute top-0 w-full max-w-[960px] h-full rounded-[32px] md:rounded-[42px] overflow-hidden select-none ${
+        isActive
+          ? 'border-2 border-[#26EFFD] shadow-[0_0_40px_rgba(38,239,253,0.3),0_8px_24px_rgba(0,0,0,0.7)] cursor-default'
+          : 'border border-white/10 cursor-pointer'
+      }`}
+      style={{
+        zIndex,
+        willChange: 'transform, opacity',
+        backfaceVisibility: 'hidden',
+        contain: 'layout style paint',
+        transform: 'translateZ(0)',     // force GPU compositing layer
+      }}
+    >
+      {/* Image – native lazy + decoding async for off-screen perf */}
+      <div className="relative w-full h-full bg-[#050B14]">
+        <img
+          src={project.cover_image}
+          alt={project.title}
+          className="w-full h-full object-cover"
+          loading="lazy"
+          decoding="async"
+          style={{ willChange: 'auto' }}
+        />
+
+        {/* Gradient overlay */}
+        <div
+          className="absolute inset-0 flex flex-col justify-end p-6 md:p-10 lg:p-12"
+          style={{
+            background: 'linear-gradient(to top, rgba(0,0,0,0.88) 0%, rgba(0,0,0,0.2) 45%, transparent 100%)',
+          }}
+        >
+          <div className="flex flex-col gap-1.5 max-w-2xl">
+            {project.category && (
+              <span
+                className="text-xs md:text-sm font-bold tracking-wider uppercase"
+                style={{ color: '#26EFFD' }}
+              >
+                {project.category}
+              </span>
+            )}
+            <h3
+              className="text-xl md:text-3xl lg:text-4xl font-extrabold text-white leading-tight"
+              style={{ fontFamily: "'Sahara Bold', 'Milan Display', sans-serif" }}
+            >
+              {project.title}
+            </h3>
+            {project.description && (
+              <p className="text-gray-300 text-xs md:text-sm line-clamp-2 mt-0.5">
+                {project.description}
+              </p>
+            )}
+          </div>
+
+          {/* View button – only rendered on active card */}
+          <AnimatePresence>
+            {isActive && (
+              <motion.div
+                initial={{ opacity: 0, y: 12 }}
+                animate={{ opacity: 1, y: 0 }}
+                exit={{ opacity: 0, y: 8 }}
+                transition={{ duration: 0.3, ease: 'easeOut' }}
+                className="absolute bottom-6 left-6 md:bottom-10 md:left-10 z-30"
+              >
+                <button
+                  onClick={handleViewClick}
+                  className="px-6 md:px-8 py-2 md:py-2.5 bg-white text-black border-2 border-black rounded-full font-black text-xs md:text-sm shadow-[3px_3px_0px_#000] hover:shadow-[1px_1px_0px_#000] hover:bg-[#26EFFD] active:scale-95 cursor-pointer flex items-center gap-2"
+                  style={{
+                    fontFamily: "'Sahara Bold', 'Inter', sans-serif",
+                    transition: 'box-shadow 0.15s, background 0.2s, transform 0.1s',
+                  }}
+                >
+                  <span>عرض التفاصيل</span>
+                  <ExternalLink size={14} />
+                </button>
+              </motion.div>
+            )}
+          </AnimatePresence>
+        </div>
+      </div>
+    </motion.div>
+  );
+});
+
+/* ─── Carousel Section (reusable) ─── */
 interface Carousel3DSectionProps {
   id: string;
   subtitle: string;
@@ -144,7 +278,8 @@ const Carousel3DSection = memo(function Carousel3DSection({
   const isInView = useInView(ref, { once: true, margin: '-40px' });
 
   const [currentIndex, setCurrentIndex] = useState(0);
-  const [isPaused, setIsPaused] = useState(false);
+  const isPausedRef = useRef(false);           // ref instead of state – avoids re-renders on hover
+  const timerRef = useRef<ReturnType<typeof setInterval> | null>(null);
 
   const total = items.length;
 
@@ -156,32 +291,56 @@ const Carousel3DSection = memo(function Carousel3DSection({
     setCurrentIndex((prev) => (prev - 1 + total) % total);
   }, [total]);
 
-  // Smooth Auto-play Timer (No progress bar UI)
-  useEffect(() => {
-    if (isPaused || total <= 1) return;
+  const handleNavigate = useCallback(
+    (project: Project) => {
+      navigate(`/project/${project.id}`, { state: { project } });
+    },
+    [navigate],
+  );
 
-    const timer = setInterval(() => {
-      handleNext();
+  // Auto-play with ref-based pause to avoid state-churn
+  useEffect(() => {
+    if (total <= 1) return;
+
+    timerRef.current = setInterval(() => {
+      if (!isPausedRef.current) handleNext();
     }, AUTOPLAY_DURATION);
 
-    return () => clearInterval(timer);
-  }, [isPaused, total, handleNext]);
+    return () => {
+      if (timerRef.current) clearInterval(timerRef.current);
+    };
+  }, [total, handleNext]);
 
-  // Calculate 3D Offset for center card vs side cards
-  const getCardOffset = (index: number) => {
-    let diff = index - currentIndex;
-    if (diff > Math.floor(total / 2)) diff -= total;
-    if (diff < -Math.floor(total / 2)) diff += total;
-    return diff;
-  };
+  const handleMouseEnter = useCallback(() => { isPausedRef.current = true; }, []);
+  const handleMouseLeave = useCallback(() => { isPausedRef.current = false; }, []);
+
+  // Pre-compute visible cards array (max 3 at a time) – avoids work inside render
+  const visibleCards = useMemo(() => {
+    const result: { project: Project; offset: number; isActive: boolean }[] = [];
+    for (let i = 0; i < total; i++) {
+      let diff = i - currentIndex;
+      if (diff > Math.floor(total / 2)) diff -= total;
+      if (diff < -Math.floor(total / 2)) diff += total;
+      if (Math.abs(diff) <= 1) {
+        result.push({ project: items[i], offset: diff, isActive: diff === 0 });
+      }
+    }
+    // sort so active card renders last (on top in DOM = on top visually)
+    return result.sort((a, b) => Math.abs(a.offset) - Math.abs(b.offset)).reverse();
+  }, [currentIndex, items, total]);
 
   return (
-    <section id={id} className="py-10 md:py-16 px-4 md:px-6 relative z-10 overflow-hidden" dir="rtl">
+    <section
+      id={id}
+      className="py-10 md:py-16 px-4 md:px-6 relative z-10 overflow-hidden"
+      dir="rtl"
+      style={{ contain: 'layout style' }}
+    >
       <motion.div
         ref={ref}
         initial={{ opacity: 0, y: 30 }}
         animate={isInView ? { opacity: 1, y: 0 } : {}}
-        transition={{ duration: 0.7 }}
+        transition={{ duration: 0.6, ease: 'easeOut' }}
         className="max-w-7xl mx-auto flex flex-col gap-8 md:gap-10"
       >
         {/* Header */}
@@ -199,164 +358,70 @@ const Carousel3DSection = memo(function Carousel3DSection({
           )}
           <h2
             className="text-3xl md:text-5xl lg:text-6xl font-black text-white leading-tight tracking-tight flex items-center justify-center gap-3"
-            style={{
-              fontFamily: "'Milan Display', 'Sahara Bold', 'Inter', sans-serif",
-            }}
+            style={{ fontFamily: "'Milan Display', 'Sahara Bold', 'Inter', sans-serif" }}
           >
             {titlePrefix} <span style={{ color: '#26EFFD' }}>{titleHighlight}</span>
           </h2>
         </div>
 
-        {/* 3D Stage (960x540 card aspect ratio with ultra-smooth spring physics) */}
+        {/* 3D Stage – fixed aspect 960×540 */}
         <div
           className="relative w-full flex items-center justify-center min-h-[320px] md:min-h-[520px] lg:min-h-[580px] py-4"
-          onMouseEnter={() => setIsPaused(true)}
-          onMouseLeave={() => setIsPaused(false)}
+          onMouseEnter={handleMouseEnter}
+          onMouseLeave={handleMouseLeave}
         >
-          <div className="relative w-full max-w-[960px] h-[270px] sm:h-[360px] md:h-[480px] lg:h-[540px] flex items-center justify-center">
-            {items.map((project, index) => {
-              const offset = getCardOffset(index);
-              const isActive = offset === 0;
-              const isVisible = Math.abs(offset) <= 1;
-
-              if (!isVisible) return null;
-
-              let xPosition = '0%';
-              let scale = 1;
-              let zIndex = 20;
-              let opacity = 1;
-
-              if (offset === -1) {
-                xPosition = '-55%';
-                scale = 0.78;
-                zIndex = 10;
-                opacity = 0.45;
-              } else if (offset === 1) {
-                xPosition = '55%';
-                scale = 0.78;
-                zIndex = 10;
-                opacity = 0.45;
-              }
-
-              return (
-                <motion.div
-                  key={project.id}
-                  onClick={() => {
-                    if (offset === -1) handlePrev();
-                    else if (offset === 1) handleNext();
-                  }}
-                  initial={false}
-                  animate={{
-                    x: xPosition,
-                    scale: scale,
-                    opacity: opacity,
-                    zIndex: zIndex,
-                  }}
-                  transition={{
-                    type: 'spring',
-                    stiffness: 180,
-                    damping: 24,
-                    mass: 0.8,
-                  }}
-                  className={`absolute top-0 w-full max-w-[960px] h-full rounded-[32px] md:rounded-[42px] overflow-hidden cursor-pointer select-none transition-all duration-300 ${
-                    isActive
-                      ? 'border-2 border-[#26EFFD] shadow-[0_0_50px_rgba(38,239,253,0.35),0_10px_30px_rgba(0,0,0,0.8)]'
-                      : 'border border-white/10 hover:border-[#26EFFD]/50 shadow-2xl brightness-75'
-                  }`}
-                >
-                  {/* Image */}
-                  <div className="relative w-full h-full bg-[#050B14]">
-                    <img
-                      src={project.cover_image}
-                      alt={project.title}
-                      className="w-full h-full object-cover transition-transform duration-700 hover:scale-105"
-                      loading="lazy"
-                    />
-
-                    {/* Gradient Overlay & Details */}
-                    <div className="absolute inset-0 bg-gradient-to-t from-black/90 via-black/20 to-transparent flex flex-col justify-end p-6 md:p-10 lg:p-12">
-                      <div className="flex flex-col gap-2 max-w-2xl">
-                        {project.category && (
-                          <span
-                            className="text-xs md:text-sm font-bold tracking-wider uppercase inline-block"
-                            style={{ color: '#26EFFD' }}
-                          >
-                            {project.category}
-                          </span>
-                        )}
-                        <h3
-                          className="text-2xl md:text-4xl font-extrabold text-white leading-tight"
-                          style={{ fontFamily: "'Sahara Bold', 'Milan Display', sans-serif" }}
-                        >
-                          {project.title}
-                        </h3>
-                        {project.description && (
-                          <p className="text-gray-300 text-xs md:text-sm line-clamp-2 mt-1">
-                            {project.description}
-                          </p>
-                        )}
-                      </div>
-
-                      {/* View Button on Active Card */}
-                      {isActive && (
-                        <div className="absolute bottom-6 left-6 md:bottom-10 md:left-10 z-30">
-                          <motion.button
-                            onClick={(e) => {
-                              e.stopPropagation();
-                              navigate(`/project/${project.id}`, { state: { project } });
-                            }}
-                            whileHover={{ scale: 1.05, y: -2 }}
-                            whileTap={{ scale: 0.95 }}
-                            className="px-6 md:px-8 py-2 md:py-2.5 bg-[#ffffff] text-black border-2 border-black rounded-full font-black text-xs md:text-sm shadow-[3px_3px_0px_#000000] hover:shadow-[1px_1px_0px_#000000] hover:bg-[#26EFFD] transition-all cursor-pointer flex items-center gap-2"
-                            style={{ fontFamily: "'Sahara Bold', 'Inter', sans-serif" }}
-                          >
-                            <span>عرض التفاصيل</span>
-                            <ExternalLink size={14} />
-                          </motion.button>
-                        </div>
-                      )}
-                    </div>
-                  </div>
-                </motion.div>
-              );
-            })}
+          <div
+            className="relative w-full max-w-[960px] h-[270px] sm:h-[360px] md:h-[480px] lg:h-[540px] flex items-center justify-center"
+            style={{ perspective: '1200px' }}
+          >
+            {visibleCards.map(({ project, offset, isActive }) => (
+              <CarouselCard
+                key={project.id}
+                project={project}
+                offset={offset}
+                isActive={isActive}
+                onPrev={handlePrev}
+                onNext={handleNext}
+                onNavigate={handleNavigate}
+              />
+            ))}
           </div>
         </div>
 
-        {/* Bottom Nav Bar with Dashed Cyan Line (NO Duration progress bar) */}
+        {/* Navigation Buttons + Dashed Line */}
         <div className="w-full max-w-[960px] mx-auto flex items-center justify-between gap-4 mt-2">
-          {/* Previous Button (Right in RTL) */}
-          <motion.button
+          <button
             onClick={handlePrev}
-            whileHover={{ scale: 1.05 }}
-            whileTap={{ scale: 0.95 }}
-            className="px-8 md:px-12 py-2.5 md:py-3 rounded-full bg-[#050B14]/80 backdrop-blur-md border-2 border-[#26EFFD] text-[#26EFFD] font-bold text-sm md:text-base shadow-[0_0_20px_rgba(38,239,253,0.2)] hover:shadow-[0_0_30px_rgba(38,239,253,0.4)] hover:bg-[#26EFFD]/10 transition-all flex items-center gap-2 cursor-pointer select-none"
-            style={{ fontFamily: "'Sahara Bold', 'Inter', sans-serif" }}
+            className="px-8 md:px-12 py-2.5 md:py-3 rounded-full bg-[#050B14]/80 backdrop-blur-md border-2 border-[#26EFFD] text-[#26EFFD] font-bold text-sm md:text-base shadow-[0_0_20px_rgba(38,239,253,0.2)] hover:shadow-[0_0_30px_rgba(38,239,253,0.4)] hover:bg-[#26EFFD]/10 active:scale-95 cursor-pointer select-none"
+            style={{
+              fontFamily: "'Sahara Bold', 'Inter', sans-serif",
+              transition: 'box-shadow 0.2s, background 0.2s, transform 0.1s',
+            }}
           >
-            <span>السابق</span>
-          </motion.button>
+            السابق
+          </button>
 
-          {/* Cyan Dashed Line */}
-          <div className="flex-1 h-[2px] relative flex items-center">
+          <div className="flex-1 h-[2px] flex items-center" aria-hidden>
             <div className="w-full border-t-2 border-dashed border-[#26EFFD]/50" />
           </div>
 
-          {/* Next Button (Left in RTL) */}
-          <motion.button
+          <button
             onClick={handleNext}
-            whileHover={{ scale: 1.05 }}
-            whileTap={{ scale: 0.95 }}
-            className="px-8 md:px-12 py-2.5 md:py-3 rounded-full bg-[#050B14]/80 backdrop-blur-md border-2 border-[#26EFFD] text-[#26EFFD] font-bold text-sm md:text-base shadow-[0_0_20px_rgba(38,239,253,0.2)] hover:shadow-[0_0_30px_rgba(38,239,253,0.4)] hover:bg-[#26EFFD]/10 transition-all flex items-center gap-2 cursor-pointer select-none"
-            style={{ fontFamily: "'Sahara Bold', 'Inter', sans-serif" }}
+            className="px-8 md:px-12 py-2.5 md:py-3 rounded-full bg-[#050B14]/80 backdrop-blur-md border-2 border-[#26EFFD] text-[#26EFFD] font-bold text-sm md:text-base shadow-[0_0_20px_rgba(38,239,253,0.2)] hover:shadow-[0_0_30px_rgba(38,239,253,0.4)] hover:bg-[#26EFFD]/10 active:scale-95 cursor-pointer select-none"
+            style={{
+              fontFamily: "'Sahara Bold', 'Inter', sans-serif",
+              transition: 'box-shadow 0.2s, background 0.2s, transform 0.1s',
+            }}
           >
-            <span>التالي</span>
-          </motion.button>
+            التالي
+          </button>
         </div>
       </motion.div>
     </section>
   );
 });
 
+/* ─── Portfolio wrapper ─── */
 const Portfolio = memo(function Portfolio() {
   const { data: dbProjects } = useQuery({
     queryKey: ['projects'],
@@ -364,19 +429,20 @@ const Portfolio = memo(function Portfolio() {
     staleTime: 120_000,
   });
 
-  // Filter branding / mockup projects vs featured projects
-  const mockupProjects = Array.isArray(dbProjects)
-    ? dbProjects.filter((p) => p.category === 'mockup' || p.category === 'branding' || p.title.toLowerCase().includes('mockup'))
-    : [];
+  const { mockupsList, projectsList } = useMemo(() => {
+    const all = Array.isArray(dbProjects) ? dbProjects : [];
 
-  const featuredProjects = Array.isArray(dbProjects)
-    ? dbProjects.filter((p) => p.featured)
-    : [];
+    const mockups = all.filter(
+      (p) => p.category === 'mockup' || p.category === 'branding' || p.title.toLowerCase().includes('mockup'),
+    );
 
-  const mockupsList = mockupProjects.length > 0 ? mockupProjects : defaultMockups;
-  const projectsList = featuredProjects.length > 0
-    ? featuredProjects
-    : (Array.isArray(dbProjects) && dbProjects.length > 0 ? dbProjects : defaultProjects);
+    const featured = all.filter((p) => p.featured);
+
+    return {
+      mockupsList: mockups.length > 0 ? mockups : defaultMockups,
+      projectsList: featured.length > 0 ? featured : all.length > 0 ? all : defaultProjects,
+    };
+  }, [dbProjects]);
 
   return (
     <div className="flex flex-col gap-8 md:gap-16">

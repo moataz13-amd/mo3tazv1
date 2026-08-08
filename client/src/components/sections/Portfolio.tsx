@@ -413,10 +413,10 @@ const Carousel3DSection = memo(function Carousel3DSection({
         <div className="w-full max-w-[960px] mx-auto flex items-center justify-between gap-3 sm:gap-4 mt-1 sm:mt-2">
           <button
             onClick={handlePrev}
-            className="px-5 sm:px-8 md:px-12 py-2 sm:py-2.5 md:py-3 rounded-full bg-[#050B14]/80 backdrop-blur-md border-2 border-[#26EFFD] text-[#26EFFD] font-bold text-xs sm:text-sm md:text-base shadow-[0_0_15px_rgba(38,239,253,0.2)] hover:shadow-[0_0_30px_rgba(38,239,253,0.4)] hover:bg-[#26EFFD]/10 active:scale-95 cursor-pointer select-none"
+            className="px-6 sm:px-10 md:px-14 py-2 sm:py-2.5 md:py-3 rounded-full bg-[#050816] border-[2.5px] border-[#26EFFD] text-[#26EFFD] font-black text-sm sm:text-base md:text-lg shadow-[3px_3px_0px_#26EFFD] sm:shadow-[5px_5px_0px_#26EFFD] hover:bg-[#26EFFD]/10 active:shadow-[0px_0px_0px_#26EFFD] active:translate-x-[3px] active:translate-y-[3px] sm:active:translate-x-[5px] sm:active:translate-y-[5px] cursor-pointer select-none"
             style={{
               fontFamily: "'Sahara Bold', 'Inter', sans-serif",
-              transition: 'box-shadow 0.2s, background 0.2s, transform 0.1s',
+              transition: 'all 0.15s ease-out',
             }}
           >
             السابق
@@ -428,10 +428,10 @@ const Carousel3DSection = memo(function Carousel3DSection({
 
           <button
             onClick={handleNext}
-            className="px-5 sm:px-8 md:px-12 py-2 sm:py-2.5 md:py-3 rounded-full bg-[#050B14]/80 backdrop-blur-md border-2 border-[#26EFFD] text-[#26EFFD] font-bold text-xs sm:text-sm md:text-base shadow-[0_0_15px_rgba(38,239,253,0.2)] hover:shadow-[0_0_30px_rgba(38,239,253,0.4)] hover:bg-[#26EFFD]/10 active:scale-95 cursor-pointer select-none"
+            className="px-6 sm:px-10 md:px-14 py-2 sm:py-2.5 md:py-3 rounded-full bg-[#050816] border-[2.5px] border-[#26EFFD] text-[#26EFFD] font-black text-sm sm:text-base md:text-lg shadow-[3px_3px_0px_#26EFFD] sm:shadow-[5px_5px_0px_#26EFFD] hover:bg-[#26EFFD]/10 active:shadow-[0px_0px_0px_#26EFFD] active:translate-x-[3px] active:translate-y-[3px] sm:active:translate-x-[5px] sm:active:translate-y-[5px] cursor-pointer select-none"
             style={{
               fontFamily: "'Sahara Bold', 'Inter', sans-serif",
-              transition: 'box-shadow 0.2s, background 0.2s, transform 0.1s',
+              transition: 'all 0.15s ease-out',
             }}
           >
             التالي

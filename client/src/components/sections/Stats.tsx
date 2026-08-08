@@ -116,7 +116,6 @@ const Stats = memo(function Stats() {
                     background: 'linear-gradient(180deg, #091326 0%, #040712 100%)',
                     border: '3px solid #26EFFD',
                     borderRadius: '42px',
-                    boxShadow: '0 0 35px rgba(38, 239, 253, 0.4), inset 0 0 20px rgba(38, 239, 253, 0.15)',
                   }}
                 >
                   {/* Icon Circle Container */}
@@ -147,14 +146,14 @@ const Stats = memo(function Stats() {
                     </svg>
 
                     {/* Icon badge */}
-                    <div className="relative z-10 w-15 h-15 rounded-full bg-[#050814] border border-[#26EFFD]/50 flex items-center justify-center text-[#26EFFD] shadow-[0_0_18px_rgba(38,239,253,0.35)]">
-                      <IconComponent className="w-7 h-7 text-[#26EFFD]" />
+                    <div className="relative z-10 w-full h-full flex items-center justify-center text-[#26EFFD]">
+                      <IconComponent className="w-8 h-8 text-[#26EFFD]" />
                     </div>
                   </div>
 
-                  {/* Value / Number with Cyan Underline */}
                   <div className="border-b-[2.5px] border-[#26EFFD] pb-1 px-4 mb-5 inline-block">
                     <h3
+                      dir="ltr"
                       className="text-4xl sm:text-5xl md:text-6xl font-extrabold text-white tracking-tight"
                       style={{
                         fontFamily: "Georgia, 'Times New Roman', serif",

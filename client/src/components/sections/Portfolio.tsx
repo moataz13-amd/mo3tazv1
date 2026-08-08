@@ -124,11 +124,29 @@ const defaultProjects: Project[] = [
 
 const AUTOPLAY_DURATION = 5000;
 
+// Lightweight responsive hook using matchMedia (zero DOM reflows)
+function useIsMobile() {
+  const [isMobile, setIsMobile] = useState(() =>
+    typeof window !== 'undefined' ? window.matchMedia('(max-width: 639px)').matches : false
+  );
+
+  useEffect(() => {
+    if (typeof window === 'undefined') return;
+    const media = window.matchMedia('(max-width: 639px)');
+    const listener = (e: MediaQueryListEvent) => setIsMobile(e.matches);
+    media.addEventListener('change', listener);
+    return () => media.removeEventListener('change', listener);
+  }, []);
+
+  return isMobile;
+}
+
 /* ─── Single Card (memoized to avoid needless re-render) ─── */
 const CarouselCard = memo(function CarouselCard({
   project,
   offset,
   isActive,
+  isSmallScreen,
   onPrev,
   onNext,
   onNavigate,
@@ -136,12 +154,12 @@ const CarouselCard = memo(function CarouselCard({
   project: Project;
   offset: number;
   isActive: boolean;
+  isSmallScreen: boolean;
   onPrev: () => void;
   onNext: () => void;
   onNavigate: (p: Project) => void;
 }) {
   // Responsive transform values for mobile vs desktop
-  const isSmallScreen = typeof window !== 'undefined' && window.innerWidth < 640;
   const xOffset = isSmallScreen ? 44 : 55;
   const xPercent = offset === 0 ? 0 : offset < 0 ? -xOffset : xOffset;
   const cardScale = isActive ? 1 : isSmallScreen ? 0.82 : 0.78;
@@ -276,7 +294,8 @@ const Carousel3DSection = memo(function Carousel3DSection({
 }: Carousel3DSectionProps) {
   const navigate = useNavigate();
   const ref = useRef(null);
-  const isInView = useInView(ref, { once: true, margin: '-40px' });
+  const isInView = useInView(ref, { once: false, margin: '-20px' });
+  const isSmallScreen = useIsMobile();
 
   const [currentIndex, setCurrentIndex] = useState(0);
   const isPausedRef = useRef(false);           // ref instead of state – avoids re-renders on hover
@@ -299,18 +318,20 @@ const Carousel3DSection = memo(function Carousel3DSection({
     [navigate],
   );
 
-  // Auto-play with ref-based pause to avoid state-churn
+  // Auto-play timer: pauses when section is scrolled offscreen or browser tab is hidden
   useEffect(() => {
-    if (total <= 1) return;
+    if (total <= 1 || !isInView) return;
 
     timerRef.current = setInterval(() => {
-      if (!isPausedRef.current) handleNext();
+      if (!isPausedRef.current && document.visibilityState === 'visible') {
+        handleNext();
+      }
     }, AUTOPLAY_DURATION);
 
     return () => {
       if (timerRef.current) clearInterval(timerRef.current);
     };
-  }, [total, handleNext]);
+  }, [total, isInView, handleNext]);
 
   const handleMouseEnter = useCallback(() => { isPausedRef.current = true; }, []);
   const handleMouseLeave = useCallback(() => { isPausedRef.current = false; }, []);
@@ -381,6 +402,7 @@ const Carousel3DSection = memo(function Carousel3DSection({
                 project={project}
                 offset={offset}
                 isActive={isActive}
+                isSmallScreen={isSmallScreen}
                 onPrev={handlePrev}
                 onNext={handleNext}
                 onNavigate={handleNavigate}

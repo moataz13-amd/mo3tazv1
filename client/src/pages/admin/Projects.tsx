@@ -58,8 +58,8 @@ export default function ProjectsManager() {
     fd.append('internal_name', data.internal_name || '');
     fd.append('category', data.category || 'graphic');
     fd.append('description', data.description || '');
-    fd.append('featured', String(data.featured));
-    fd.append('show_details_btn', String(data.show_details_btn ?? true));
+    fd.append('featured', String(data.featured === true || data.featured === 'true'));
+    fd.append('show_details_btn', String(data.show_details_btn === true || data.show_details_btn === 'true'));
     fd.append('github_url', data.github_url || '');
     fd.append('live_url', data.live_url || '');
     fd.append('tech_stack', JSON.stringify(data.techStack || []));
@@ -120,8 +120,8 @@ export default function ProjectsManager() {
       setValue('tech_stack', (project.tech_stack || []).join(', '));
       setValue('github_url', project.github_url || '');
       setValue('live_url', project.live_url || '');
-      setValue('featured', project.featured);
-      setValue('show_details_btn', project.show_details_btn ?? true);
+      setValue('featured', project.featured === true || (project as any).featured === 'true');
+      setValue('show_details_btn', project.show_details_btn !== false && (project as any).show_details_btn !== 'false');
       setExistingGalleryImages(project.images || []);
       setCoverImagePreview(project.cover_image);
       setNewGalleryPreviews([]);

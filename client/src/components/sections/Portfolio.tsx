@@ -247,8 +247,11 @@ const CarouselCard = memo(function CarouselCard({
           </div>
 
           {/* View button – rendered if active card and show_details_btn is true */}
-          <AnimatePresence>
-            {isActive && (project.show_details_btn ?? true) && (
+          {(() => {
+            const showDetails = project.show_details_btn !== false && (project as any).show_details_btn !== 'false';
+            return (
+              <AnimatePresence>
+                {isActive && showDetails && (
               <motion.div
                 initial={{ opacity: 0, y: 12 }}
                 animate={{ opacity: 1, y: 0 }}
@@ -270,6 +273,8 @@ const CarouselCard = memo(function CarouselCard({
               </motion.div>
             )}
           </AnimatePresence>
+            );
+          })()}
         </div>
       </div>
     </motion.div>

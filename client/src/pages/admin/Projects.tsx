@@ -354,120 +354,205 @@ export default function ProjectsManager() {
       {/* Modal */}
       {isModalOpen && (
         <div className="modal-overlay">
-          <div className="modal-content max-w-2xl bg-[#050816] border border-glass-border">
-            <div className="flex items-center justify-between mb-6 pb-4 border-b border-glass-border">
-              <h3 className="text-lg font-black text-white tracking-wide">
-                {editingProject ? t('modifyCategorySettings') : t('createDesignCategory')}
-              </h3>
-              <button onClick={closeModal} className="text-gray-400 hover:text-white">
-                <X size={18} />
+          <div className="modal-content max-w-2xl bg-[#090d1f] border border-[#26EFFD]/30 shadow-[0_0_50px_rgba(38,239,253,0.15)] rounded-3xl p-6 md:p-8">
+            {/* Modal Header */}
+            <div className="flex items-center justify-between mb-6 pb-4 border-b border-white/10">
+              <div className="flex items-center gap-3">
+                <div className="w-9 h-9 rounded-xl bg-[#26EFFD]/10 border border-[#26EFFD]/30 flex items-center justify-center text-[#26EFFD]">
+                  {editingProject ? <Edit size={18} /> : <Plus size={18} />}
+                </div>
+                <div>
+                  <h3 className="text-lg font-black text-white tracking-wide">
+                    {editingProject ? t('modifyCategorySettings') : t('createDesignCategory')}
+                  </h3>
+                  <p className="text-[11px] text-gray-400">
+                    {editingProject ? 'تعديل بيانات وإعدادات العرض' : 'إضافة تصميم أو موك آب جديد للمعرض'}
+                  </p>
+                </div>
+              </div>
+              <button
+                onClick={closeModal}
+                className="w-8 h-8 rounded-full bg-white/5 border border-white/10 hover:bg-white/15 flex items-center justify-center text-gray-400 hover:text-white transition-all cursor-pointer"
+              >
+                <X size={16} />
               </button>
             </div>
 
             <form onSubmit={handleSubmit(onSubmit)} className="space-y-5">
-              <div className="grid grid-cols-2 gap-4">
+              {/* Titles Row */}
+              <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
                 <div>
-                  <label className="block text-xs font-mono text-gray-400 mb-1.5">{t('publicTitle')}</label>
-                  <input {...register('title')} className="input-field text-sm" placeholder="e.g. Pop Art Designs" required />
-                </div>
-                <div>
-                  <label className="block text-xs font-mono text-gray-400 mb-1.5">{t('internalName')}</label>
-                  <input {...register('internal_name')} className="input-field text-sm" placeholder="e.g. Pop Art Designs - Moataz" />
-                </div>
-              </div>
-              <div className="grid grid-cols-2 gap-4">
-                <div>
-                  <label className="block text-xs font-mono text-gray-400 mb-1.5">{t('groupCategory')}</label>
-                  <select {...register('category')} className="input-field text-sm bg-[#050816]">
-                    <option value="graphic">{t('graphicDesign')}</option>
-                    <option value="branding">{t('brandingStrategy')}</option>
-                    <option value="mockup">{t('mockupShowcase')}</option>
-                    <option value="ui-ux">{t('uiUxDesign')}</option>
-                    <option value="web">{t('webDevelopment')}</option>
-                  </select>
-                  {/* Helper hint about sections */}
-                  <p className="text-[10px] text-gray-500 mt-1.5 leading-relaxed">
-                    💡 فئة <span className="text-amber-300">موك آب</span> أو <span className="text-amber-300">براندينج</span> → سلايدر الموك آب &nbsp;|&nbsp; البقية → سلايدر المشاريع
-                  </p>
-                </div>
-                <div className="flex flex-col justify-between">
-                  <div className="flex items-center gap-2 h-10">
-                    <input type="checkbox" id="featured" {...register('featured')} className="w-4 h-4 rounded border-glass-border bg-surface text-primary focus:ring-0 cursor-pointer" />
-                    <label htmlFor="featured" className="text-xs font-mono text-gray-400 cursor-pointer select-none">{t('featureThisCategory')}</label>
-                  </div>
-                  <p className="text-[10px] text-gray-500 leading-relaxed">
-                    ⭐ التفعيل يضيف العنصر لسلايدر <span className="text-cyan-300">المشاريع المميزة</span>
-                  </p>
-                </div>
-              </div>
-
-              <div>
-                <label className="block text-xs font-mono text-gray-400 mb-1.5">{t('descriptionAr')}</label>
-                <textarea {...register('description')} rows={2} className="input-field text-sm" placeholder="e.g. تصاميم مستوحاة من ثقافة البوب آرت..." required />
-              </div>
-
-              <div className="grid grid-cols-1 md:grid-cols-2 gap-5 items-end">
-                <div>
-                  <label className="block text-xs font-mono text-gray-400 mb-1.5">{t('categoryCoverImage')}</label>
-                  {coverImagePreview && (
-                    <div className="relative mb-2 w-full h-24 rounded-xl overflow-hidden border border-glass-border bg-surface">
-                      <img src={coverImagePreview} alt="Cover Preview" className="object-cover w-full h-full" />
-                    </div>
-                  )}
+                  <label className="block text-xs font-bold text-gray-300 mb-1.5">{t('publicTitle')}</label>
                   <input
-                    type="file"
-                    {...coverImageRegister}
-                    onChange={(e) => {
-                      coverImageRegister.onChange(e);
-                      if (e.target.files && e.target.files[0]) {
-                        setCoverImagePreview(URL.createObjectURL(e.target.files[0]));
-                      }
-                    }}
-                    className="text-xs text-gray-400 bg-surface border border-glass-border p-2 rounded-xl w-full"
+                    {...register('title')}
+                    className="w-full bg-[#050816] border border-white/15 focus:border-[#26EFFD] focus:ring-1 focus:ring-[#26EFFD] rounded-xl px-4 py-2.5 text-xs text-white placeholder-gray-500 outline-none transition-all"
+                    placeholder="مثال: Pop Art Designs"
+                    required
+                  />
+                </div>
+                <div>
+                  <label className="block text-xs font-bold text-gray-300 mb-1.5">{t('internalName')}</label>
+                  <input
+                    {...register('internal_name')}
+                    className="w-full bg-[#050816] border border-white/15 focus:border-[#26EFFD] focus:ring-1 focus:ring-[#26EFFD] rounded-xl px-4 py-2.5 text-xs text-white placeholder-gray-500 outline-none transition-all"
+                    placeholder="مثال: تصاميم البوب آرت - معتز"
                   />
                 </div>
               </div>
 
-              {/* Multiple designs upload */}
+              {/* Category & Featured Row */}
+              <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
+                <div>
+                  <label className="block text-xs font-bold text-gray-300 mb-1.5">{t('groupCategory')}</label>
+                  <div className="relative">
+                    <select
+                      {...register('category')}
+                      className="w-full bg-[#050816] border border-white/15 focus:border-[#26EFFD] focus:ring-1 focus:ring-[#26EFFD] rounded-xl px-4 py-2.5 text-xs text-white cursor-pointer outline-none transition-all appearance-none"
+                    >
+                      <option value="graphic" className="bg-[#090d1f] text-white py-2">{t('graphicDesign')}</option>
+                      <option value="branding" className="bg-[#090d1f] text-white py-2">{t('brandingStrategy')}</option>
+                      <option value="mockup" className="bg-[#090d1f] text-white py-2">{t('mockupShowcase')}</option>
+                      <option value="ui-ux" className="bg-[#090d1f] text-white py-2">{t('uiUxDesign')}</option>
+                      <option value="web" className="bg-[#090d1f] text-white py-2">{t('webDevelopment')}</option>
+                    </select>
+                    <div className="pointer-events-none absolute inset-y-0 left-0 flex items-center px-3 text-gray-400">
+                      <svg className="w-4 h-4 fill-current" viewBox="0 0 20 20">
+                        <path d="M5.293 7.293a1 1 0 011.414 0L10 10.586l3.293-3.293a1 1 0 111.414 1.414l-4 4a1 1 0 01-1.414 0l-4-4a1 1 0 010-1.414z" />
+                      </svg>
+                    </div>
+                  </div>
+                  <p className="text-[10px] text-amber-300/80 mt-1.5 leading-relaxed bg-amber-500/10 border border-amber-500/20 p-2 rounded-lg">
+                    💡 اختيار <span className="font-bold text-amber-300">موك آب</span> أو <span className="font-bold text-amber-300">براندينج</span> يُظهر العنصر في سلايدر الموك آب الأعلى.
+                  </p>
+                </div>
+
+                <div>
+                  <label className="block text-xs font-bold text-gray-300 mb-1.5">حالة الظهور والتمييز</label>
+                  <div className="p-3 rounded-xl border border-white/15 bg-[#050816] flex items-center gap-3 cursor-pointer hover:border-[#26EFFD]/40 transition-colors">
+                    <input
+                      type="checkbox"
+                      id="featured"
+                      {...register('featured')}
+                      className="w-4 h-4 rounded border-white/20 bg-surface text-[#26EFFD] focus:ring-0 cursor-pointer accent-[#26EFFD]"
+                    />
+                    <label htmlFor="featured" className="text-xs font-bold text-gray-200 cursor-pointer select-none">
+                      {t('featureThisCategory')}
+                    </label>
+                  </div>
+                  <p className="text-[10px] text-cyan-300/80 mt-1.5 leading-relaxed bg-cyan-500/10 border border-cyan-500/20 p-2 rounded-lg">
+                    ⭐ تفعيل التميز يُظهر العنصر في سلايدر <span className="font-bold text-cyan-300">المشاريع المميزة</span>.
+                  </p>
+                </div>
+              </div>
+
+              {/* Description */}
               <div>
-                <label className="block text-xs font-mono text-gray-400 mb-1.5">{t('uploadDesignItems')}</label>
+                <label className="block text-xs font-bold text-gray-300 mb-1.5">{t('descriptionAr')}</label>
+                <textarea
+                  {...register('description')}
+                  rows={2}
+                  className="w-full bg-[#050816] border border-white/15 focus:border-[#26EFFD] focus:ring-1 focus:ring-[#26EFFD] rounded-xl px-4 py-2.5 text-xs text-white placeholder-gray-500 outline-none transition-all resize-none"
+                  placeholder="e.g. تصاميم مستوحاة من ثقافة البوب آرت..."
+                  required
+                />
+              </div>
+
+              {/* Cover Image Upload Card */}
+              <div>
+                <label className="block text-xs font-bold text-gray-300 mb-1.5">{t('categoryCoverImage')}</label>
+                <div className="flex items-center gap-4 p-3 rounded-2xl border border-dashed border-white/20 bg-[#050816] hover:border-[#26EFFD]/50 transition-all group">
+                  {coverImagePreview ? (
+                    <div className="relative w-24 h-16 rounded-xl overflow-hidden border border-white/10 flex-shrink-0">
+                      <img src={coverImagePreview} alt="Cover Preview" className="object-cover w-full h-full" />
+                    </div>
+                  ) : (
+                    <div className="w-12 h-12 rounded-xl bg-white/5 border border-white/10 flex items-center justify-center text-gray-400 group-hover:text-[#26EFFD] group-hover:border-[#26EFFD]/40 transition-all flex-shrink-0">
+                      <UploadCloud size={20} />
+                    </div>
+                  )}
+
+                  <div className="flex-1 min-w-0">
+                    <p className="text-xs font-bold text-white">
+                      {coverImagePreview ? 'صورة الغلاف الحالية' : 'اختر صورة غلاف للمجموعة'}
+                    </p>
+                    <p className="text-[10px] text-gray-400 mt-0.5">JPG, PNG, WEBP (تنسيق عالي الجودة)</p>
+                  </div>
+
+                  <label className="px-4 py-2 rounded-xl bg-[#26EFFD]/10 hover:bg-[#26EFFD]/20 border border-[#26EFFD]/40 text-[#26EFFD] text-xs font-bold cursor-pointer transition-all flex items-center gap-1.5">
+                    <UploadCloud size={14} />
+                    <span>{coverImagePreview ? 'تغيير الصورة' : 'رفع غلاف'}</span>
+                    <input
+                      type="file"
+                      accept="image/*"
+                      className="hidden"
+                      {...coverImageRegister}
+                      onChange={(e) => {
+                        coverImageRegister.onChange(e);
+                        if (e.target.files && e.target.files[0]) {
+                          setCoverImagePreview(URL.createObjectURL(e.target.files[0]));
+                        }
+                      }}
+                    />
+                  </label>
+                </div>
+              </div>
+
+              {/* Multiple Gallery Images Upload Dropzone */}
+              <div>
+                <label className="block text-xs font-bold text-gray-300 mb-1.5">{t('uploadDesignItems')}</label>
+                
+                {/* Previews if any selected */}
                 {newGalleryPreviews.length > 0 && (
-                  <div className="grid grid-cols-6 gap-2 mb-3 max-h-24 overflow-y-auto p-2 bg-[#050816] rounded-xl border border-glass-border">
+                  <div className="grid grid-cols-5 gap-2 mb-3 max-h-28 overflow-y-auto p-2.5 bg-[#050816] rounded-2xl border border-white/10">
                     {newGalleryPreviews.map((url, idx) => (
-                      <div key={idx} className="relative rounded-lg overflow-hidden border border-glass-border aspect-square">
-                        <img src={url} className="object-cover w-full h-full" alt="New Upload Preview" />
+                      <div key={idx} className="relative rounded-xl overflow-hidden border border-white/10 aspect-square group">
+                        <img src={url} className="object-cover w-full h-full" alt="Upload Preview" />
+                        <span className="absolute bottom-1 right-1 px-1.5 py-0.5 rounded bg-black/70 text-[9px] font-mono text-white">جديد</span>
                       </div>
                     ))}
                   </div>
                 )}
-                <input
-                  type="file"
-                  multiple
-                  {...galleryImagesRegister}
-                  onChange={(e) => {
-                    galleryImagesRegister.onChange(e);
-                    if (e.target.files) {
-                      const filesArray = Array.from(e.target.files);
-                      const urls = filesArray.map(file => URL.createObjectURL(file));
-                      setNewGalleryPreviews(urls);
-                    }
-                  }}
-                  className="text-xs text-gray-400 bg-surface border border-glass-border p-2 rounded-xl w-full"
-                />
+
+                <label className="flex flex-col items-center justify-center p-4 rounded-2xl border-2 border-dashed border-white/20 hover:border-[#26EFFD] bg-[#050816] hover:bg-[#26EFFD]/5 transition-all cursor-pointer group text-center space-y-2">
+                  <UploadCloud size={26} className="text-gray-400 group-hover:text-[#26EFFD] transition-colors" />
+                  <div>
+                    <p className="text-xs font-bold text-white group-hover:text-[#26EFFD] transition-colors">
+                      {newGalleryPreviews.length > 0 ? `تم اختيار ${newGalleryPreviews.length} صور (اضغط لإضافة المزيد)` : 'اضغط لرفع عناصر صور التصاميم (يمكنك اختيار عدة صور)'}
+                    </p>
+                    <p className="text-[10px] text-gray-500 mt-0.5">يدعم رفع ملفات متعددة دفعة واحدة</p>
+                  </div>
+                  <input
+                    type="file"
+                    multiple
+                    accept="image/*"
+                    className="hidden"
+                    {...galleryImagesRegister}
+                    onChange={(e) => {
+                      galleryImagesRegister.onChange(e);
+                      if (e.target.files) {
+                        const filesArray = Array.from(e.target.files);
+                        const urls = filesArray.map(file => URL.createObjectURL(file));
+                        setNewGalleryPreviews(urls);
+                      }
+                    }}
+                  />
+                </label>
               </div>
 
-              {/* List of existing gallery images */}
+              {/* Existing Gallery Images */}
               {editingProject && existingGalleryImages.length > 0 && (
                 <div>
-                  <label className="block text-xs font-mono text-gray-400 mb-2">{t('existingDesigns')} ({existingGalleryImages.length})</label>
-                  <div className="grid grid-cols-5 gap-3 max-h-40 overflow-y-auto p-2 bg-[#050816] rounded-xl border border-glass-border">
+                  <label className="block text-xs font-bold text-gray-300 mb-2">
+                    {t('existingDesigns')} ({existingGalleryImages.length})
+                  </label>
+                  <div className="grid grid-cols-5 gap-3 max-h-36 overflow-y-auto p-2.5 bg-[#050816] rounded-2xl border border-white/10">
                     {existingGalleryImages.map((imgUrl, index) => (
-                      <div key={index} className="relative group rounded-lg overflow-hidden border border-glass-border aspect-square">
+                      <div key={index} className="relative group rounded-xl overflow-hidden border border-white/10 aspect-square">
                         <img src={imgUrl} className="object-cover w-full h-full" alt="Design Item" />
                         <button
                           type="button"
                           onClick={() => removeExistingImage(imgUrl)}
-                          className="absolute inset-0 bg-black/60 opacity-0 group-hover:opacity-100 flex items-center justify-center text-red-500 transition-opacity cursor-pointer"
+                          className="absolute inset-0 bg-black/75 opacity-0 group-hover:opacity-100 flex items-center justify-center text-red-400 hover:text-red-300 transition-opacity cursor-pointer"
                         >
                           <Trash2 size={16} />
                         </button>
@@ -477,12 +562,21 @@ export default function ProjectsManager() {
                 </div>
               )}
 
-              <div className="flex justify-end gap-3 pt-5 border-t border-glass-border">
-                <button type="button" onClick={closeModal} className="px-4 py-2 border border-glass-border rounded-full text-xs font-bold text-gray-400 hover:text-white transition-colors">
+              {/* Action Buttons */}
+              <div className="flex items-center justify-end gap-3 pt-5 border-t border-white/10">
+                <button
+                  type="button"
+                  onClick={closeModal}
+                  className="px-5 py-2.5 border border-white/15 hover:border-white/30 rounded-full text-xs font-bold text-gray-300 hover:text-white transition-all cursor-pointer"
+                >
                   {t('cancel')}
                 </button>
-                <button type="submit" className="neon-btn px-6 py-2.5 text-xs font-black flex items-center gap-1.5">
-                  <Save size={14} /> {t('saveCategory')}
+                <button
+                  type="submit"
+                  className="neon-btn px-7 py-2.5 text-xs font-extrabold flex items-center gap-2 cursor-pointer shadow-[0_0_20px_rgba(38,239,253,0.3)] hover:shadow-[0_0_30px_rgba(38,239,253,0.5)]"
+                >
+                  <Save size={15} />
+                  <span>{t('saveCategory')}</span>
                 </button>
               </div>
             </form>

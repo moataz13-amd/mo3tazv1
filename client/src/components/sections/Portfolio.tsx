@@ -476,7 +476,7 @@ const Portfolio = memo(function Portfolio() {
       {/* 1. Mockup Showcase Section (Upper Section) */}
       <Carousel3DSection
         id="mockups"
-        subtitle="معرض الموك آب"
+        subtitle=" الموك آب"
         titlePrefix=""
         titleHighlight="الموك آب"
         items={mockupsList}

@@ -385,12 +385,11 @@ export default function ProjectsManager() {
               {/* Titles Row */}
               <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
                 <div>
-                  <label className="block text-xs font-bold text-gray-300 mb-1.5">{t('publicTitle')}</label>
+                  <label className="block text-xs font-bold text-gray-300 mb-1.5">{t('publicTitle')} <span className="text-gray-500 font-normal">(اختياري)</span></label>
                   <input
                     {...register('title')}
                     className="w-full bg-[#050816] border border-white/15 focus:border-[#26EFFD] focus:ring-1 focus:ring-[#26EFFD] rounded-xl px-4 py-2.5 text-xs text-white placeholder-gray-500 outline-none transition-all"
                     placeholder="مثال: Pop Art Designs"
-                    required
                   />
                 </div>
                 <div>

@@ -478,21 +478,44 @@ body {
 .modal-overlay {
   position: fixed;
   inset: 0;
-  background: rgba(5, 8, 22, 0.8);
-  backdrop-filter: blur(8px);
-  z-index: 50;
+  background: rgba(3, 6, 16, 0.85);
+  backdrop-filter: blur(14px);
+  -webkit-backdrop-filter: blur(14px);
+  z-index: 100;
   display: flex;
   align-items: center;
   justify-content: center;
+  padding: 1.5rem 1rem;
+  overflow-y: auto;
+  overscroll-behavior: contain;
 }
 
 .modal-content {
   @apply glass-card;
-  width: 90%;
-  max-width: 640px;
-  max-height: 90vh;
+  width: 100%;
+  max-width: 680px;
+  max-height: 85vh;
   overflow-y: auto;
+  margin: auto;
   padding: 2rem;
+  overscroll-behavior: contain;
+  scrollbar-width: thin;
+  scrollbar-color: rgba(38, 239, 253, 0.4) rgba(5, 8, 22, 0.6);
+}
+
+.modal-content::-webkit-scrollbar {
+  width: 6px;
+}
+.modal-content::-webkit-scrollbar-track {
+  background: rgba(5, 8, 22, 0.6);
+  border-radius: 10px;
+}
+.modal-content::-webkit-scrollbar-thumb {
+  background: rgba(38, 239, 253, 0.4);
+  border-radius: 10px;
+}
+.modal-content::-webkit-scrollbar-thumb:hover {
+  background: rgba(38, 239, 253, 0.7);
 }
 
 /* ============================================
@@ -1027,9 +1050,11 @@ select.input-field option {
 }
 
 .admin-content-shell .modal-overlay {
-  background: rgba(3, 6, 16, 0.82) !important;
+  background: rgba(3, 6, 16, 0.85) !important;
   backdrop-filter: blur(14px) !important;
   -webkit-backdrop-filter: blur(14px) !important;
+  z-index: 100 !important;
+  overflow-y: auto !important;
 }
 
 .admin-content-shell .modal-content {
@@ -1038,6 +1063,9 @@ select.input-field option {
   border: 1px solid rgba(38, 239, 253, 0.3) !important;
   border-radius: 28px !important;
   box-shadow: 0 0 50px rgba(0, 229, 255, 0.15), 0 25px 60px rgba(0, 0, 0, 0.85) !important;
+  max-height: 85vh !important;
+  overflow-y: auto !important;
+  overscroll-behavior: contain !important;
 }
 
 .admin-content-shell .modal-content > div:first-child {

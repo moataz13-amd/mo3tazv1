@@ -354,7 +354,7 @@ export default function ProjectsManager() {
       {/* Modal */}
       {isModalOpen && (
         <div className="modal-overlay">
-          <div className="modal-content max-w-2xl bg-[#090d1f] border border-[#26EFFD]/30 shadow-[0_0_50px_rgba(38,239,253,0.15)] rounded-3xl p-6 md:p-8">
+          <div className="modal-content max-w-2xl max-h-[85vh] overflow-y-auto my-auto bg-[#090d1f] border border-[#26EFFD]/30 shadow-[0_0_50px_rgba(38,239,253,0.15)] rounded-3xl p-6 md:p-8">
             {/* Modal Header */}
             <div className="flex items-center justify-between mb-6 pb-4 border-b border-white/10">
               <div className="flex items-center gap-3">

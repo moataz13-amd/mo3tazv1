@@ -25,6 +25,7 @@ export interface Project {
   live_url?: string;
   category: 'web' | 'ui-ux' | 'graphic' | 'branding' | 'mockup' | 'other';
   featured: boolean;
+  show_details_btn?: boolean;
   status: 'draft' | 'published';
   created_at: string;
   updated_at: string;

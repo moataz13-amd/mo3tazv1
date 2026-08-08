@@ -59,6 +59,7 @@ export default function ProjectsManager() {
     fd.append('category', data.category || 'graphic');
     fd.append('description', data.description || '');
     fd.append('featured', String(data.featured));
+    fd.append('show_details_btn', String(data.show_details_btn ?? true));
     fd.append('github_url', data.github_url || '');
     fd.append('live_url', data.live_url || '');
     fd.append('tech_stack', JSON.stringify(data.techStack || []));
@@ -120,6 +121,7 @@ export default function ProjectsManager() {
       setValue('github_url', project.github_url || '');
       setValue('live_url', project.live_url || '');
       setValue('featured', project.featured);
+      setValue('show_details_btn', project.show_details_btn ?? true);
       setExistingGalleryImages(project.images || []);
       setCoverImagePreview(project.cover_image);
       setNewGalleryPreviews([]);
@@ -134,6 +136,7 @@ export default function ProjectsManager() {
         github_url: '',
         live_url: '',
         featured: false,
+        show_details_btn: true,
       });
       setExistingGalleryImages([]);
       setCoverImagePreview(null);
@@ -426,9 +429,11 @@ export default function ProjectsManager() {
                   </p>
                 </div>
 
-                <div>
-                  <label className="block text-xs font-bold text-gray-300 mb-1.5">حالة الظهور والتمييز</label>
-                  <div className="p-3 rounded-xl border border-white/15 bg-[#050816] flex items-center gap-3 cursor-pointer hover:border-[#26EFFD]/40 transition-colors">
+                <div className="space-y-2">
+                  <label className="block text-xs font-bold text-gray-300 mb-1.5">خيارات التفاعل والظهور</label>
+                  
+                  {/* Featured checkbox */}
+                  <div className="p-2.5 rounded-xl border border-white/15 bg-[#050816] flex items-center gap-3 cursor-pointer hover:border-[#26EFFD]/40 transition-colors">
                     <input
                       type="checkbox"
                       id="featured"
@@ -436,12 +441,22 @@ export default function ProjectsManager() {
                       className="w-4 h-4 rounded border-white/20 bg-surface text-[#26EFFD] focus:ring-0 cursor-pointer accent-[#26EFFD]"
                     />
                     <label htmlFor="featured" className="text-xs font-bold text-gray-200 cursor-pointer select-none">
-                      {t('featureThisCategory')}
+                      {t('featureThisCategory')} (سلايدر مميز)
                     </label>
                   </div>
-                  <p className="text-[10px] text-cyan-300/80 mt-1.5 leading-relaxed bg-cyan-500/10 border border-cyan-500/20 p-2 rounded-lg">
-                    ⭐ تفعيل التميز يُظهر العنصر في سلايدر <span className="font-bold text-cyan-300">المشاريع المميزة</span>.
-                  </p>
+
+                  {/* Show Details Button checkbox */}
+                  <div className="p-2.5 rounded-xl border border-white/15 bg-[#050816] flex items-center gap-3 cursor-pointer hover:border-[#26EFFD]/40 transition-colors">
+                    <input
+                      type="checkbox"
+                      id="show_details_btn"
+                      {...register('show_details_btn')}
+                      className="w-4 h-4 rounded border-white/20 bg-surface text-[#26EFFD] focus:ring-0 cursor-pointer accent-[#26EFFD]"
+                    />
+                    <label htmlFor="show_details_btn" className="text-xs font-bold text-gray-200 cursor-pointer select-none">
+                      إظهار زر "عرض التفاصيل" في الكارد
+                    </label>
+                  </div>
                 </div>
               </div>
 

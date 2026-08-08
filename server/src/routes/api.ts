@@ -97,7 +97,8 @@ router.post('/projects', authenticate, upload.fields([
     }
 
     const techStack = req.body.tech_stack ? JSON.parse(req.body.tech_stack) : [];
-    const featured = req.body.featured === 'true';
+    const featured = req.body.featured === 'true' || req.body.featured === true;
+    const show_details_btn = req.body.show_details_btn !== undefined ? (req.body.show_details_btn === 'true' || req.body.show_details_btn === true) : true;
 
     const projectData = {
       title: req.body.title || '',
@@ -110,6 +111,7 @@ router.post('/projects', authenticate, upload.fields([
       live_url: req.body.live_url || null,
       category: req.body.category || 'graphic',
       featured,
+      show_details_btn,
       status: 'published'
     };
 
@@ -132,7 +134,8 @@ router.put('/projects/:id', authenticate, upload.fields([
       internal_name: req.body.internal_name || null,
       description: req.body.description,
       category: req.body.category,
-      featured: req.body.featured === 'true',
+      featured: req.body.featured === 'true' || req.body.featured === true,
+      show_details_btn: req.body.show_details_btn !== undefined ? (req.body.show_details_btn === 'true' || req.body.show_details_btn === true) : true,
       github_url: req.body.github_url || null,
       live_url: req.body.live_url || null,
     };

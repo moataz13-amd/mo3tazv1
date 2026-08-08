@@ -1,11 +1,13 @@
-import { useState } from 'react';
+import { useState, useMemo } from 'react';
 import { useQuery, useMutation, useQueryClient } from '@tanstack/react-query';
 import { useForm } from 'react-hook-form';
-import { Plus, Trash2, Edit, X, Save, Star, ExternalLink, Image as ImageIcon, UploadCloud } from 'lucide-react';
+import { Plus, Trash2, Edit, X, Save, Star, ExternalLink, Image as ImageIcon, UploadCloud, Layers, Monitor } from 'lucide-react';
 import toast from 'react-hot-toast';
 import { projectsAPI } from '../../lib/api';
 import type { Project } from '../../types';
 import { useAdminTranslation } from '../../lib/adminTranslations';
+
+type FilterTab = 'all' | 'mockup' | 'featured' | 'other';
 
 export default function ProjectsManager() {
   const { t } = useAdminTranslation();
@@ -15,11 +17,40 @@ export default function ProjectsManager() {
   const [existingGalleryImages, setExistingGalleryImages] = useState<string[]>([]);
   const [coverImagePreview, setCoverImagePreview] = useState<string | null>(null);
   const [newGalleryPreviews, setNewGalleryPreviews] = useState<string[]>([]);
+  const [activeTab, setActiveTab] = useState<FilterTab>('all');
 
   const { data: projects, isLoading } = useQuery({
     queryKey: ['projects'],
     queryFn: () => projectsAPI.getAll().then((r) => r.data as Project[]),
   });
+
+  // Filtered projects based on active tab
+  const filteredProjects = useMemo(() => {
+    if (!Array.isArray(projects)) return [];
+    switch (activeTab) {
+      case 'mockup':
+        return projects.filter((p) => p.category === 'mockup' || p.category === 'branding');
+      case 'featured':
+        return projects.filter((p) => p.featured);
+      case 'other':
+        return projects.filter((p) => p.category !== 'mockup' && p.category !== 'branding');
+      default:
+        return projects;
+    }
+  }, [projects, activeTab]);
+
+  // Count badges
+  const mockupCount = useMemo(() => {
+    if (!Array.isArray(projects)) return 0;
+    return projects.filter((p) => p.category === 'mockup' || p.category === 'branding').length;
+  }, [projects]);
+
+  const featuredCount = useMemo(() => {
+    if (!Array.isArray(projects)) return 0;
+    return projects.filter((p) => p.featured).length;
+  }, [projects]);
+
+  const isMockupCategory = (cat: string) => cat === 'mockup' || cat === 'branding';
 
   const buildProjectFormData = (data: any, coverFile: File | null, existingCover: string) => {
     const fd = new FormData();
@@ -97,7 +128,7 @@ export default function ProjectsManager() {
       reset({
         title: '',
         internal_name: '',
-        category: 'graphic',
+        category: activeTab === 'mockup' ? 'mockup' : 'graphic',
         description: '',
         tech_stack: '',
         github_url: '',
@@ -159,6 +190,13 @@ export default function ProjectsManager() {
   const coverImageRegister = register('cover_image');
   const galleryImagesRegister = register('gallery_images');
 
+  const filterTabs: { key: FilterTab; label: string; count?: number; icon: React.ReactNode; color: string }[] = [
+    { key: 'all', label: 'الكل', count: Array.isArray(projects) ? projects.length : 0, icon: <Layers size={14} />, color: '#ffffff' },
+    { key: 'mockup', label: 'موك آب', count: mockupCount, icon: <Monitor size={14} />, color: '#f59e0b' },
+    { key: 'featured', label: 'المميزة', count: featuredCount, icon: <Star size={14} />, color: '#00E5FF' },
+    { key: 'other', label: 'أخرى', icon: <ImageIcon size={14} />, color: '#8b5cf6' },
+  ];
+
   return (
     <div className="space-y-6">
       <div className="flex items-center justify-between">
@@ -171,17 +209,94 @@ export default function ProjectsManager() {
         </button>
       </div>
 
+      {/* Filter Tabs */}
+      <div className="flex items-center gap-2 flex-wrap">
+        {filterTabs.map((tab) => (
+          <button
+            key={tab.key}
+            onClick={() => setActiveTab(tab.key)}
+            className={`flex items-center gap-1.5 px-4 py-2 rounded-full text-xs font-bold border transition-all cursor-pointer select-none ${
+              activeTab === tab.key
+                ? 'border-[#26EFFD] bg-[#26EFFD]/10 text-white shadow-[0_0_12px_rgba(38,239,253,0.2)]'
+                : 'border-white/10 text-gray-400 hover:border-white/25 hover:text-white'
+            }`}
+          >
+            <span style={{ color: activeTab === tab.key ? tab.color : undefined }}>{tab.icon}</span>
+            <span>{tab.label}</span>
+            {tab.count !== undefined && (
+              <span
+                className="ml-1 px-1.5 py-0.5 rounded-full text-[10px] font-bold"
+                style={{
+                  background: activeTab === tab.key ? `${tab.color}20` : 'rgba(255,255,255,0.08)',
+                  color: activeTab === tab.key ? tab.color : '#888',
+                }}
+              >
+                {tab.count}
+              </span>
+            )}
+          </button>
+        ))}
+      </div>
+
+      {/* Info Banner when Mockup tab is active */}
+      {activeTab === 'mockup' && (
+        <div className="flex items-start gap-3 p-4 rounded-2xl border border-amber-500/30 bg-amber-500/5">
+          <Monitor size={18} className="text-amber-400 mt-0.5 flex-shrink-0" />
+          <div>
+            <p className="text-sm font-bold text-amber-300">سكشن تصاميم الموك آب</p>
+            <p className="text-xs text-gray-400 mt-0.5">
+              العناصر هنا تظهر في سكشن "تصاميم الموك آب" على الموقع العام. اختر فئة <strong className="text-amber-300">موك آب</strong> أو <strong className="text-amber-300">براندينج</strong> لأي عنصر عشان يظهر في السلايدر.
+            </p>
+          </div>
+        </div>
+      )}
+
+      {activeTab === 'featured' && (
+        <div className="flex items-start gap-3 p-4 rounded-2xl border border-cyan-500/30 bg-cyan-500/5">
+          <Star size={18} className="text-cyan-400 mt-0.5 flex-shrink-0" />
+          <div>
+            <p className="text-sm font-bold text-cyan-300">سكشن المشاريع المميزة</p>
+            <p className="text-xs text-gray-400 mt-0.5">
+              العناصر المحددة كـ <strong className="text-cyan-300">مميزة (Featured)</strong> تظهر في سكشن "المشاريع المميزة" على الموقع العام.
+            </p>
+          </div>
+        </div>
+      )}
+
       {isLoading ? (
         <div className="flex items-center justify-center py-20">
           <div className="spinner" />
         </div>
+      ) : filteredProjects.length === 0 ? (
+        <div className="flex flex-col items-center justify-center py-16 text-center">
+          <div className="w-16 h-16 rounded-2xl bg-white/5 border border-white/10 flex items-center justify-center mb-4">
+            <ImageIcon size={24} className="text-gray-500" />
+          </div>
+          <p className="text-gray-400 text-sm font-bold">لا توجد عناصر في هذا التصنيف</p>
+          <p className="text-gray-500 text-xs mt-1">أضف عنصر جديد أو اختر تصنيف مختلف</p>
+          <button
+            onClick={() => openModal()}
+            className="neon-btn px-5 py-2 text-xs font-black flex items-center gap-1.5 mt-4"
+          >
+            <Plus size={14} /> إضافة عنصر
+          </button>
+        </div>
       ) : (
         <div className="grid md:grid-cols-2 lg:grid-cols-3 gap-5">
-          {Array.isArray(projects) && projects.map((project) => (
+          {filteredProjects.map((project) => (
             <div key={project.id} className="project-card group">
               <div className="project-card-image relative">
                 <img src={project.cover_image} alt={project.title} className="object-cover w-full h-48" />
+                {/* Badges row */}
                 <div className="absolute top-3 right-3 flex gap-1.5 z-10">
+                  {/* Mockup badge */}
+                  {isMockupCategory(project.category) && (
+                    <div className="h-7 px-2.5 rounded-lg bg-amber-500/25 border border-amber-500/50 flex items-center gap-1 text-amber-300 text-[10px] font-bold">
+                      <Monitor size={11} />
+                      <span>موك آب</span>
+                    </div>
+                  )}
+                  {/* Featured badge */}
                   {project.featured && (
                     <div className="w-8 h-8 rounded-lg bg-[rgba(0,229,255,0.25)] border border-primary flex items-center justify-center text-primary shadow-neon-sm">
                       <Star size={14} fill="#00E5FF" />
@@ -193,13 +308,33 @@ export default function ProjectsManager() {
               <div className="p-5 space-y-4">
                 <div>
                   <div className="flex items-center justify-between mb-1">
-                    <span className="text-[10px] uppercase font-mono tracking-wider text-primary">{project.category}</span>
+                    <span
+                      className={`text-[10px] uppercase font-mono tracking-wider ${
+                        isMockupCategory(project.category) ? 'text-amber-400' : 'text-primary'
+                      }`}
+                    >
+                      {project.category}
+                    </span>
                     <span className="text-[10px] text-gray-400 flex items-center gap-1">
                       <ImageIcon size={10} /> {project.images?.length || 0} {t('designsCount')}
                     </span>
                   </div>
                   <h3 className="font-bold text-white text-base truncate">{project.internal_name || project.title}</h3>
                   <p className="text-xs text-gray-400 mt-1 line-clamp-2">{project.description}</p>
+                </div>
+
+                {/* Section indicator */}
+                <div className="flex items-center gap-1.5">
+                  {isMockupCategory(project.category) && (
+                    <span className="text-[9px] px-2 py-0.5 rounded-full bg-amber-500/10 border border-amber-500/30 text-amber-300 font-bold">
+                      📺 سلايدر الموك آب
+                    </span>
+                  )}
+                  {project.featured && (
+                    <span className="text-[9px] px-2 py-0.5 rounded-full bg-cyan-500/10 border border-cyan-500/30 text-cyan-300 font-bold">
+                      ⭐ سلايدر المميزة
+                    </span>
+                  )}
                 </div>
 
                 <div className="flex justify-end gap-2 pt-2 border-t border-glass-border">
@@ -250,6 +385,19 @@ export default function ProjectsManager() {
                     <option value="ui-ux">{t('uiUxDesign')}</option>
                     <option value="web">{t('webDevelopment')}</option>
                   </select>
+                  {/* Helper hint about sections */}
+                  <p className="text-[10px] text-gray-500 mt-1.5 leading-relaxed">
+                    💡 فئة <span className="text-amber-300">موك آب</span> أو <span className="text-amber-300">براندينج</span> → سلايدر الموك آب &nbsp;|&nbsp; البقية → سلايدر المشاريع
+                  </p>
+                </div>
+                <div className="flex flex-col justify-between">
+                  <div className="flex items-center gap-2 h-10">
+                    <input type="checkbox" id="featured" {...register('featured')} className="w-4 h-4 rounded border-glass-border bg-surface text-primary focus:ring-0 cursor-pointer" />
+                    <label htmlFor="featured" className="text-xs font-mono text-gray-400 cursor-pointer select-none">{t('featureThisCategory')}</label>
+                  </div>
+                  <p className="text-[10px] text-gray-500 leading-relaxed">
+                    ⭐ التفعيل يضيف العنصر لسلايدر <span className="text-cyan-300">المشاريع المميزة</span>
+                  </p>
                 </div>
               </div>
 
@@ -277,10 +425,6 @@ export default function ProjectsManager() {
                     }}
                     className="text-xs text-gray-400 bg-surface border border-glass-border p-2 rounded-xl w-full"
                   />
-                </div>
-                <div className="flex items-center gap-2 h-10 mb-1">
-                  <input type="checkbox" id="featured" {...register('featured')} className="w-4 h-4 rounded border-glass-border bg-surface text-primary focus:ring-0 cursor-pointer" />
-                  <label htmlFor="featured" className="text-xs font-mono text-gray-400 cursor-pointer select-none">{t('featureThisCategory')}</label>
                 </div>
               </div>
 
@@ -348,4 +492,3 @@ export default function ProjectsManager() {
     </div>
   );
 }
-

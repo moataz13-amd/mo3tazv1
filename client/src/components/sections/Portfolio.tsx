@@ -432,15 +432,21 @@ const Portfolio = memo(function Portfolio() {
   const { mockupsList, projectsList } = useMemo(() => {
     const all = Array.isArray(dbProjects) ? dbProjects : [];
 
-    const mockups = all.filter(
-      (p) => p.category === 'mockup' || p.category === 'branding' || p.title.toLowerCase().includes('mockup'),
-    );
+    const isMockup = (p: Project) =>
+      p.category === 'mockup' || p.category === 'branding' || p.title.toLowerCase().includes('mockup');
 
-    const featured = all.filter((p) => p.featured);
+    // Mockup carousel: only mockup/branding category items
+    const mockups = all.filter(isMockup);
+
+    // Featured carousel: featured items that are NOT in the mockup carousel (no duplication)
+    const featured = all.filter((p) => p.featured && !isMockup(p));
+
+    // Fallback: if no featured, show all non-mockup items
+    const nonMockups = all.filter((p) => !isMockup(p));
 
     return {
       mockupsList: mockups.length > 0 ? mockups : defaultMockups,
-      projectsList: featured.length > 0 ? featured : all.length > 0 ? all : defaultProjects,
+      projectsList: featured.length > 0 ? featured : nonMockups.length > 0 ? nonMockups : defaultProjects,
     };
   }, [dbProjects]);
 

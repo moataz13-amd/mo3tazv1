@@ -131,26 +131,50 @@ export default function ProjectDesigns() {
                   e.stopPropagation();
                   setLightboxIndex((lightboxIndex - 1 + images.length) % images.length);
                 }}
-                className="absolute left-6 w-12 h-12 rounded-full border-2 border-black bg-[#26EFFD] text-black flex items-center justify-center shadow-[3px_3px_0px_#000000] hover:scale-105 cursor-pointer z-50"
+                className="hidden md:flex absolute left-6 w-12 h-12 rounded-full border-2 border-black bg-[#26EFFD] text-black items-center justify-center shadow-[3px_3px_0px_#000000] hover:scale-105 cursor-pointer z-50"
               >
                 <ChevronLeft size={24} />
               </button>
             )}
 
-            <motion.div
-              initial={{ scale: 0.95 }}
-              animate={{ scale: 1 }}
-              exit={{ scale: 0.95 }}
-              onClick={(e) => e.stopPropagation()}
-              className="max-w-[95vw] max-h-[90vh] relative border-4 border-black rounded-2xl md:rounded-3xl overflow-hidden bg-white shadow-[8px_8px_0px_#000000]"
-            >
-              <img
-                src={images[lightboxIndex]}
-                alt="Enlarged design"
-                className="max-w-full max-h-[90vh] object-contain"
-                loading="lazy" decoding="async"
-              />
-            </motion.div>
+            <div className="flex flex-col items-center gap-4" onClick={(e) => e.stopPropagation()}>
+              <motion.div
+                initial={{ scale: 0.95 }}
+                animate={{ scale: 1 }}
+                exit={{ scale: 0.95 }}
+                className="max-w-[95vw] max-h-[90vh] relative border-4 border-black rounded-2xl md:rounded-3xl overflow-hidden bg-white shadow-[8px_8px_0px_#000000]"
+              >
+                <img
+                  src={images[lightboxIndex]}
+                  alt="Enlarged design"
+                  className="max-w-full max-h-[90vh] object-contain"
+                  loading="lazy" decoding="async"
+                />
+              </motion.div>
+
+              {images.length > 1 && (
+                <div className="flex md:hidden items-center justify-center gap-4 z-50">
+                  <button
+                    onClick={(e) => {
+                      e.stopPropagation();
+                      setLightboxIndex((lightboxIndex - 1 + images.length) % images.length);
+                    }}
+                    className="w-12 h-12 rounded-full border-2 border-black bg-[#26EFFD] text-black flex items-center justify-center shadow-[3px_3px_0px_#000000] hover:scale-105 cursor-pointer"
+                  >
+                    <ChevronLeft size={24} />
+                  </button>
+                  <button
+                    onClick={(e) => {
+                      e.stopPropagation();
+                      setLightboxIndex((lightboxIndex + 1) % images.length);
+                    }}
+                    className="w-12 h-12 rounded-full border-2 border-black bg-[#26EFFD] text-black flex items-center justify-center shadow-[3px_3px_0px_#000000] hover:scale-105 cursor-pointer"
+                  >
+                    <ChevronRight size={24} />
+                  </button>
+                </div>
+              )}
+            </div>
 
             {images.length > 1 && (
               <button
@@ -158,7 +182,7 @@ export default function ProjectDesigns() {
                   e.stopPropagation();
                   setLightboxIndex((lightboxIndex + 1) % images.length);
                 }}
-                className="absolute right-6 w-12 h-12 rounded-full border-2 border-black bg-[#26EFFD] text-black flex items-center justify-center shadow-[3px_3px_0px_#000000] hover:scale-105 cursor-pointer z-50"
+                className="hidden md:flex absolute right-6 w-12 h-12 rounded-full border-2 border-black bg-[#26EFFD] text-black items-center justify-center shadow-[3px_3px_0px_#000000] hover:scale-105 cursor-pointer z-50"
               >
                 <ChevronRight size={24} />
               </button>

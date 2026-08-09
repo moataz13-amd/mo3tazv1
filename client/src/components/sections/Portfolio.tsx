@@ -6,122 +6,6 @@ import { ExternalLink } from 'lucide-react';
 import { projectsAPI } from '../../lib/api';
 import type { Project } from '../../types';
 
-// Mockup showcase fallback items
-const defaultMockups: Project[] = [
-  {
-    id: 'm1',
-    title: 'Brand Packaging Mockup',
-    category: 'branding',
-    featured: true,
-    status: 'published',
-    description: 'موك آب احترافي للهويات البصرية والتغليف الفاخر لاستعراض المنتجات.',
-    cover_image: 'https://images.unsplash.com/photo-1547658719-da2b51169166?w=1200&q=80',
-    tech_stack: ['Photoshop', '3D Mockup'],
-    created_at: '',
-    updated_at: '',
-  },
-  {
-    id: 'm2',
-    title: 'Stationery & Branding Showcase',
-    category: 'branding',
-    featured: true,
-    status: 'published',
-    description: 'عرض موك آب متكامل للمطبوعات، الكروت الشخصية والمستندات الرسمية.',
-    cover_image: 'https://images.unsplash.com/photo-1586717791821-3f44a563fa4c?w=1200&q=80',
-    tech_stack: ['Illustrator', 'Photoshop'],
-    created_at: '',
-    updated_at: '',
-  },
-  {
-    id: 'm3',
-    title: 'Digital Screen Mockup',
-    category: 'ui-ux',
-    featured: true,
-    status: 'published',
-    description: 'استعراض تصاميم الواجهات والتطبيقات على أحدث الشاشات والأجهزة الرقمية.',
-    cover_image: 'https://images.unsplash.com/photo-1507238691740-187a5b1d37b8?w=1200&q=80',
-    tech_stack: ['Figma', 'Dimension'],
-    created_at: '',
-    updated_at: '',
-  },
-  {
-    id: 'm4',
-    title: '3D Product Design Mockup',
-    category: 'graphic',
-    featured: true,
-    status: 'published',
-    description: 'موك آب ثلاثي الأبعاد يعكس التفاصيل بدقة متناهية وزوايا واقعية.',
-    cover_image: 'https://images.unsplash.com/photo-1626785774573-4b799315345d?w=1200&q=80',
-    tech_stack: ['Cinema 4D', 'Photoshop'],
-    created_at: '',
-    updated_at: '',
-  }
-];
-
-// Featured projects fallback items
-const defaultProjects: Project[] = [
-  {
-    id: '1',
-    title: 'Pop Art Designs',
-    category: 'graphic',
-    featured: true,
-    status: 'published',
-    description: 'مجموعة من التصاميم الفنية الجريئة المستوحاة من ثقافة البوب آرت والألوان الحيوية.',
-    cover_image: 'https://images.unsplash.com/photo-1618005182384-a83a8bd57fbe?w=1200&q=80',
-    tech_stack: ['Photoshop', 'Illustrator'],
-    created_at: '',
-    updated_at: '',
-  },
-  {
-    id: '2',
-    title: 'Social Media Designs',
-    category: 'graphic',
-    featured: true,
-    status: 'published',
-    description: 'تصاميم إبداعية لمنصات التواصل الاجتماعي تركز على الهوية البصرية وزيادة التفاعل.',
-    cover_image: 'https://images.unsplash.com/photo-1614849963640-9cc74b2a826f?w=1200&q=80',
-    tech_stack: ['Photoshop', 'Figma'],
-    created_at: '',
-    updated_at: '',
-  },
-  {
-    id: '3',
-    title: 'Collage Art Designs',
-    category: 'graphic',
-    featured: true,
-    status: 'published',
-    description: 'دمج الصور والمواد المختلفة لإنشاء لوحات فنية معبرة وفريدة من نوعها.',
-    cover_image: 'https://images.unsplash.com/photo-1579783900882-c0d3dad7b119?w=1200&q=80',
-    tech_stack: ['Mixed Media', 'Photoshop'],
-    created_at: '',
-    updated_at: '',
-  },
-  {
-    id: '4',
-    title: 'Sports Designs',
-    category: 'graphic',
-    featured: true,
-    status: 'published',
-    description: 'تصاميم رياضية ديناميكية ومليئة بالحماس للاعبين والأندية والفعاليات الرياضية.',
-    cover_image: 'https://images.unsplash.com/photo-1508098682722-e99c43a406b2?w=1200&q=80',
-    tech_stack: ['Photoshop', 'Lightroom'],
-    created_at: '',
-    updated_at: '',
-  },
-  {
-    id: '5',
-    title: 'Visuals Designs',
-    category: 'graphic',
-    featured: true,
-    status: 'published',
-    description: 'عناصر مرئية وتصاميم فنية مبتكرة تناسب مختلف مجالات النشر الرقمي.',
-    cover_image: 'https://images.unsplash.com/photo-1550684848-fac1c5b4e853?w=1200&q=80',
-    tech_stack: ['Illustrator', 'Dimension'],
-    created_at: '',
-    updated_at: '',
-  }
-];
-
 const AUTOPLAY_DURATION = 5000;
 
 // Lightweight responsive hook using matchMedia (zero DOM reflows)
@@ -385,6 +269,17 @@ const Carousel3DSection = memo(function Carousel3DSection({
         </div>
 
         {/* 3D Stage – proportional aspect scaling on mobile */}
+        {total === 0 ? (
+          <div className="text-center py-16 sm:py-24">
+            <div className="inline-flex flex-col items-center gap-3 px-8 py-10 rounded-3xl border-2 border-dashed border-white/15 bg-white/[0.02]">
+              <div className="text-3xl sm:text-4xl">🎨</div>
+              <p className="text-gray-500 text-sm font-bold" style={{ fontFamily: "'Sahara Bold', 'Inter', sans-serif" }}>
+                لا توجد عناصر في هذا القسم بعد
+              </p>
+              <p className="text-gray-600 text-xs">يتم إضافة التصاميم من لوحة التحكم</p>
+            </div>
+          </div>
+        ) : (
         <div
           className="relative w-full flex items-center justify-center min-h-[240px] sm:min-h-[360px] md:min-h-[520px] lg:min-h-[580px] py-2 sm:py-4"
           onMouseEnter={handleMouseEnter}
@@ -408,8 +303,10 @@ const Carousel3DSection = memo(function Carousel3DSection({
             ))}
           </div>
         </div>
+        )}
 
         {/* Navigation Buttons + Dashed Line */}
+        {total > 0 && (
         <div className="w-full max-w-[960px] mx-auto flex items-center justify-between gap-3 sm:gap-4 mt-1 sm:mt-2">
           <button
             onClick={handlePrev}
@@ -437,6 +334,7 @@ const Carousel3DSection = memo(function Carousel3DSection({
             التالي
           </button>
         </div>
+        )}
       </motion.div>
     </section>
   );
@@ -466,8 +364,8 @@ const Portfolio = memo(function Portfolio() {
     const nonMockups = all.filter((p) => !isMockup(p));
 
     return {
-      mockupsList: mockups.length > 0 ? mockups : defaultMockups,
-      projectsList: featured.length > 0 ? featured : nonMockups.length > 0 ? nonMockups : defaultProjects,
+      mockupsList: mockups,
+      projectsList: featured.length > 0 ? featured : nonMockups,
     };
   }, [dbProjects]);
 

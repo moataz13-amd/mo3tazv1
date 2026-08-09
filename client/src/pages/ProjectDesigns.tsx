@@ -1,7 +1,7 @@
-import { useState, useEffect } from 'react';
+import { useState, useEffect, useMemo } from 'react';
 import { useParams, useNavigate, useLocation } from 'react-router-dom';
 import { motion, AnimatePresence } from 'framer-motion';
-import { X, ChevronLeft, ChevronRight } from 'lucide-react';
+import { X, ChevronLeft, ChevronRight, ArrowUpDown } from 'lucide-react';
 import { projectsAPI } from '../lib/api';
 import FloatingNav from '../components/navigation/FloatingNav';
 import type { Project } from '../types';
@@ -14,6 +14,7 @@ export default function ProjectDesigns() {
   const [project, setProject] = useState<Project | null>(stateProject || null);
   const [loading, setLoading] = useState(!stateProject);
   const [lightboxIndex, setLightboxIndex] = useState<number | null>(null);
+  const [sortOrder, setSortOrder] = useState<'asc' | 'desc'>('asc');
 
   useEffect(() => {
     if (!id) return;
@@ -40,7 +41,8 @@ export default function ProjectDesigns() {
 
   if (!project) return null;
 
-  const images = project.images || [];
+  const rawImages = project.images || [];
+  const images = sortOrder === 'desc' ? [...rawImages].reverse() : rawImages;
   const hasImages = images.length > 0;
 
   return (
@@ -50,9 +52,26 @@ export default function ProjectDesigns() {
       {/* Content */}
       <main className="pt-28 md:pt-32 pb-16 px-4 md:px-8 max-w-7xl mx-auto">
         {/* Project info */}
-        <div className="mb-10 text-center">
+        <div className="mb-6 text-center">
           <p className="text-gray-400 max-w-2xl mx-auto leading-relaxed">{project.description}</p>
         </div>
+
+        {/* Sort Toggle for visitors */}
+        {hasImages && images.length > 1 && (
+          <div className="flex justify-center mb-8">
+            <button
+              onClick={() => setSortOrder((prev) => (prev === 'asc' ? 'desc' : 'asc'))}
+              className="flex items-center gap-2 px-6 py-2.5 rounded-full bg-[#050816] border-[2.5px] border-[#26EFFD] text-[#26EFFD] font-black text-sm shadow-[3px_3px_0px_#26EFFD] hover:bg-[#26EFFD]/10 active:shadow-[0px_0px_0px_#26EFFD] active:translate-x-[3px] active:translate-y-[3px] cursor-pointer select-none"
+              style={{
+                fontFamily: "'Sahara Bold', 'Inter', sans-serif",
+                transition: 'all 0.15s ease-out',
+              }}
+            >
+              <ArrowUpDown size={16} />
+              <span>{sortOrder === 'asc' ? 'الأقدم أولاً' : 'الأحدث أولاً'}</span>
+            </button>
+          </div>
+        )}
 
         {!hasImages ? (
           <div className="text-center py-20 text-gray-500 font-bold" style={{ fontFamily: "'Sahara Bold', sans-serif" }}>

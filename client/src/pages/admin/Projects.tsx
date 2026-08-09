@@ -206,9 +206,6 @@ export default function ProjectsManager() {
     }
   };
 
-  const coverImageRegister = register('cover_image');
-  const galleryImagesRegister = register('gallery_images');
-
   const filesToFileList = (files: File[]): FileList => {
     const dt = new DataTransfer();
     files.forEach((f) => dt.items.add(f));
@@ -506,7 +503,7 @@ export default function ProjectsManager() {
                 <label className="block text-xs font-bold text-gray-300 mb-1.5">{t('categoryCoverImage')}</label>
                 <FileDropzone
                   onFilesSelect={(files) => {
-                    coverImageRegister.onChange({ target: { files: filesToFileList(files) } });
+                    setValue('cover_image', filesToFileList(files));
                     if (files[0]) setCoverImagePreview(URL.createObjectURL(files[0]));
                   }}
                   accept="image/*"
@@ -553,7 +550,7 @@ export default function ProjectsManager() {
                   onFilesSelect={(files) => {
                     const next = [...galleryFiles, ...files];
                     setGalleryFiles(next);
-                    galleryImagesRegister.onChange({ target: { files: filesToFileList(next) } });
+                    setValue('gallery_images', filesToFileList(next));
                     setNewGalleryPreviews(next.map((file) => URL.createObjectURL(file)));
                   }}
                   accept="image/*"

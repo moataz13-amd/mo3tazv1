@@ -271,6 +271,13 @@ export const db = {
     });
   },
 
+  getProjectById: async (id: string) => {
+    if (!supabase) return null;
+    const { data, error } = await supabase!.from('projects').select('*').eq('id', id).maybeSingle();
+    if (error) console.error('[DB] getProjectById error:', error.message);
+    return data || null;
+  },
+
   createProject: async (body: any) => {
     if (!supabase) throw new Error('Database not configured');
     const safeInsert = async (data: any): Promise<any> => {

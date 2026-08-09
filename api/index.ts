@@ -205,6 +205,14 @@ app.get('/api/projects', async (_req, res) => {
   catch (err: any) { res.status(500).json({ message: err.message }); }
 });
 
+app.get('/api/projects/:id', async (req, res) => {
+  try {
+    const item = await db.getProjectById(req.params.id);
+    if (!item) return res.status(404).json({ message: 'Project not found' });
+    res.json(item);
+  } catch (err: any) { res.status(500).json({ message: err.message }); }
+});
+
 app.post('/api/projects', authenticate, async (req: any, res) => {
   try {
     console.log('[CREATE PROJECT] files count:', req.files?.length);

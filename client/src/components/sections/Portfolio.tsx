@@ -113,7 +113,7 @@ const CarouselCard = memo(function CarouselCard({
               className="text-lg sm:text-2xl md:text-3xl lg:text-4xl font-extrabold text-white leading-tight"
               style={{ fontFamily: "'Sahara Bold', 'Milan Display', sans-serif" }}
             >
-              {project.title}
+              {project.title || project.internal_name || 'غير مسمى'}
             </h3>
             {project.description && (
               <p className="text-gray-300 text-[11px] sm:text-xs md:text-sm line-clamp-1 sm:line-clamp-2 mt-0.5">

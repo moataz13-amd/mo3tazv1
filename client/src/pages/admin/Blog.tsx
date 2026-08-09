@@ -4,6 +4,7 @@ import { useForm } from 'react-hook-form';
 import { Plus, Trash2, Edit, X, Save, Newspaper } from 'lucide-react';
 import toast from 'react-hot-toast';
 import { blogAPI } from '../../lib/api';
+import FileDropzone from '../../components/admin/FileDropzone';
 import type { BlogPost } from '../../types';
 
 export default function BlogManager() {
@@ -197,7 +198,16 @@ export default function BlogManager() {
 
               <div>
                 <label className="block text-xs font-mono text-gray-400 mb-1">Cover Image Asset</label>
-                <input type="file" {...register('cover_image')} className="text-xs text-gray-400 bg-surface border border-glass-border p-2 rounded-xl w-full" />
+                <FileDropzone
+                  onFilesSelect={(files) => {
+                    const dt = new DataTransfer();
+                    dt.items.add(files[0]);
+                    setValue('cover_image', dt.files);
+                  }}
+                  accept="image/*"
+                  label="اسحب وأفلت صورة الغلاف أو اضغط للاختيار"
+                  hint="JPG, PNG, WEBP"
+                />
               </div>
 
               <div className="flex justify-end gap-3 pt-6 border-t border-glass-border">

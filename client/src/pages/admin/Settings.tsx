@@ -8,6 +8,7 @@ import {
 import toast from 'react-hot-toast';
 import { settingsAPI, mediaAPI } from '../../lib/api';
 import { useAdminTranslation } from '../../lib/adminTranslations';
+import FileDropzone from '../../components/admin/FileDropzone';
 import type { SiteSettings, ClientLogo, MarqueeTag } from '../../types';
 
 type ActiveTab = 'general' | 'hero' | 'marquees' | 'about' | 'contact' | 'seo' | 'database';
@@ -52,7 +53,7 @@ export default function SettingsPage() {
     onError: () => toast.error('Failed to save settings'),
   });
 
-  const { register, handleSubmit, reset } = useForm();
+  const { register, handleSubmit, reset, setValue } = useForm();
 
   useEffect(() => {
     if (settings) {
@@ -194,14 +195,6 @@ export default function SettingsPage() {
     }
   };
 
-  const handleLogoFileChange = (e: React.ChangeEvent<HTMLInputElement>) => {
-    if (e.target.files && e.target.files[0]) {
-      const file = e.target.files[0];
-      setNewLogoFile(file);
-      setLogoPreview(URL.createObjectURL(file));
-    }
-  };
-
   const handleRemoveLogo = (idx: number) => {
     setClientLogos(prev => prev.filter((_, i) => i !== idx));
   };
@@ -331,23 +324,53 @@ export default function SettingsPage() {
                 <div className="grid md:grid-cols-2 gap-4">
                   <div>
                     <label className="block text-xs font-mono text-gray-400 mb-1.5">{t('avatarProfile')}</label>
-                    <div className="flex items-center gap-3">
-                      {settings?.avatar && (
-                        <img src={settings.avatar} className="w-10 h-10 object-cover rounded-xl border border-glass-border bg-surface" alt="Avatar" />
-                      )}
-                      <input type="file" {...register('avatar')} className="text-xs text-gray-400 bg-surface border border-glass-border p-2 rounded-xl w-full" />
-                    </div>
+                    <FileDropzone
+                      onFilesSelect={(files) => {
+                        const dt = new DataTransfer();
+                        dt.items.add(files[0]);
+                        setValue('avatar', dt.files);
+                      }}
+                      accept="image/*"
+                      className="py-4"
+                      label={t('avatarProfile')}
+                      hint="JPG, PNG, WEBP"
+                    >
+                      <div className="flex items-center gap-3 w-full">
+                        {settings?.avatar && (
+                          <img src={settings.avatar} className="w-10 h-10 object-cover rounded-xl border border-glass-border bg-surface" alt="Avatar" />
+                        )}
+                        <div className="flex-1 text-left">
+                          <p className="text-xs font-bold text-white">{t('avatarProfile')}</p>
+                          <p className="text-[10px] text-gray-500 mt-0.5">اسحب وأفلت أو اضغط للاختيار</p>
+                        </div>
+                      </div>
+                    </FileDropzone>
                   </div>
                   <div>
                     <label className="block text-xs font-mono text-gray-400 mb-1.5">{t('cvPdf')}</label>
-                    <div className="flex items-center gap-3">
-                      {settings?.cv_url && (
-                        <a href={settings.cv_url} target="_blank" rel="noreferrer" className="p-2 border border-glass-border bg-surface hover:text-primary rounded-xl text-xs flex items-center gap-1.5">
-                          <FileText size={12} /> {t('viewCv')}
-                        </a>
-                      )}
-                      <input type="file" {...register('cv')} className="text-xs text-gray-400 bg-surface border border-glass-border p-2 rounded-xl w-full" />
-                    </div>
+                    <FileDropzone
+                      onFilesSelect={(files) => {
+                        const dt = new DataTransfer();
+                        dt.items.add(files[0]);
+                        setValue('cv', dt.files);
+                      }}
+                      accept=".pdf,application/pdf"
+                      className="py-4"
+                      label={t('cvPdf')}
+                      hint="PDF"
+                    >
+                      <div className="flex items-center gap-3 w-full">
+                        {settings?.cv_url && (
+                          <a href={settings.cv_url} target="_blank" rel="noreferrer" className="p-2 border border-glass-border bg-surface hover:text-primary rounded-xl text-xs flex items-center gap-1.5" onClick={(e) => e.stopPropagation()}>
+                            <FileText size={12} /> {t('viewCv')}
+                          </a>
+                        )}
+                        <div className="flex-1 text-left">
+                          <p className="text-xs font-bold text-white">{t('cvPdf')}</p>
+                          <p className="text-[10px] text-gray-500 mt-0.5">اسحب وأفلت ملف PDF أو اضغط للاختيار</p>
+                        </div>
+                      </div>
+                    </FileDropzone>
                   </div>
                 </div>
               </div>
@@ -411,11 +434,17 @@ export default function SettingsPage() {
                     </div>
                     <div>
                       <label className="block text-[10px] font-mono text-gray-400 mb-1">{t('uploadBrandLogo')}</label>
-                      <input
-                        type="file"
-                        onChange={handleLogoFileChange}
+                      <FileDropzone
+                        onFilesSelect={(files) => {
+                          const file = files[0];
+                          if (file) {
+                            setNewLogoFile(file);
+                            setLogoPreview(URL.createObjectURL(file));
+                          }
+                        }}
                         accept="image/*"
-                        className="text-[10px] text-gray-400 bg-[#050816] border border-glass-border p-1 rounded-xl w-full"
+                        className="py-3"
+                        label={logoPreview ? 'اللوجو المحدد ✓' : t('uploadBrandLogo')}
                       />
                     </div>
                     <button

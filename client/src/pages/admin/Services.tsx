@@ -1,10 +1,12 @@
-import { useState } from 'react';
+import { useState, useMemo } from 'react';
 import { useQuery, useMutation, useQueryClient } from '@tanstack/react-query';
 import { useForm } from 'react-hook-form';
-import { Plus, Trash2, Edit, X, Save } from 'lucide-react';
+import { Plus, Trash2, Edit, X, Save, UploadCloud, GripVertical } from 'lucide-react';
 import toast from 'react-hot-toast';
-import { servicesAPI } from '../../lib/api';
+import { servicesAPI, reorderAPI } from '../../lib/api';
 import { useAdminTranslation } from '../../lib/adminTranslations';
+import { useDragReorder, reorderArray } from '../../components/admin/useDragReorder';
+import FileDropzone from '../../components/admin/FileDropzone';
 import type { Service } from '../../types';
 
 export default function ServicesManager() {
@@ -19,6 +21,21 @@ export default function ServicesManager() {
     queryKey: ['services'],
     queryFn: () => servicesAPI.getAll().then((r) => r.data as Service[]),
   });
+
+  const sortedServices = useMemo(() => [...(services || [])].sort((a, b) => a.order - b.order), [services]);
+
+  const reorderMutation = useMutation({
+    mutationFn: (items: { id: string; order: number }[]) => reorderAPI.reorder('services', items),
+    onError: () => toast.error('Failed to save order'),
+  });
+
+  const handleMove = (from: number, to: number) => {
+    const reordered = reorderArray(sortedServices, from, to).map((s, i) => ({ ...s, order: i + 1 }));
+    queryClient.setQueryData(['services'], reordered);
+    reorderMutation.mutate(reordered.map((s) => ({ id: s.id, order: s.order })));
+  };
+
+  const { getDragProps, activeIndex, overIndex } = useDragReorder(handleMove);
 
   const createMutation = useMutation({
     mutationFn: (data: any) => servicesAPI.create(data),
@@ -50,16 +67,6 @@ export default function ServicesManager() {
   });
 
   const { register, handleSubmit, reset, setValue } = useForm();
-
-  const handleFileChange = (e: React.ChangeEvent<HTMLInputElement>) => {
-    const file = e.target.files?.[0];
-    if (file) {
-      setSelectedFile(file);
-      const reader = new FileReader();
-      reader.onload = () => setImagePreview(reader.result as string);
-      reader.readAsDataURL(file);
-    }
-  };
 
   const openModal = (service?: Service) => {
     setSelectedFile(null);
@@ -152,8 +159,15 @@ export default function ServicesManager() {
         </div>
       ) : (
         <div className="grid md:grid-cols-2 lg:grid-cols-3 gap-5">
-          {services?.map((service) => (
-            <div key={service.id} className="glass-card p-6 group cursor-default">
+          {sortedServices.map((service, index) => (
+            <div
+              key={service.id}
+              {...getDragProps(index)}
+              className={`glass-card p-6 group cursor-default relative ${activeIndex === index ? 'opacity-40' : ''} ${overIndex === index ? 'border-primary ring-1 ring-primary/40' : ''}`}
+            >
+              <div className="absolute top-3 right-3 text-gray-500 cursor-grab active:cursor-grabbing hover:text-primary transition-colors" title="اسحب لإعادة الترتيب">
+                <GripVertical size={16} />
+              </div>
               <div className="flex items-center justify-between mb-4">
                 <div className="w-16 h-16 rounded-xl flex items-center justify-center bg-surface border border-glass-border overflow-hidden p-1">
                   {service.icon && (service.icon.startsWith('/') || service.icon.startsWith('http')) ? (
@@ -211,33 +225,36 @@ export default function ServicesManager() {
                 </div>
                 <div>
                   <label className="block text-xs font-mono text-gray-400 mb-1">{t('serviceCardImage')}</label>
-                  <div className="flex items-center gap-4 p-3 bg-surface rounded-xl border border-glass-border">
-                    <div className="w-16 h-16 rounded-lg bg-black/40 border border-glass-border flex items-center justify-center overflow-hidden flex-shrink-0">
-                      {imagePreview ? (
-                        <img src={imagePreview} alt="Preview" className="w-full h-full object-contain" />
-                      ) : (
-                        <span className="text-gray-600 text-xs font-mono">{t('noImage')}</span>
-                      )}
+                  <FileDropzone
+                    onFilesSelect={(files) => {
+                      const file = files[0];
+                      if (file) {
+                        setSelectedFile(file);
+                        const reader = new FileReader();
+                        reader.onload = () => setImagePreview(reader.result as string);
+                        reader.readAsDataURL(file);
+                      }
+                    }}
+                    accept="image/*"
+                    label={imagePreview ? t('serviceCardImage') : t('uploadImageFile')}
+                    hint={t('supportsImageDesc')}
+                  >
+                    <div className="flex items-center gap-4 w-full">
+                      <div className="w-16 h-16 rounded-lg bg-black/40 border border-glass-border flex items-center justify-center overflow-hidden flex-shrink-0">
+                        {imagePreview ? (
+                          <img src={imagePreview} alt="Preview" className="w-full h-full object-contain" />
+                        ) : (
+                          <UploadCloud size={22} className="text-gray-500" />
+                        )}
+                      </div>
+                      <div className="flex-1 text-left">
+                        <p className="text-xs font-bold text-white">
+                          {imagePreview ? t('serviceCardImage') : t('uploadImageFile')}
+                        </p>
+                        <p className="text-[10px] text-gray-500 mt-0.5">{t('supportsImageDesc')}</p>
+                      </div>
                     </div>
-                    <div className="flex-1 space-y-2">
-                      <input
-                        type="file"
-                        accept="image/*"
-                        onChange={handleFileChange}
-                        className="hidden"
-                        id="service-image-file"
-                      />
-                      <label
-                        htmlFor="service-image-file"
-                        className="neon-btn px-3 py-1.5 text-xs font-black cursor-pointer inline-block"
-                      >
-                        {t('uploadImageFile')}
-                      </label>
-                      <p className="text-[10px] text-gray-500">
-                        {t('supportsImageDesc')}
-                      </p>
-                    </div>
-                  </div>
+                  </FileDropzone>
                 </div>
 
                 <div>

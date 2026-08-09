@@ -4,6 +4,7 @@ import { Plus, Trash2, X, Image as ImageIcon, Eye, UploadCloud, Filter, Loader2 
 import toast from 'react-hot-toast';
 import { projectsAPI, mediaAPI, compressImage } from '../../lib/api';
 import { useAdminTranslation } from '../../lib/adminTranslations';
+import FileDropzone from '../../components/admin/FileDropzone';
 import type { Project } from '../../types';
 
 export default function DesignsManager() {
@@ -172,10 +173,6 @@ export default function DesignsManager() {
       return prev.filter((_, i) => i !== index);
     });
   }, []);
-
-  const triggerFileSelect = () => {
-    fileInputRef.current?.click();
-  };
 
   const handleUploadSubmit = (e: React.FormEvent) => {
     e.preventDefault();
@@ -425,26 +422,30 @@ export default function DesignsManager() {
                         );
                       })}
                     </div>
-                    <button
-                      type="button"
-                      onClick={triggerFileSelect}
-                      className="text-xs text-primary hover:underline font-bold"
-                    >
-                      + {t('addMoreImages')}
-                    </button>
+                    <FileDropzone
+                      onFilesSelect={(files) => {
+                        setSelectedFiles((prev) => [...prev, ...files]);
+                        setPreviewUrls((prev) => [...prev, ...files.map((f) => URL.createObjectURL(f))]);
+                      }}
+                      accept="image/*"
+                      multiple
+                      className="py-4"
+                      label="+ اسحب وأفلت صوراً إضافية أو اضغط للاختيار"
+                      hint={t('imageTypesDesc')}
+                    />
                   </div>
                 ) : (
                   /* Custom dropzone box */
-                  <div
-                    onClick={triggerFileSelect}
-                    className="border-2 border-dashed border-glass-border hover:border-primary rounded-2xl p-6 text-center cursor-pointer hover:bg-surface/5 transition-all space-y-3"
-                  >
-                    <UploadCloud size={32} className="mx-auto text-primary animate-pulse" />
-                    <div>
-                      <p className="text-xs text-white font-bold">{t('clickToChooseImage')}</p>
-                      <p className="text-[10px] text-gray-500 mt-1">{t('imageTypesDesc')}</p>
-                    </div>
-                  </div>
+                  <FileDropzone
+                    onFilesSelect={(files) => {
+                      setSelectedFiles((prev) => [...prev, ...files]);
+                      setPreviewUrls((prev) => [...prev, ...files.map((f) => URL.createObjectURL(f))]);
+                    }}
+                    accept="image/*"
+                    multiple
+                    label={t('clickToChooseImage')}
+                    hint={t('imageTypesDesc')}
+                  />
                 )}
 
                 {isUploading && (

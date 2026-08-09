@@ -4,6 +4,7 @@ import { useForm } from 'react-hook-form';
 import { Plus, Trash2, Edit, X, Save, Star, ExternalLink, Image as ImageIcon, UploadCloud, Layers, Monitor, ArrowUpDown } from 'lucide-react';
 import toast from 'react-hot-toast';
 import { projectsAPI } from '../../lib/api';
+import FileDropzone from '../../components/admin/FileDropzone';
 import type { Project } from '../../types';
 import { useAdminTranslation } from '../../lib/adminTranslations';
 
@@ -17,6 +18,7 @@ export default function ProjectsManager() {
   const [existingGalleryImages, setExistingGalleryImages] = useState<string[]>([]);
   const [coverImagePreview, setCoverImagePreview] = useState<string | null>(null);
   const [newGalleryPreviews, setNewGalleryPreviews] = useState<string[]>([]);
+  const [galleryFiles, setGalleryFiles] = useState<File[]>([]);
   const [activeTab, setActiveTab] = useState<FilterTab>('all');
   const [sortOrder, setSortOrder] = useState<'asc' | 'desc'>('asc');
 
@@ -135,6 +137,7 @@ export default function ProjectsManager() {
       setExistingGalleryImages(project.images || []);
       setCoverImagePreview(project.cover_image);
       setNewGalleryPreviews([]);
+      setGalleryFiles([]);
     } else {
       setEditingProject(null);
       reset({
@@ -151,6 +154,7 @@ export default function ProjectsManager() {
       setExistingGalleryImages([]);
       setCoverImagePreview(null);
       setNewGalleryPreviews([]);
+      setGalleryFiles([]);
     }
     setIsModalOpen(true);
   };
@@ -161,6 +165,7 @@ export default function ProjectsManager() {
     setExistingGalleryImages([]);
     setCoverImagePreview(null);
     setNewGalleryPreviews([]);
+    setGalleryFiles([]);
   };
 
   const removeExistingImage = (imgUrl: string) => {
@@ -203,6 +208,12 @@ export default function ProjectsManager() {
 
   const coverImageRegister = register('cover_image');
   const galleryImagesRegister = register('gallery_images');
+
+  const filesToFileList = (files: File[]): FileList => {
+    const dt = new DataTransfer();
+    files.forEach((f) => dt.items.add(f));
+    return dt.files;
+  };
 
   const filterTabs: { key: FilterTab; label: string; count?: number; icon: React.ReactNode; color: string }[] = [
     { key: 'all', label: 'الكل', count: Array.isArray(projects) ? projects.length : 0, icon: <Layers size={14} />, color: '#ffffff' },
@@ -493,41 +504,33 @@ export default function ProjectsManager() {
               {/* Cover Image Upload Card */}
               <div>
                 <label className="block text-xs font-bold text-gray-300 mb-1.5">{t('categoryCoverImage')}</label>
-                <div className="flex items-center gap-4 p-3 rounded-2xl border border-dashed border-white/20 bg-[#050816] hover:border-[#26EFFD]/50 transition-all group">
-                  {coverImagePreview ? (
-                    <div className="relative w-24 h-16 rounded-xl overflow-hidden border border-white/10 flex-shrink-0">
-                      <img src={coverImagePreview} alt="Cover Preview" className="object-cover w-full h-full" />
+                <FileDropzone
+                  onFilesSelect={(files) => {
+                    coverImageRegister.onChange({ target: { files: filesToFileList(files) } });
+                    if (files[0]) setCoverImagePreview(URL.createObjectURL(files[0]));
+                  }}
+                  accept="image/*"
+                  label={coverImagePreview ? 'صورة الغلاف الحالية' : 'اختر صورة غلاف للمجموعة'}
+                  hint="JPG, PNG, WEBP (تنسيق عالي الجودة)"
+                >
+                  <div className="flex items-center gap-4 w-full">
+                    {coverImagePreview ? (
+                      <div className="relative w-24 h-16 rounded-xl overflow-hidden border border-white/10 flex-shrink-0">
+                        <img src={coverImagePreview} alt="Cover Preview" className="object-cover w-full h-full" />
+                      </div>
+                    ) : (
+                      <div className="w-12 h-12 rounded-xl bg-white/5 border border-white/10 flex items-center justify-center text-gray-400 flex-shrink-0">
+                        <UploadCloud size={20} />
+                      </div>
+                    )}
+                    <div className="flex-1 min-w-0 text-left">
+                      <p className="text-xs font-bold text-white">
+                        {coverImagePreview ? 'صورة الغلاف الحالية' : 'اختر صورة غلاف للمجموعة'}
+                      </p>
+                      <p className="text-[10px] text-gray-400 mt-0.5">JPG, PNG, WEBP (تنسيق عالي الجودة)</p>
                     </div>
-                  ) : (
-                    <div className="w-12 h-12 rounded-xl bg-white/5 border border-white/10 flex items-center justify-center text-gray-400 group-hover:text-[#26EFFD] group-hover:border-[#26EFFD]/40 transition-all flex-shrink-0">
-                      <UploadCloud size={20} />
-                    </div>
-                  )}
-
-                  <div className="flex-1 min-w-0">
-                    <p className="text-xs font-bold text-white">
-                      {coverImagePreview ? 'صورة الغلاف الحالية' : 'اختر صورة غلاف للمجموعة'}
-                    </p>
-                    <p className="text-[10px] text-gray-400 mt-0.5">JPG, PNG, WEBP (تنسيق عالي الجودة)</p>
                   </div>
-
-                  <label className="px-4 py-2 rounded-xl bg-[#26EFFD]/10 hover:bg-[#26EFFD]/20 border border-[#26EFFD]/40 text-[#26EFFD] text-xs font-bold cursor-pointer transition-all flex items-center gap-1.5">
-                    <UploadCloud size={14} />
-                    <span>{coverImagePreview ? 'تغيير الصورة' : 'رفع غلاف'}</span>
-                    <input
-                      type="file"
-                      accept="image/*"
-                      className="hidden"
-                      {...coverImageRegister}
-                      onChange={(e) => {
-                        coverImageRegister.onChange(e);
-                        if (e.target.files && e.target.files[0]) {
-                          setCoverImagePreview(URL.createObjectURL(e.target.files[0]));
-                        }
-                      }}
-                    />
-                  </label>
-                </div>
+                </FileDropzone>
               </div>
 
               {/* Multiple Gallery Images Upload Dropzone */}
@@ -546,30 +549,26 @@ export default function ProjectsManager() {
                   </div>
                 )}
 
-                <label className="flex flex-col items-center justify-center p-4 rounded-2xl border-2 border-dashed border-white/20 hover:border-[#26EFFD] bg-[#050816] hover:bg-[#26EFFD]/5 transition-all cursor-pointer group text-center space-y-2">
-                  <UploadCloud size={26} className="text-gray-400 group-hover:text-[#26EFFD] transition-colors" />
+                <FileDropzone
+                  onFilesSelect={(files) => {
+                    const next = [...galleryFiles, ...files];
+                    setGalleryFiles(next);
+                    galleryImagesRegister.onChange({ target: { files: filesToFileList(next) } });
+                    setNewGalleryPreviews(next.map((file) => URL.createObjectURL(file)));
+                  }}
+                  accept="image/*"
+                  multiple
+                  label={newGalleryPreviews.length > 0 ? `تم اختيار ${newGalleryPreviews.length} صور (اسحب أو اضغط لإضافة المزيد)` : 'اضغط لرفع عناصر صور التصاميم (يمكنك اختيار عدة صور)'}
+                  hint="يدعم رفع ملفات متعددة دفعة واحدة"
+                >
+                  <UploadCloud size={26} className="text-gray-400" />
                   <div>
-                    <p className="text-xs font-bold text-white group-hover:text-[#26EFFD] transition-colors">
-                      {newGalleryPreviews.length > 0 ? `تم اختيار ${newGalleryPreviews.length} صور (اضغط لإضافة المزيد)` : 'اضغط لرفع عناصر صور التصاميم (يمكنك اختيار عدة صور)'}
+                    <p className="text-xs font-bold text-white">
+                      {newGalleryPreviews.length > 0 ? `تم اختيار ${newGalleryPreviews.length} صور (اسحب أو اضغط لإضافة المزيد)` : 'اضغط لرفع عناصر صور التصاميم (يمكنك اختيار عدة صور)'}
                     </p>
                     <p className="text-[10px] text-gray-500 mt-0.5">يدعم رفع ملفات متعددة دفعة واحدة</p>
                   </div>
-                  <input
-                    type="file"
-                    multiple
-                    accept="image/*"
-                    className="hidden"
-                    {...galleryImagesRegister}
-                    onChange={(e) => {
-                      galleryImagesRegister.onChange(e);
-                      if (e.target.files) {
-                        const filesArray = Array.from(e.target.files);
-                        const urls = filesArray.map(file => URL.createObjectURL(file));
-                        setNewGalleryPreviews(urls);
-                      }
-                    }}
-                  />
-                </label>
+                </FileDropzone>
               </div>
 
               {/* Existing Gallery Images */}

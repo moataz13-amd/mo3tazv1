@@ -1,8 +1,9 @@
-import { useState } from 'react';
+import { useState, useMemo } from 'react';
 import { useQuery, useMutation, useQueryClient } from '@tanstack/react-query';
-import { Plus, Edit2, Trash2, X, Save, Globe } from 'lucide-react';
+import { Plus, Edit2, Trash2, X, Save, Globe, GripVertical } from 'lucide-react';
 import toast from 'react-hot-toast';
-import { languagesAPI } from '../../lib/api';
+import { languagesAPI, reorderAPI } from '../../lib/api';
+import { useDragReorder, reorderArray } from '../../components/admin/useDragReorder';
 import type { Language } from '../../types';
 
 const colorOptions = ['#00E5FF', '#4F46E5', '#f59e0b', '#10b981', '#06B6D4', '#8b5cf6', '#ef4444', '#ec4899'];
@@ -29,6 +30,21 @@ export default function LanguagesPage() {
     queryKey: ['languages'],
     queryFn: () => languagesAPI.getAll().then((r) => r.data as Language[]),
   });
+
+  const sortedLanguages = useMemo(() => [...languages].sort((a, b) => a.order - b.order), [languages]);
+
+  const reorderMutation = useMutation({
+    mutationFn: (items: { id: string; order: number }[]) => reorderAPI.reorder('languages', items),
+    onError: () => toast.error('فشل حفظ الترتيب'),
+  });
+
+  const handleMove = (from: number, to: number) => {
+    const reordered = reorderArray(sortedLanguages, from, to).map((l, i) => ({ ...l, order: i + 1 }));
+    queryClient.setQueryData(['languages'], reordered);
+    reorderMutation.mutate(reordered.map((l) => ({ id: l.id, order: l.order })));
+  };
+
+  const { getDragProps, activeIndex, overIndex } = useDragReorder(handleMove);
 
   const createMutation = useMutation({
     mutationFn: (data: object) => languagesAPI.create(data),
@@ -248,12 +264,16 @@ export default function LanguagesPage() {
         </div>
       ) : (
         <div className="grid md:grid-cols-2 gap-4">
-          {languages.sort((a, b) => a.order - b.order).map((lang) => (
+          {sortedLanguages.map((lang, index) => (
             <div
               key={lang.id}
-              className="glass-card p-5 group hover:border-opacity-60 transition-all"
+              {...getDragProps(index)}
+              className={`glass-card p-5 group hover:border-opacity-60 transition-all relative ${activeIndex === index ? 'opacity-40' : ''} ${overIndex === index ? 'border-primary ring-1 ring-primary/40' : ''}`}
               style={{ borderColor: `${lang.color}30` }}
             >
+              <div className="absolute top-2 left-2 text-gray-500 cursor-grab active:cursor-grabbing hover:text-primary transition-colors" title="اسحب لإعادة الترتيب">
+                <GripVertical size={16} />
+              </div>
               <div className="flex items-center justify-between mb-4">
                 <div className="flex items-center gap-3">
                   <span className="text-3xl">{lang.flag}</span>

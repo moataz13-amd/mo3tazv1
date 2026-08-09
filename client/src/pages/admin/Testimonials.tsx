@@ -4,6 +4,7 @@ import { useForm } from 'react-hook-form';
 import { Plus, Trash2, Edit, X, Save, Star } from 'lucide-react';
 import toast from 'react-hot-toast';
 import { testimonialsAPI } from '../../lib/api';
+import FileDropzone from '../../components/admin/FileDropzone';
 import type { Testimonial } from '../../types';
 
 export default function TestimonialsManager() {
@@ -220,7 +221,16 @@ export default function TestimonialsManager() {
               <div className="grid grid-cols-3 gap-4 items-center">
                 <div className="col-span-2">
                   <label className="block text-xs font-mono text-gray-400 mb-1">Client Avatar/Photo</label>
-                  <input type="file" {...register('client_photo')} className="text-xs text-gray-400 bg-surface border border-glass-border p-2 rounded-xl w-full" />
+                  <FileDropzone
+                    onFilesSelect={(files) => {
+                      const dt = new DataTransfer();
+                      dt.items.add(files[0]);
+                      setValue('client_photo', dt.files);
+                    }}
+                    accept="image/*"
+                    className="py-4"
+                    label="اسحب وأفلت صورة العميل أو اضغط للاختيار"
+                  />
                 </div>
                 <div>
                   <label className="block text-xs font-mono text-gray-400 mb-1">Rating Stars (1-5)</label>

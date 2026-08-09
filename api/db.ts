@@ -662,4 +662,27 @@ export const db = {
     }
     log('clearClientLogos');
   },
+
+  reorderItems: async (table: string, items: { id: string; order: number }[]) => {
+    if (!supabase) return;
+    await Promise.all(items.map(({ id, order }) =>
+      supabase!.from(table).update({ order }).eq('id', id)
+    ));
+    clearCache(table);
+    log('reorderItems', table);
+  },
+
+  reorderClientLogos: async (items: { id: string; order: number }[]) => {
+    if (!supabase) return;
+    const { data } = await supabase.from('settings').select('client_logos').limit(1).maybeSingle();
+    const logos: any[] = data?.client_logos || [];
+    const orderMap = new Map(items.map((i) => [String(i.id), i.order]));
+    const updated = logos.map((l: any) => (orderMap.has(String(l.id)) ? { ...l, order: orderMap.get(String(l.id)) } : l));
+    const settingsId = await getSettingsId();
+    if (settingsId) {
+      await supabase.from('settings').update({ client_logos: updated }).eq('id', settingsId);
+    }
+    clearCache('settings');
+    log('reorderClientLogos');
+  },
 };

@@ -3,6 +3,7 @@ import { useQuery, useMutation, useQueryClient } from '@tanstack/react-query';
 import { Upload, Trash2, Link2, Eye, FileImage } from 'lucide-react';
 import toast from 'react-hot-toast';
 import { mediaAPI } from '../../lib/api';
+import FileDropzone from '../../components/admin/FileDropzone';
 import type { MediaFile } from '../../types';
 
 export default function MediaManager() {
@@ -14,16 +15,6 @@ export default function MediaManager() {
     queryFn: () => mediaAPI.getAll().then((r) => r.data as MediaFile[]),
   });
 
-  const uploadMutation = useMutation({
-    mutationFn: (data: FormData) => mediaAPI.upload(data),
-    onSuccess: () => {
-      queryClient.invalidateQueries({ queryKey: ['mediaFiles'] });
-      toast.success('File uploaded successfully');
-    },
-    onError: () => toast.error('Failed to upload file'),
-    onSettled: () => setUploading(false),
-  });
-
   const deleteMutation = useMutation({
     mutationFn: (publicId: string) => mediaAPI.delete(publicId),
     onSuccess: () => {
@@ -33,12 +24,30 @@ export default function MediaManager() {
     onError: () => toast.error('Failed to delete file'),
   });
 
+  const handleFiles = async (files: File[]) => {
+    setUploading(true);
+    let ok = 0;
+    let fail = 0;
+    for (const file of files) {
+      const formData = new FormData();
+      formData.append('file', file);
+      try {
+        await mediaAPI.upload(formData);
+        ok++;
+      } catch {
+        fail++;
+      }
+    }
+    queryClient.invalidateQueries({ queryKey: ['mediaFiles'] });
+    if (fail > 0) toast.error(`${fail} file(s) failed to upload`);
+    else toast.success(`${ok} file(s) uploaded successfully`);
+    setUploading(false);
+  };
+
   const handleUpload = (e: React.ChangeEvent<HTMLInputElement>) => {
     if (!e.target.files || !e.target.files[0]) return;
-    setUploading(true);
-    const formData = new FormData();
-    formData.append('file', e.target.files[0]);
-    uploadMutation.mutate(formData);
+    handleFiles(Array.from(e.target.files));
+    e.target.value = '';
   };
 
   const handleCopyLink = (url: string) => {
@@ -65,6 +74,15 @@ export default function MediaManager() {
           <input type="file" onChange={handleUpload} className="hidden" accept="image/*,video/*" />
         </label>
       </div>
+
+      <FileDropzone
+        onFilesSelect={handleFiles}
+        accept="image/*,video/*"
+        multiple
+        disabled={uploading}
+        label={uploading ? 'Uploading...' : 'اسحب وأفلت الملفات هنا أو اضغط للاختيار'}
+        hint="يدعم رفع ملفات متعددة دفعة واحدة (صور وفيديو)"
+      />
 
       {isLoading ? (
         <div className="flex items-center justify-center py-20">

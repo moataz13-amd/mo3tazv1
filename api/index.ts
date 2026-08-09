@@ -684,6 +684,38 @@ app.delete('/api/client-logos/:id', authenticate, async (req, res) => {
   catch (err: any) { res.status(500).json({ message: err.message }); }
 });
 
+// REORDER — bulk update display order for an entity
+const REORDERABLE: Record<string, string> = {
+  skills: 'skills',
+  services: 'services',
+  experience: 'experience',
+  languages: 'languages',
+};
+
+app.patch('/api/reorder/:entity', authenticate, async (req: any, res) => {
+  try {
+    const items = req.body?.items;
+    if (!Array.isArray(items) || items.length === 0) {
+      return res.status(400).json({ message: 'items array is required' });
+    }
+    const clean = items.map((i: any) => ({
+      id: String(i.id),
+      order: Number(i.order) || 0,
+    }));
+    if (req.params.entity === 'client-logos') {
+      await db.reorderClientLogos(clean);
+    } else {
+      const table = REORDERABLE[req.params.entity];
+      if (!table) return res.status(400).json({ message: 'Entity does not support reordering' });
+      await db.reorderItems(table, clean);
+    }
+    await db.logActivity('Reorder', `Reordered ${req.params.entity}`);
+    res.json({ message: 'Order updated' });
+  } catch (err: any) {
+    res.status(500).json({ message: err.message });
+  }
+});
+
 // Error handler
 app.use((err: any, _req: express.Request, res: express.Response, _next: express.NextFunction) => {
   console.error(err.stack);

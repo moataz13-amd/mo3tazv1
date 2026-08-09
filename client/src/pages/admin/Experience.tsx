@@ -1,8 +1,9 @@
-import { useState } from 'react';
+import { useState, useMemo } from 'react';
 import { useQuery, useMutation, useQueryClient } from '@tanstack/react-query';
-import { Plus, Edit2, Trash2, X, Save, Briefcase, GraduationCap, Award } from 'lucide-react';
+import { Plus, Edit2, Trash2, X, Save, Briefcase, GraduationCap, Award, GripVertical } from 'lucide-react';
 import toast from 'react-hot-toast';
-import { experienceAPI } from '../../lib/api';
+import { experienceAPI, reorderAPI } from '../../lib/api';
+import { useDragReorder, reorderArray } from '../../components/admin/useDragReorder';
 import type { ExperienceEntry } from '../../types';
 
 const typeOptions = [
@@ -35,6 +36,21 @@ export default function ExperiencePage() {
     queryKey: ['experience'],
     queryFn: () => experienceAPI.getAll().then((r) => r.data as ExperienceEntry[]),
   });
+
+  const sortedEntries = useMemo(() => [...entries].sort((a, b) => a.order - b.order), [entries]);
+
+  const reorderMutation = useMutation({
+    mutationFn: (items: { id: string; order: number }[]) => reorderAPI.reorder('experience', items),
+    onError: () => toast.error('فشل حفظ الترتيب'),
+  });
+
+  const handleMove = (from: number, to: number) => {
+    const reordered = reorderArray(sortedEntries, from, to).map((e, i) => ({ ...e, order: i + 1 }));
+    queryClient.setQueryData(['experience'], reordered);
+    reorderMutation.mutate(reordered.map((e) => ({ id: e.id, order: e.order })));
+  };
+
+  const { getDragProps, activeIndex, overIndex } = useDragReorder(handleMove);
 
   const createMutation = useMutation({
     mutationFn: (data: object) => experienceAPI.create(data),
@@ -269,12 +285,16 @@ export default function ExperiencePage() {
         </div>
       ) : (
         <div className="space-y-3">
-          {entries.sort((a, b) => a.order - b.order).map((entry) => (
+          {sortedEntries.map((entry, index) => (
             <div
               key={entry.id}
-              className="glass-card p-5 flex items-start gap-4 group hover:border-opacity-60 transition-all"
+              {...getDragProps(index)}
+              className={`glass-card p-5 flex items-start gap-4 group hover:border-opacity-60 transition-all relative ${activeIndex === index ? 'opacity-40' : ''} ${overIndex === index ? 'border-primary ring-1 ring-primary/40' : ''}`}
               style={{ borderColor: `${entry.color}30` }}
             >
+              <div className="absolute top-2 left-2 text-gray-500 cursor-grab active:cursor-grabbing hover:text-primary transition-colors" title="اسحب لإعادة الترتيب">
+                <GripVertical size={16} />
+              </div>
               <div
                 className="w-10 h-10 rounded-xl flex items-center justify-center text-lg flex-shrink-0"
                 style={{ background: `${entry.color}20`, border: `1px solid ${entry.color}40` }}

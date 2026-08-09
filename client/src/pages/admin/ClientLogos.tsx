@@ -1,10 +1,12 @@
-import { useState, useRef } from 'react';
+import { useState, useMemo } from 'react';
 import { useQuery, useMutation, useQueryClient } from '@tanstack/react-query';
 import { useForm } from 'react-hook-form';
-import { Plus, Trash2, Edit, X, Save, ImageIcon, Upload, GripVertical, AlertTriangle } from 'lucide-react';
+import { Plus, Trash2, Edit, X, Save, ImageIcon, GripVertical, AlertTriangle } from 'lucide-react';
 import toast from 'react-hot-toast';
-import { clientLogosAPI } from '../../lib/api';
+import { clientLogosAPI, reorderAPI } from '../../lib/api';
 import { useAdminTranslation } from '../../lib/adminTranslations';
+import { useDragReorder, reorderArray } from '../../components/admin/useDragReorder';
+import FileDropzone from '../../components/admin/FileDropzone';
 
 interface ClientLogo {
   id: string;
@@ -21,12 +23,30 @@ export default function ClientLogosManager() {
   const [isModalOpen, setIsModalOpen] = useState(false);
   const [imagePreview, setImagePreview] = useState<string | null>(null);
   const [selectedFile, setSelectedFile] = useState<File | null>(null);
-  const fileInputRef = useRef<HTMLInputElement>(null);
 
   const { data: logos, isLoading } = useQuery({
     queryKey: ['client-logos'],
     queryFn: () => clientLogosAPI.getAll().then((r) => r.data as ClientLogo[]),
   });
+
+  const sortedLogos = useMemo(() => [...(logos || [])].sort((a, b) => a.order - b.order), [logos]);
+
+  const reorderMutation = useMutation({
+    mutationFn: (items: { id: string; order: number }[]) => reorderAPI.reorder('client-logos', items),
+    onSuccess: () => {
+      queryClient.invalidateQueries({ queryKey: ['client-logos'] });
+      queryClient.invalidateQueries({ queryKey: ['settings'] });
+    },
+    onError: () => toast.error('فشل حفظ الترتيب'),
+  });
+
+  const handleMove = (from: number, to: number) => {
+    const reordered = reorderArray(sortedLogos, from, to).map((l, i) => ({ ...l, order: i + 1 }));
+    queryClient.setQueryData(['client-logos'], reordered);
+    reorderMutation.mutate(reordered.map((l) => ({ id: l.id, order: l.order })));
+  };
+
+  const { getDragProps, activeIndex, overIndex } = useDragReorder(handleMove);
 
   const createMutation = useMutation({
     mutationFn: (data: FormData) => clientLogosAPI.create(data),
@@ -105,16 +125,6 @@ export default function ClientLogosManager() {
     setSelectedFile(null);
   };
 
-  const handleFileChange = (e: React.ChangeEvent<HTMLInputElement>) => {
-    const file = e.target.files?.[0];
-    if (file) {
-      setSelectedFile(file);
-      const reader = new FileReader();
-      reader.onload = () => setImagePreview(reader.result as string);
-      reader.readAsDataURL(file);
-    }
-  };
-
   const onSubmit = (data: any) => {
     const formData = new FormData();
     formData.append('name', data.name || '');
@@ -170,13 +180,14 @@ export default function ClientLogosManager() {
         <div className="glass-card p-6">
           {/* Grid View of Logos */}
           <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 xl:grid-cols-4 gap-4">
-            {logos.map((logo) => (
+            {sortedLogos.map((logo, index) => (
               <div
                 key={logo.id}
-                className="group relative rounded-xl border border-glass-border bg-surface/50 p-4 transition-all duration-300 hover:border-[rgba(0,191,255,0.3)] hover:shadow-[0_0_20px_rgba(0,191,255,0.08)]"
+                {...getDragProps(index)}
+                className={`group relative rounded-xl border border-glass-border bg-surface/50 p-4 transition-all duration-300 hover:border-[rgba(0,191,255,0.3)] hover:shadow-[0_0_20px_rgba(0,191,255,0.08)] ${activeIndex === index ? 'opacity-40' : ''} ${overIndex === index ? 'border-primary ring-1 ring-primary/40' : ''}`}
               >
                 {/* Order Badge */}
-                <div className="absolute top-3 left-3 flex items-center gap-1 text-[10px] font-mono text-gray-500">
+                <div className="absolute top-3 left-3 flex items-center gap-1 text-[10px] font-mono text-gray-500 cursor-grab active:cursor-grabbing hover:text-primary transition-colors" title="اسحب لإعادة الترتيب">
                   <GripVertical size={12} />
                   {t('orderHash')} {logo.order}
                 </div>
@@ -254,9 +265,19 @@ export default function ClientLogosManager() {
               {/* Logo Image Upload */}
               <div>
                 <label className="block text-xs font-mono text-gray-400 mb-2">{t('logoImage')}</label>
-                <div
-                  onClick={() => fileInputRef.current?.click()}
-                  className="relative border-2 border-dashed border-glass-border rounded-xl p-6 flex flex-col items-center justify-center cursor-pointer hover:border-primary/50 transition-colors group"
+                <FileDropzone
+                  onFilesSelect={(files) => {
+                    const file = files[0];
+                    if (file) {
+                      setSelectedFile(file);
+                      const reader = new FileReader();
+                      reader.onload = () => setImagePreview(reader.result as string);
+                      reader.readAsDataURL(file);
+                    }
+                  }}
+                  accept="image/*"
+                  label={imagePreview ? 'اللوجو الحالي' : t('clickToChooseImage')}
+                  hint="PNG, SVG, WEBP"
                 >
                   {imagePreview ? (
                     <div className="flex items-center justify-center h-20">
@@ -266,21 +287,8 @@ export default function ClientLogosManager() {
                         className="max-h-full max-w-full object-contain"
                       />
                     </div>
-                  ) : (
-                    <>
-                      <Upload size={24} className="text-gray-500 group-hover:text-primary mb-2 transition-colors" />
-                      <span className="text-xs text-gray-400">{t('clickToChooseImage')}</span>
-                      <span className="text-[10px] text-gray-500 mt-1">PNG, SVG, WEBP</span>
-                    </>
-                  )}
-                  <input
-                    ref={fileInputRef}
-                    type="file"
-                    accept="image/*"
-                    onChange={handleFileChange}
-                    className="hidden"
-                  />
-                </div>
+                  ) : null}
+                </FileDropzone>
               </div>
 
               {/* Manual URL Input */}

@@ -1,9 +1,10 @@
-import { useState } from 'react';
+import { useState, useMemo } from 'react';
 import { useQuery, useMutation, useQueryClient } from '@tanstack/react-query';
 import { useForm } from 'react-hook-form';
-import { Plus, Trash2, Edit, X, Save } from 'lucide-react';
+import { Plus, Trash2, Edit, X, Save, GripVertical } from 'lucide-react';
 import toast from 'react-hot-toast';
-import { skillsAPI } from '../../lib/api';
+import { skillsAPI, reorderAPI } from '../../lib/api';
+import { useDragReorder, reorderArray } from '../../components/admin/useDragReorder';
 import type { Skill } from '../../types';
 
 export default function SkillsManager() {
@@ -15,6 +16,21 @@ export default function SkillsManager() {
     queryKey: ['skills'],
     queryFn: () => skillsAPI.getAll().then((r) => r.data as Skill[]),
   });
+
+  const sortedSkills = useMemo(() => [...(skills || [])].sort((a, b) => a.order - b.order), [skills]);
+
+  const reorderMutation = useMutation({
+    mutationFn: (items: { id: string; order: number }[]) => reorderAPI.reorder('skills', items),
+    onError: () => toast.error('Failed to save order'),
+  });
+
+  const handleMove = (from: number, to: number) => {
+    const reordered = reorderArray(sortedSkills, from, to).map((s, i) => ({ ...s, order: i + 1 }));
+    queryClient.setQueryData(['skills'], reordered);
+    reorderMutation.mutate(reordered.map((s) => ({ id: s.id, order: s.order })));
+  };
+
+  const { getDragProps, activeIndex, overIndex } = useDragReorder(handleMove);
 
   const createMutation = useMutation({
     mutationFn: (data: any) => skillsAPI.create(data),
@@ -121,9 +137,18 @@ export default function SkillsManager() {
                 </tr>
               </thead>
               <tbody className="divide-y divide-glass-border">
-                {skills?.map((skill) => (
-                  <tr key={skill.id} className="hover:bg-surface/30 transition-colors text-sm">
-                    <td className="py-3.5 px-4 font-semibold text-white">{skill.name}</td>
+                {sortedSkills.map((skill, index) => (
+                  <tr
+                    key={skill.id}
+                    {...getDragProps(index)}
+                    className={`transition-colors text-sm ${activeIndex === index ? 'opacity-40' : 'hover:bg-surface/30'} ${overIndex === index ? 'bg-primary/10' : ''}`}
+                  >
+                    <td className="py-3.5 px-4 font-semibold text-white flex items-center gap-2">
+                      <span className="cursor-grab active:cursor-grabbing text-gray-500 hover:text-primary transition-colors" title="اسحب لإعادة الترتيب">
+                        <GripVertical size={14} />
+                      </span>
+                      {skill.name}
+                    </td>
                     <td className="py-3.5 px-4">
                       <span className="text-[10px] font-mono px-2.5 py-1 rounded-full bg-surface border border-glass-border text-primary capitalize">
                         {skill.category}

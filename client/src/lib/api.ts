@@ -154,6 +154,11 @@ export const clientLogosAPI = {
   deleteAll: () => api.delete('/client-logos'),
 };
 
+export const reorderAPI = {
+  reorder: (entity: string, items: { id: string; order: number }[]) =>
+    api.patch(`/reorder/${entity}`, { items }),
+};
+
 export async function compressImage(file: File, maxDimension = 1920, quality = 0.8): Promise<Blob> {
   return new Promise((resolve, reject) => {
     const img = new Image();

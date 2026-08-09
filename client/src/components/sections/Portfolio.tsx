@@ -34,6 +34,7 @@ const CarouselCard = memo(function CarouselCard({
   onPrev,
   onNext,
   onNavigate,
+  hideText,
 }: {
   project: Project;
   offset: number;
@@ -42,6 +43,7 @@ const CarouselCard = memo(function CarouselCard({
   onPrev: () => void;
   onNext: () => void;
   onNavigate: (p: Project) => void;
+  hideText?: boolean;
 }) {
   // Responsive transform values for mobile vs desktop
   const xOffset = isSmallScreen ? 44 : 55;
@@ -108,6 +110,7 @@ const CarouselCard = memo(function CarouselCard({
             background: 'linear-gradient(to top, rgba(0,0,0,0.75) 0%, rgba(0,0,0,0.15) 35%, transparent 60%)',
           }}
         >
+          {!hideText && (
           <div className="flex flex-col gap-1 max-w-2xl pb-10 sm:pb-0">
             <h3
               className="text-lg sm:text-2xl md:text-3xl lg:text-4xl font-extrabold text-white leading-tight"
@@ -121,6 +124,7 @@ const CarouselCard = memo(function CarouselCard({
               </p>
             )}
           </div>
+          )}
 
           {/* View button – only when show_details_btn is explicitly true */}
           {(() => {
@@ -165,6 +169,7 @@ interface Carousel3DSectionProps {
   titlePrefix: string;
   titleHighlight: string;
   items: Project[];
+  hideText?: boolean;
 }
 
 const Carousel3DSection = memo(function Carousel3DSection({
@@ -173,6 +178,7 @@ const Carousel3DSection = memo(function Carousel3DSection({
   titlePrefix,
   titleHighlight,
   items,
+  hideText = false,
 }: Carousel3DSectionProps) {
   const navigate = useNavigate();
   const ref = useRef(null);
@@ -299,6 +305,7 @@ const Carousel3DSection = memo(function Carousel3DSection({
                 onPrev={handlePrev}
                 onNext={handleNext}
                 onNavigate={handleNavigate}
+                hideText={hideText}
               />
             ))}
           </div>
@@ -378,6 +385,7 @@ const Portfolio = memo(function Portfolio() {
         titlePrefix=""
         titleHighlight="الموك آب"
         items={mockupsList}
+        hideText
       />
 
       {/* 2. Featured Projects Section (Main Portfolio Section) */}

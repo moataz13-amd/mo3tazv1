@@ -9,9 +9,21 @@ import toast from 'react-hot-toast';
 import { settingsAPI, mediaAPI } from '../../lib/api';
 import { useAdminTranslation } from '../../lib/adminTranslations';
 import FileDropzone from '../../components/admin/FileDropzone';
-import type { SiteSettings, ClientLogo, MarqueeTag } from '../../types';
+import type { SiteSettings, ClientLogo, MarqueeTag, SocialLink } from '../../types';
 
 type ActiveTab = 'general' | 'hero' | 'marquees' | 'about' | 'contact' | 'seo' | 'database';
+
+export const SOCIAL_PLATFORMS = [
+  'facebook', 'instagram', 'tiktok', 'behance', 'dribbble', 'linkedin',
+  'x', 'youtube', 'whatsapp', 'pinterest', 'github', 'telegram', 'other',
+];
+
+const SOCIAL_PLATFORM_LABELS: Record<string, string> = {
+  facebook: 'فيسبوك', instagram: 'انستجرام', tiktok: 'تيك توك', behance: 'بيهانس',
+  dribbble: 'دريببل', linkedin: 'لينكد إن', x: 'X (تويتر)', youtube: 'يوتيوب',
+  whatsapp: 'واتساب', pinterest: 'بينترست', github: 'جيت هب', telegram: 'تيليجرام',
+  other: 'أخرى (مخصص)',
+};
 
 export default function SettingsPage() {
   const { t } = useAdminTranslation();
@@ -22,6 +34,9 @@ export default function SettingsPage() {
   const [clientLogos, setClientLogos] = useState<ClientLogo[]>([]);
   const [marqueeRow1, setMarqueeRow1] = useState<MarqueeTag[]>([]);
   const [marqueeRow2, setMarqueeRow2] = useState<MarqueeTag[]>([]);
+  const [socialLinks, setSocialLinks] = useState<SocialLink[]>([]);
+  const [newSocialPlatform, setNewSocialPlatform] = useState('behance');
+  const [newSocialUrl, setNewSocialUrl] = useState('');
 
   // Add Item Temp States
   const [newLogoName, setNewLogoName] = useState('');
@@ -84,6 +99,13 @@ export default function SettingsPage() {
       setClientLogos(Array.isArray(settings.client_logos) ? settings.client_logos : []);
       setMarqueeRow1(Array.isArray(settings.marquee_row1) && settings.marquee_row1.length ? settings.marquee_row1 : (() => { try { return JSON.parse(localStorage.getItem('portfolio_marquee_row1') || '[]'); } catch { return []; } })());
       setMarqueeRow2(Array.isArray(settings.marquee_row2) && settings.marquee_row2.length ? settings.marquee_row2 : (() => { try { return JSON.parse(localStorage.getItem('portfolio_marquee_row2') || '[]'); } catch { return []; } })());
+      setSocialLinks(Array.isArray(settings.social_links) && settings.social_links.length
+        ? settings.social_links
+        : [
+            ...(settings.facebook_url ? [{ id: crypto.randomUUID(), platform: 'facebook', url: settings.facebook_url, icon: '', order: 0, enabled: true }] : []),
+            ...(settings.instagram_url ? [{ id: crypto.randomUUID(), platform: 'instagram', url: settings.instagram_url, icon: '', order: 1, enabled: true }] : []),
+            ...(settings.tiktok_url ? [{ id: crypto.randomUUID(), platform: 'tiktok', url: settings.tiktok_url, icon: '', order: 2, enabled: true }] : []),
+          ]);
     }
   }, [settings, reset]);
 
@@ -120,6 +142,7 @@ export default function SettingsPage() {
     formData.append('marquee_row1', mq1);
     formData.append('marquee_row2', mq2);
     formData.append('client_logos', JSON.stringify(clientLogos));
+    formData.append('social_links', JSON.stringify(socialLinks.map((link, i) => ({ ...link, order: i }))));
 
     if (data.avatar && data.avatar[0]) {
       formData.append('avatar', data.avatar[0]);
@@ -162,6 +185,7 @@ export default function SettingsPage() {
       const ls2 = (() => { try { return JSON.parse(localStorage.getItem('portfolio_marquee_row2') || '[]'); } catch { return []; } })();
       setMarqueeRow1(Array.isArray(settings.marquee_row1) && settings.marquee_row1.length ? settings.marquee_row1 : (ls1.length ? ls1 : []));
       setMarqueeRow2(Array.isArray(settings.marquee_row2) && settings.marquee_row2.length ? settings.marquee_row2 : (ls2.length ? ls2 : []));
+      setSocialLinks(Array.isArray(settings.social_links) ? settings.social_links : []);
     }
   };
 
@@ -245,6 +269,32 @@ export default function SettingsPage() {
 
   const handleRemoveTag2 = (idx: number) => {
     setMarqueeRow2(prev => prev.filter((_, i) => i !== idx));
+  };
+
+  // Social links
+  const handleAddSocialLink = () => {
+    const url = newSocialUrl.trim();
+    if (!url) {
+      toast.error('يرجى إدخال رابط المنصة أولاً');
+      return;
+    }
+    setSocialLinks(prev => [...prev, {
+      id: crypto.randomUUID(),
+      platform: newSocialPlatform,
+      url,
+      icon: '',
+      order: prev.length,
+      enabled: true,
+    }]);
+    setNewSocialUrl('');
+  };
+
+  const handleUpdateSocialLink = (id: string, patch: Partial<SocialLink>) => {
+    setSocialLinks(prev => prev.map(link => (link.id === id ? { ...link, ...patch } : link)));
+  };
+
+  const handleRemoveSocialLink = (id: string) => {
+    setSocialLinks(prev => prev.filter(link => link.id !== id));
   };
 
   // Tab configurations
@@ -682,6 +732,86 @@ export default function SettingsPage() {
                     <label className="block text-xs font-mono text-gray-400 mb-1.5">{t('availabilityResponseTime')}</label>
                     <input {...register('availability_response_time')} className="input-field text-sm" placeholder="e.g. < 24 hours" />
                   </div>
+                </div>
+
+                {/* Social Links Manager */}
+                <div className="border-t border-glass-border pt-5">
+                  <div className="flex items-center justify-between mb-3">
+                    <label className="block text-xs font-mono text-gray-400">روابط السوشيال ميديا</label>
+                    <span className="text-[10px] text-gray-500">تظهر في الفوتر — كل رابط اختياري (اظهر/اخفي)</span>
+                  </div>
+
+                  {socialLinks.length > 0 && (
+                    <div className="space-y-2 mb-4">
+                      {socialLinks.map((link) => (
+                        <div key={link.id} className="flex items-center gap-2 p-2 rounded-xl border border-glass-border bg-[#050816]">
+                          <select
+                            value={link.platform}
+                            onChange={(e) => handleUpdateSocialLink(link.id, { platform: e.target.value })}
+                            className="input-field py-1.5 px-2 text-xs bg-[#050816] w-32 flex-shrink-0 cursor-pointer"
+                          >
+                            {SOCIAL_PLATFORMS.map((p) => (
+                              <option key={p} value={p} className="bg-[#090d1f] text-white">{SOCIAL_PLATFORM_LABELS[p]}</option>
+                            ))}
+                          </select>
+                          <input
+                            value={link.url}
+                            onChange={(e) => handleUpdateSocialLink(link.id, { url: e.target.value })}
+                            placeholder="https://..."
+                            dir="ltr"
+                            className="input-field py-1.5 px-2 text-xs bg-[#050816] flex-1 min-w-0 text-left"
+                          />
+                          <label className="flex items-center gap-1.5 text-[10px] font-bold text-gray-300 cursor-pointer select-none flex-shrink-0">
+                            <input
+                              type="checkbox"
+                              checked={link.enabled !== false}
+                              onChange={(e) => handleUpdateSocialLink(link.id, { enabled: e.target.checked })}
+                              className="w-3.5 h-3.5 rounded border-white/20 accent-[#26EFFD] cursor-pointer"
+                            />
+                            اظهار
+                          </label>
+                          <button
+                            type="button"
+                            onClick={() => handleRemoveSocialLink(link.id)}
+                            className="p-1.5 text-red-400 hover:bg-red-500/10 rounded-lg transition-colors cursor-pointer flex-shrink-0"
+                            title="حذف الرابط"
+                          >
+                            <Trash2 size={14} />
+                          </button>
+                        </div>
+                      ))}
+                    </div>
+                  )}
+
+                  <div className="flex items-center gap-2">
+                    <select
+                      value={newSocialPlatform}
+                      onChange={(e) => setNewSocialPlatform(e.target.value)}
+                      className="input-field py-2 px-2 text-xs bg-[#050816] w-32 flex-shrink-0 cursor-pointer"
+                    >
+                      {SOCIAL_PLATFORMS.map((p) => (
+                        <option key={p} value={p} className="bg-[#090d1f] text-white">{SOCIAL_PLATFORM_LABELS[p]}</option>
+                      ))}
+                    </select>
+                    <input
+                      value={newSocialUrl}
+                      onChange={(e) => setNewSocialUrl(e.target.value)}
+                      onKeyDown={(e) => { if (e.key === 'Enter') { e.preventDefault(); handleAddSocialLink(); } }}
+                      placeholder="https://behance.net/yourname"
+                      dir="ltr"
+                      className="input-field py-2 px-2 text-xs bg-[#050816] flex-1 min-w-0 text-left"
+                    />
+                    <button
+                      type="button"
+                      onClick={handleAddSocialLink}
+                      className="neon-btn px-4 py-2 text-xs font-black flex items-center gap-1.5 flex-shrink-0 cursor-pointer"
+                    >
+                      <Plus size={14} /> إضافة
+                    </button>
+                  </div>
+                  <p className="text-[10px] text-gray-500 mt-2">
+                    كل رابط تختار إظهاره يظهر في فوتر الموقع. أوقف "اظهار" أو احذف الرابط لإخفائه.
+                  </p>
                 </div>
               </div>
             )}

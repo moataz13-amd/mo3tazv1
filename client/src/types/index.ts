@@ -104,6 +104,7 @@ export interface SocialLink {
   url: string;
   icon: string;
   order: number;
+  enabled?: boolean;
 }
 
 export interface ClientLogo {

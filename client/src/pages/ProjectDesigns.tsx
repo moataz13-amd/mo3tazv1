@@ -1,4 +1,4 @@
-import { useState, useEffect, useMemo } from 'react';
+import { useState, useEffect, useMemo, useRef } from 'react';
 import { useParams, useNavigate, useLocation } from 'react-router-dom';
 import { motion, AnimatePresence } from 'framer-motion';
 import { X, ChevronLeft, ChevronRight, ArrowUpDown } from 'lucide-react';
@@ -15,6 +15,24 @@ export default function ProjectDesigns() {
   const [loading, setLoading] = useState(!stateProject);
   const [lightboxIndex, setLightboxIndex] = useState<number | null>(null);
   const [sortOrder, setSortOrder] = useState<'asc' | 'desc'>('asc');
+  const touchStartX = useRef<number | null>(null);
+
+  const handleTouchStart = (e: React.TouchEvent) => {
+    touchStartX.current = e.touches[0].clientX;
+  };
+
+  const handleTouchEnd = (e: React.TouchEvent) => {
+    if (touchStartX.current === null) return;
+    const deltaX = e.changedTouches[0].clientX - touchStartX.current;
+    touchStartX.current = null;
+    if (Math.abs(deltaX) < 50) return;
+    const current = lightboxIndex ?? 0;
+    if (deltaX < 0) {
+      setLightboxIndex((current + 1) % images.length);
+    } else {
+      setLightboxIndex((current - 1 + images.length) % images.length);
+    }
+  };
 
   useEffect(() => {
     if (!id) return;
@@ -137,7 +155,13 @@ export default function ProjectDesigns() {
               </button>
             )}
 
-            <div className="flex flex-col items-center gap-4" onClick={(e) => e.stopPropagation()}>
+            <div
+              className="flex flex-col items-center gap-4"
+              onClick={(e) => e.stopPropagation()}
+              onTouchStart={handleTouchStart}
+              onTouchEnd={handleTouchEnd}
+              style={{ touchAction: 'pan-y' }}
+            >
               <motion.div
                 initial={{ scale: 0.95 }}
                 animate={{ scale: 1 }}
@@ -147,33 +171,11 @@ export default function ProjectDesigns() {
                 <img
                   src={images[lightboxIndex]}
                   alt="Enlarged design"
-                  className="max-w-full max-h-[90vh] object-contain"
+                  className="max-w-full max-h-[90vh] object-contain select-none"
                   loading="lazy" decoding="async"
+                  draggable={false}
                 />
               </motion.div>
-
-              {images.length > 1 && (
-                <div className="flex md:hidden items-center justify-center gap-4 z-50">
-                  <button
-                    onClick={(e) => {
-                      e.stopPropagation();
-                      setLightboxIndex((lightboxIndex - 1 + images.length) % images.length);
-                    }}
-                    className="w-12 h-12 rounded-full border-2 border-black bg-[#26EFFD] text-black flex items-center justify-center shadow-[3px_3px_0px_#000000] hover:scale-105 cursor-pointer"
-                  >
-                    <ChevronLeft size={24} />
-                  </button>
-                  <button
-                    onClick={(e) => {
-                      e.stopPropagation();
-                      setLightboxIndex((lightboxIndex + 1) % images.length);
-                    }}
-                    className="w-12 h-12 rounded-full border-2 border-black bg-[#26EFFD] text-black flex items-center justify-center shadow-[3px_3px_0px_#000000] hover:scale-105 cursor-pointer"
-                  >
-                    <ChevronRight size={24} />
-                  </button>
-                </div>
-              )}
             </div>
 
             {images.length > 1 && (

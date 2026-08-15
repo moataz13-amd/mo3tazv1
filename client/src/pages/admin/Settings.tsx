@@ -6,12 +6,13 @@ import {
   PhoneCall, Tag, Search, Plus, Trash2, Upload, FileText, X
 } from 'lucide-react';
 import toast from 'react-hot-toast';
-import { settingsAPI, mediaAPI, compressImage } from '../../lib/api';
+import { settingsAPI, mediaAPI } from '../../lib/api';
 import { useAdminTranslation } from '../../lib/adminTranslations';
 import FileDropzone from '../../components/admin/FileDropzone';
 import type { SiteSettings, ClientLogo, MarqueeTag, SocialLink } from '../../types';
 
 type ActiveTab = 'general' | 'hero' | 'marquees' | 'about' | 'contact' | 'seo' | 'database';
+const DEFAULT_AVATAR = '/me2.png';
 
 export const SOCIAL_PLATFORMS = [
   'facebook', 'instagram', 'tiktok', 'behance', 'dribbble', 'linkedin',
@@ -43,6 +44,8 @@ export default function SettingsPage() {
   const [newLogoFile, setNewLogoFile] = useState<File | null>(null);
   const [logoPreview, setLogoPreview] = useState<string | null>(null);
   const [isUploadingLogo, setIsUploadingLogo] = useState(false);
+  const [avatarPreview, setAvatarPreview] = useState<string | null>(null);
+  const [avatarRemoved, setAvatarRemoved] = useState(false);
 
   const [newTagText1, setNewTagText1] = useState('');
   const [newTagVariant1, setNewTagVariant1] = useState<'solid' | 'glass'>('solid');
@@ -106,6 +109,8 @@ export default function SettingsPage() {
             ...(settings.instagram_url ? [{ id: crypto.randomUUID(), platform: 'instagram', url: settings.instagram_url, icon: '', order: 1, enabled: true }] : []),
             ...(settings.tiktok_url ? [{ id: crypto.randomUUID(), platform: 'tiktok', url: settings.tiktok_url, icon: '', order: 2, enabled: true }] : []),
           ]);
+      setAvatarPreview(settings.avatar || DEFAULT_AVATAR);
+      setAvatarRemoved(false);
     }
   }, [settings, reset]);
 
@@ -151,18 +156,13 @@ export default function SettingsPage() {
     formData.append('client_logos', JSON.stringify(clientLogos));
     formData.append('social_links', JSON.stringify(socialLinks.map((link, i) => ({ ...link, order: i }))));
 
-    if (data.avatar && data.avatar[0]) {
+    if (avatarRemoved) {
+      formData.append('avatar', DEFAULT_AVATAR);
+    } else if (data.avatar && data.avatar[0]) {
       try {
         const file = data.avatar[0];
-        if (file.type.startsWith('image/')) {
-          const blob = await compressImage(file, 512, 0.85);
-          const f = new File([blob], file.name.replace(/\.[^.]+$/, '.webp'), { type: 'image/webp' });
-          const url = await uploadFile(f);
-          formData.append('avatar', url);
-        } else {
-          const url = await uploadFile(file);
-          formData.append('avatar', url);
-        }
+        const url = await uploadFile(file);
+        formData.append('avatar', url);
       } catch {
         toast.error('Failed to upload avatar image.');
         return;
@@ -213,7 +213,26 @@ export default function SettingsPage() {
       setMarqueeRow1(Array.isArray(settings.marquee_row1) && settings.marquee_row1.length ? settings.marquee_row1 : (ls1.length ? ls1 : []));
       setMarqueeRow2(Array.isArray(settings.marquee_row2) && settings.marquee_row2.length ? settings.marquee_row2 : (ls2.length ? ls2 : []));
       setSocialLinks(Array.isArray(settings.social_links) ? settings.social_links : []);
+      setAvatarPreview(settings.avatar || DEFAULT_AVATAR);
+      setAvatarRemoved(false);
     }
+  };
+
+  const handleAvatarSelect = (files: File[]) => {
+    const file = files[0];
+    if (!file) return;
+
+    const dt = new DataTransfer();
+    dt.items.add(file);
+    setValue('avatar', dt.files);
+    setAvatarPreview(URL.createObjectURL(file));
+    setAvatarRemoved(false);
+  };
+
+  const handleRemoveAvatar = () => {
+    setValue('avatar', undefined);
+    setAvatarPreview(DEFAULT_AVATAR);
+    setAvatarRemoved(true);
   };
 
   // Add brand logo
@@ -402,26 +421,30 @@ export default function SettingsPage() {
                   <div>
                     <label className="block text-xs font-mono text-gray-400 mb-1.5">{t('avatarProfile')}</label>
                     <FileDropzone
-                      onFilesSelect={(files) => {
-                        const dt = new DataTransfer();
-                        dt.items.add(files[0]);
-                        setValue('avatar', dt.files);
-                      }}
+                      onFilesSelect={handleAvatarSelect}
                       accept="image/*"
                       className="py-4"
                       label={t('avatarProfile')}
                       hint="JPG, PNG, WEBP"
                     >
                       <div className="flex items-center gap-3 w-full">
-                        {settings?.avatar && (
-                          <img src={settings.avatar} className="w-10 h-10 object-cover rounded-xl border border-glass-border bg-surface" alt="Avatar" />
+                        {avatarPreview && (
+                          <img src={avatarPreview} className="w-10 h-10 object-cover rounded-xl border border-glass-border bg-surface" alt="Avatar" />
                         )}
                         <div className="flex-1 text-left">
                           <p className="text-xs font-bold text-white">{t('avatarProfile')}</p>
-                          <p className="text-[10px] text-gray-500 mt-0.5">اسحب وأفلت أو اضغط للاختيار</p>
+                          <p className="text-[10px] text-gray-500 mt-0.5">اسحب وأفلت أو اضغط للاختيار - يتم رفع الصورة بدون ضغط</p>
                         </div>
                       </div>
                     </FileDropzone>
+                    <button
+                      type="button"
+                      onClick={handleRemoveAvatar}
+                      className="mt-2 inline-flex items-center gap-1.5 rounded-lg border border-red-500/30 px-3 py-1.5 text-[11px] font-bold text-red-300 transition hover:bg-red-500/10"
+                    >
+                      <X size={12} />
+                      إزالة الصورة والرجوع للأصلية
+                    </button>
                   </div>
                   <div>
                     <label className="block text-xs font-mono text-gray-400 mb-1.5">{t('cvPdf')}</label>

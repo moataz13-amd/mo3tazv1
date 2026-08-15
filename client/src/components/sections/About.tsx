@@ -84,29 +84,29 @@ const About = memo(function About() {
           initial={{ opacity: 0, y: 40 }}
           animate={isInView ? { opacity: 1, y: 0 } : {}}
           transition={{ duration: 0.8, delay: 0.2, ease: [0.22, 1, 0.36, 1] }}
-          className="relative w-full p-10 md:p-16 overflow-visible flex flex-col items-center"
+          className="relative w-full p-6 md:p-12 overflow-visible flex flex-col items-center"
         >
           {/* Location Pin - Top Right */}
-          <div className="absolute top-8 right-8 flex items-center gap-2 text-white/50 text-[14px] font-medium" style={{ fontFamily: "'Sahara Bold', sans-serif" }}>
+          <div className="absolute top-8 right-8 z-30 flex items-center gap-2 text-white/50 text-[14px] font-medium" style={{ fontFamily: "'Sahara Bold', sans-serif" }}>
             <MapPin size={16} className="text-[#26EFFD]" />
             <span>{location}</span>
           </div>
 
           {/* Profile Photo with Cyan Arch/Circle Backdrop */}
-          <div className="relative flex justify-center -mt-[80px] md:-mt-[160px] -mb-[40px] md:-mb-[90px]">
+          <div className="relative z-10 flex justify-center -mt-8 md:-mt-16 mb-8 md:mb-10 w-full pointer-events-none">
             {/* Profile Avatar Frame */}
-            <div className="relative z-20 w-full max-w-[460px] md:max-w-[580px] flex items-center justify-center">
+            <div className="relative w-full max-w-[320px] md:max-w-[420px] flex items-center justify-center">
               <img
                 src={avatar}
                 alt={name}
-                className="w-full h-auto object-contain transform scale-110 md:scale-120 transition-transform duration-500"
+                className="w-full max-h-[420px] md:max-h-[520px] object-contain transition-transform duration-500"
                 loading="lazy" decoding="async"
               />
             </div>
           </div>
 
           {/* Details Row: Name + Stats */}
-          <div className="w-full flex flex-col md:flex-row items-center justify-between gap-12 border-b border-white/5 pb-10 mb-10">
+          <div className="relative z-20 w-full flex flex-col md:flex-row items-center justify-between gap-12 border-b border-white/5 pb-10 mb-10">
             {/* Right: Name and Role */}
             <div className="text-center md:text-right">
               <h3

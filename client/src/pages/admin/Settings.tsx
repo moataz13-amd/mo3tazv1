@@ -6,7 +6,7 @@ import {
   PhoneCall, Tag, Search, Plus, Trash2, Upload, FileText, X
 } from 'lucide-react';
 import toast from 'react-hot-toast';
-import { settingsAPI, mediaAPI } from '../../lib/api';
+import { settingsAPI, mediaAPI, compressImage } from '../../lib/api';
 import { useAdminTranslation } from '../../lib/adminTranslations';
 import FileDropzone from '../../components/admin/FileDropzone';
 import type { SiteSettings, ClientLogo, MarqueeTag, SocialLink } from '../../types';
@@ -109,7 +109,14 @@ export default function SettingsPage() {
     }
   }, [settings, reset]);
 
-  const onSubmit = (data: any) => {
+  const uploadFile = async (file: File) => {
+    const fd = new FormData();
+    fd.append('file', file);
+    const res = await mediaAPI.upload(fd);
+    return res.data.url;
+  };
+
+  const onSubmit = async (data: any) => {
     const formData = new FormData();
     formData.append('name', data.name);
     formData.append('title', data.title);
@@ -145,10 +152,30 @@ export default function SettingsPage() {
     formData.append('social_links', JSON.stringify(socialLinks.map((link, i) => ({ ...link, order: i }))));
 
     if (data.avatar && data.avatar[0]) {
-      formData.append('avatar', data.avatar[0]);
+      try {
+        const file = data.avatar[0];
+        if (file.type.startsWith('image/')) {
+          const blob = await compressImage(file, 512, 0.85);
+          const f = new File([blob], file.name.replace(/\.[^.]+$/, '.webp'), { type: 'image/webp' });
+          const url = await uploadFile(f);
+          formData.append('avatar', url);
+        } else {
+          const url = await uploadFile(file);
+          formData.append('avatar', url);
+        }
+      } catch {
+        toast.error('Failed to upload avatar image.');
+        return;
+      }
     }
     if (data.cv && data.cv[0]) {
-      formData.append('cv', data.cv[0]);
+      try {
+        const url = await uploadFile(data.cv[0]);
+        formData.append('cv_url', url);
+      } catch {
+        toast.error('Failed to upload CV file.');
+        return;
+      }
     }
 
     updateMutation.mutate(formData);

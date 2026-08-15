@@ -323,6 +323,7 @@ export const db = {
         } else if (settingsData.avatar !== undefined) {
           supabasePayload.avatar_url = settingsData.avatar;
         }
+        if (settingsData.cv_url !== undefined) supabasePayload.cv_url = settingsData.cv_url;
 
         if (Object.keys(supabasePayload).length > 0) {
           const { error } = await supabase

@@ -587,6 +587,12 @@ router.put('/settings', authenticate, upload.fields([{ name: 'avatar', maxCount:
       try { updateData.social_links = JSON.parse(req.body.social_links); } catch { updateData.social_links = req.body.social_links; }
     }
 
+    if (req.body.avatar !== undefined) {
+      updateData.avatar = req.body.avatar;
+    }
+    if (req.body.cv_url !== undefined) {
+      updateData.cv_url = req.body.cv_url;
+    }
     if (req.files) {
       if (req.files.avatar && req.files.avatar[0]) {
         updateData.avatar = req.files.avatar[0].path;

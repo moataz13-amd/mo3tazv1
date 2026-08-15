@@ -150,7 +150,7 @@ app.get('/api/portfolio', async (_req, res) => {
       db.getTestimonials(), db.getExperience(), db.getLanguages(), db.getClientLogos(),
     ]);
     res.set('Cache-Control', 'public, max-age=30, s-maxage=120, stale-while-revalidate=60');
-    res.json({ settings, projects, skills, services, testimonials, experience, languages, clientLogos: logos });
+    res.json({ settings: normalizeSettings(settings), projects, skills, services, testimonials, experience, languages, clientLogos: logos });
   } catch (err: any) {
     res.status(500).json({ message: err.message });
   }
@@ -506,8 +506,15 @@ app.post('/api/analytics/track', async (_req, res) => {
 });
 
 // SETTINGS
+const normalizeSettings = (data: any) => {
+  if (!data || typeof data !== 'object') return data;
+  const result = { ...data };
+  if (data.avatar_url !== undefined) result.avatar = data.avatar_url;
+  return result;
+};
+
 app.get('/api/settings', async (_req, res) => {
-  try { res.json(await db.getSettings()); }
+  try { res.json(normalizeSettings(await db.getSettings())); }
   catch (err: any) { res.status(500).json({ message: err.message }); }
 });
 
@@ -524,13 +531,15 @@ app.put('/api/settings', authenticate, async (req: any, res) => {
         }
       }
     }
+    const avatarFromBody = (body.avatar !== undefined && body.avatar !== '') ? body.avatar : null;
     const avatar = await getFileUrl(req.files, 'avatar', null);
-    if (avatar) body.avatar = avatar;
+    if (avatar) body.avatar_url = avatar;
+    else if (avatarFromBody) body.avatar_url = avatarFromBody;
     const cv = await getFileUrl(req.files, 'cv', null);
     if (cv) body.cv_url = cv;
     const item = await db.updateSettings(body);
     await db.logActivity('Settings Config', 'Modified global profile settings');
-    res.json(item);
+    res.json(normalizeSettings(item));
   } catch (err: any) { res.status(500).json({ message: err.message }); }
 });
 

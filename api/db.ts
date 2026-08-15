@@ -192,7 +192,7 @@ const SETTINGS_FIELDS = [
   'about_description', 'about_section_title', 'about_section_heading', 'about_cta_text',
   'stat1_value', 'stat1_label', 'stat2_value', 'stat2_label',
   'social_links', 'client_logos', 'marquee_row1', 'marquee_row2',
-  'availability_status', 'availability_response_time', 'avatar', 'cv_url',
+  'availability_status', 'availability_response_time', 'avatar_url', 'cv_url',
 ];
 
 async function getSettingsId(): Promise<string | null> {
@@ -253,6 +253,7 @@ export const db = {
       console.error('[DB] updateSettings error:', error.message);
     };
     const payload: any = {};
+    if (body.avatar !== undefined && body.avatar_url === undefined) body.avatar_url = body.avatar;
     for (const f of SETTINGS_FIELDS) {
       if (body[f] !== undefined) payload[f] = body[f];
     }

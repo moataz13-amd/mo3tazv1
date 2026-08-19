@@ -157,7 +157,7 @@ function TimelineItem({ item, index }: { item: typeof defaultTimelineData[0]; in
           className="w-4 h-4 rounded-full border-2"
           style={{
             background: item.color,
-            borderColor: '#050816',
+            borderColor: '#082127',
             boxShadow: `0 0 15px ${item.color}80, 0 0 30px ${item.color}40`,
           }}
         />

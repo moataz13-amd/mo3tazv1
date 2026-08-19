@@ -240,7 +240,7 @@ export default function TestimonialsManager() {
 
               <div>
                 <label className="block text-xs font-mono text-gray-400 mb-1">Status</label>
-                <select {...register('status')} className="input-field text-sm bg-[#050816]">
+                <select {...register('status')} className="input-field text-sm bg-[#082127]">
                   <option value="active">Active (Visible)</option>
                   <option value="inactive">Inactive (Hidden)</option>
                 </select>

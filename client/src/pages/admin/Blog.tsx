@@ -189,7 +189,7 @@ export default function BlogManager() {
                 </div>
                 <div>
                   <label className="block text-xs font-mono text-gray-400 mb-1">Publish Status</label>
-                  <select {...register('status')} className="input-field text-sm bg-[#050816]">
+                  <select {...register('status')} className="input-field text-sm bg-[#082127]">
                     <option value="published">Published (Visible)</option>
                     <option value="draft">Draft (Hidden)</option>
                   </select>

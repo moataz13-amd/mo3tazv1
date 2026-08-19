@@ -42,7 +42,7 @@ const StatCard = memo(function StatCard({
       <div
         className="relative w-full h-[370px] sm:h-[390px] md:h-[410px] flex flex-col items-center justify-center p-8 text-center transition-all duration-300 hover:scale-[1.02]"
         style={{
-          background: 'linear-gradient(180deg, #091326 0%, #040712 100%)',
+          background: 'linear-gradient(180deg, #082127 0%, #082127 100%)',
           border: '3px solid #26EFFD',
           borderRadius: '42px',
         }}

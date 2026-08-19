@@ -114,7 +114,7 @@ const Skills = memo(function Skills() {
               {/* Middle Column (Dot Container) */}
               <div className="w-8 flex flex-col items-center justify-start self-stretch relative">
                 {/* Glowing Bullet Dot - Centered vertically with the first line of the title text */}
-                <div className="w-3.5 h-3.5 rounded-full bg-[#26EFFD] shadow-[0_0_12px_#26EFFD] border-2 border-[#050816] z-10 mt-[9px] md:mt-[12px]" />
+                <div className="w-3.5 h-3.5 rounded-full bg-[#26EFFD] shadow-[0_0_12px_#26EFFD] border-2 border-[#082127] z-10 mt-[9px] md:mt-[12px]" />
               </div>
 
               {/* Left Column (Content): Title + Description */}

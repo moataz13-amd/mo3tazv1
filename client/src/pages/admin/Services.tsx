@@ -173,7 +173,7 @@ export default function ServicesManager() {
                   {service.icon && (service.icon.startsWith('/') || service.icon.startsWith('http')) ? (
                     <img src={service.icon} alt={service.title} className="w-full h-full object-contain" />
                   ) : (
-                    <span className="text-2xl">{service.icon || '⚡'}</span>
+                    <span className="text-2xl">{service.icon || ''}</span>
                   )}
                 </div>
                 <span className="text-xs font-mono text-primary font-bold">{service.price || 'Quotes'}</span>

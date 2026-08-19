@@ -79,7 +79,7 @@ export default function ProjectDesigns() {
           <div className="flex justify-center mb-8">
             <button
               onClick={() => setSortOrder((prev) => (prev === 'asc' ? 'desc' : 'asc'))}
-              className="flex items-center gap-2 px-6 py-2.5 rounded-full bg-[#050816] border-[2.5px] border-[#26EFFD] text-[#26EFFD] font-black text-sm shadow-[3px_3px_0px_#26EFFD] hover:bg-[#26EFFD]/10 active:shadow-[0px_0px_0px_#26EFFD] active:translate-x-[3px] active:translate-y-[3px] cursor-pointer select-none"
+              className="flex items-center gap-2 px-6 py-2.5 rounded-full bg-[#082127] border-[2.5px] border-[#26EFFD] text-[#26EFFD] font-black text-sm shadow-[3px_3px_0px_#26EFFD] hover:bg-[#26EFFD]/10 active:shadow-[0px_0px_0px_#26EFFD] active:translate-x-[3px] active:translate-y-[3px] cursor-pointer select-none"
               style={{
                 fontFamily: "'Sahara Bold', 'Inter', sans-serif",
                 transition: 'all 0.15s ease-out',

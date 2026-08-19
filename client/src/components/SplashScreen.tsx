@@ -72,7 +72,7 @@ export default function SplashScreen({ onComplete }: { onComplete: () => void })
       className={`fixed inset-0 z-[9999] flex flex-col items-center justify-center transition-opacity duration-600 ${
         fadeOut ? 'opacity-0 pointer-events-none' : 'opacity-100'
       }`}
-      style={{ background: '#050816' }}
+      style={{ background: '#082127' }}
     >
       {/* Subtle ambient glow */}
       <div

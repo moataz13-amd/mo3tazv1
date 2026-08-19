@@ -546,12 +546,12 @@ body {
 
 .marquee-container::before {
   left: 0;
-  background: linear-gradient(to right, #050816 0%, transparent 100%);
+  background: linear-gradient(to right, #082127 0%, transparent 100%);
 }
 
 .marquee-container::after {
   right: 0;
-  background: linear-gradient(to left, #050816 0%, transparent 100%);
+  background: linear-gradient(to left, #082127 0%, transparent 100%);
 }
 
 .marquee-track {
@@ -639,7 +639,7 @@ html.lenis, html.lenis body {
   justify-content: center;
   padding: 0.65rem 2.25rem;
   border-radius: 9999px;
-  background: rgba(5, 8, 22, 0.75);
+  background: #082127;
   backdrop-filter: blur(16px);
   -webkit-backdrop-filter: blur(16px);
   border: 1px solid rgba(0, 229, 255, 0.3);
@@ -749,11 +749,11 @@ select.input-field option {
   --admin-navy: #111a32;
   --admin-violet: #8b5cf6;
   background:
-    linear-gradient(180deg, #050816 0%, #071020 48%, #050816 100%);
+    linear-gradient(180deg, #082127 0%, #071020 48%, #082127 100%);
 }
 
 .admin-sidebar-panel {
-  background: #050816 !important;
+  background: #082127 !important;
   border-color: rgba(34, 211, 214, 0.16) !important;
   box-shadow: 20px 0 60px rgba(0, 0, 0, 0.24);
 }
@@ -767,7 +767,7 @@ select.input-field option {
 .admin-main {
   background:
     linear-gradient(180deg, rgba(185, 203, 224, 0.08), rgba(185, 203, 224, 0.02)),
-    #050816;
+    #082127;
 }
 
 .admin-content-shell > div:not(.admin-dashboard-frame) {
@@ -1011,7 +1011,7 @@ select.input-field option {
   background-color: #edf4fb !important;
 }
 
-.admin-content-shell [class*="bg-[#050816]"],
+.admin-content-shell [class*="bg-[#082127]"],
 .admin-content-shell [class*="bg-[#0b1224]"] {
   background-color: #edf4fb !important;
 }
@@ -1059,7 +1059,7 @@ select.input-field option {
 }
 
 .admin-content-shell .modal-content {
-  background: linear-gradient(145deg, #0a1024 0%, #050816 100%) !important;
+  background: linear-gradient(145deg, #0a1024 0%, #082127 100%) !important;
   color: #ffffff !important;
   border: 1px solid rgba(38, 239, 253, 0.3) !important;
   border-radius: 28px !important;
@@ -1103,7 +1103,7 @@ select.input-field option {
   --admin-cyan: #22d3d6;
   background:
     linear-gradient(180deg, rgba(185, 203, 224, 0.08), rgba(185, 203, 224, 0.02)),
-    #050816;
+    #082127;
 }
 
 .admin-login .glass-card {
@@ -1153,7 +1153,7 @@ select.input-field option {
   --admin-ink: #eef6ff;
   --admin-muted: #9fb0c8;
   --admin-soft: #6f86a8;
-  --admin-page: #050816;
+  --admin-page: #082127;
   --admin-panel: #081126;
   --admin-card: #0f1a32;
   --admin-line: rgba(154, 179, 215, 0.18);
@@ -1168,7 +1168,7 @@ select.input-field option {
 .admin-login {
   background:
     radial-gradient(circle at 18% 0%, rgba(34, 211, 214, 0.09), transparent 30%),
-    linear-gradient(180deg, #050816 0%, #081126 52%, #050816 100%) !important;
+    linear-gradient(180deg, #082127 0%, #081126 52%, #082127 100%) !important;
 }
 
 .admin-content-shell > div:not(.admin-dashboard-frame),
@@ -1217,7 +1217,7 @@ select.input-field option {
 .admin-content-shell .bg-surface\/50,
 .admin-content-shell .bg-surface\/30,
 .admin-content-shell .bg-surface\/5,
-.admin-content-shell [class*="bg-[#050816]"],
+.admin-content-shell [class*="bg-[#082127]"],
 .admin-content-shell [class*="bg-[#0b1224]"],
 .admin-dashboard-frame [class*="bg-[#e8eef6]"],
 .admin-dashboard-frame [class*="bg-[#dbe5f2]"] {

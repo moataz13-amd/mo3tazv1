@@ -201,7 +201,7 @@ export default function SkillsManager() {
               <div className="grid grid-cols-2 gap-4">
                 <div>
                   <label className="block text-xs font-mono text-gray-400 mb-1">Category</label>
-                  <select {...register('category')} className="input-field text-sm bg-[#050816]">
+                  <select {...register('category')} className="input-field text-sm bg-[#082127]">
                     <option value="frontend">Frontend</option>
                     <option value="backend">Backend</option>
                     <option value="database">Database</option>

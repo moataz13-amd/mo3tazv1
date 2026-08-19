@@ -416,7 +416,7 @@ export default function ProjectsManager() {
                   <label className="block text-xs font-bold text-gray-300 mb-1.5">{t('publicTitle')} <span className="text-gray-500 font-normal">(اختياري)</span></label>
                   <input
                     {...register('title')}
-                    className="w-full bg-[#050816] border border-white/15 focus:border-[#26EFFD] focus:ring-1 focus:ring-[#26EFFD] rounded-xl px-4 py-2.5 text-xs text-white placeholder-gray-500 outline-none transition-all"
+                    className="w-full bg-[#082127] border border-white/15 focus:border-[#26EFFD] focus:ring-1 focus:ring-[#26EFFD] rounded-xl px-4 py-2.5 text-xs text-white placeholder-gray-500 outline-none transition-all"
                     placeholder="مثال: Pop Art Designs"
                   />
                 </div>
@@ -424,7 +424,7 @@ export default function ProjectsManager() {
                   <label className="block text-xs font-bold text-gray-300 mb-1.5">{t('internalName')} <span className="text-gray-500 font-normal">(اختياري)</span></label>
                   <input
                     {...register('internal_name')}
-                    className="w-full bg-[#050816] border border-white/15 focus:border-[#26EFFD] focus:ring-1 focus:ring-[#26EFFD] rounded-xl px-4 py-2.5 text-xs text-white placeholder-gray-500 outline-none transition-all"
+                    className="w-full bg-[#082127] border border-white/15 focus:border-[#26EFFD] focus:ring-1 focus:ring-[#26EFFD] rounded-xl px-4 py-2.5 text-xs text-white placeholder-gray-500 outline-none transition-all"
                     placeholder="مثال: تصاميم البوب آرت - معتز"
                   />
                 </div>
@@ -437,7 +437,7 @@ export default function ProjectsManager() {
                   <div className="relative">
                     <select
                       {...register('category')}
-                      className="w-full bg-[#050816] border border-white/15 focus:border-[#26EFFD] focus:ring-1 focus:ring-[#26EFFD] rounded-xl px-4 py-2.5 text-xs text-white cursor-pointer outline-none transition-all appearance-none"
+                      className="w-full bg-[#082127] border border-white/15 focus:border-[#26EFFD] focus:ring-1 focus:ring-[#26EFFD] rounded-xl px-4 py-2.5 text-xs text-white cursor-pointer outline-none transition-all appearance-none"
                     >
                       <option value="graphic" className="bg-[#090d1f] text-white py-2">{t('graphicDesign')}</option>
                       <option value="branding" className="bg-[#090d1f] text-white py-2">{t('brandingStrategy')}</option>
@@ -460,7 +460,7 @@ export default function ProjectsManager() {
                   <label className="block text-xs font-bold text-gray-300 mb-1.5">خيارات التفاعل والظهور</label>
                   
                   {/* Featured checkbox */}
-                  <div className="p-2.5 rounded-xl border border-white/15 bg-[#050816] flex items-center gap-3 cursor-pointer hover:border-[#26EFFD]/40 transition-colors">
+                  <div className="p-2.5 rounded-xl border border-white/15 bg-[#082127] flex items-center gap-3 cursor-pointer hover:border-[#26EFFD]/40 transition-colors">
                     <input
                       type="checkbox"
                       id="featured"
@@ -473,7 +473,7 @@ export default function ProjectsManager() {
                   </div>
 
                   {/* Show Details Button checkbox */}
-                  <div className="p-2.5 rounded-xl border border-white/15 bg-[#050816] flex items-center gap-3 cursor-pointer hover:border-[#26EFFD]/40 transition-colors">
+                  <div className="p-2.5 rounded-xl border border-white/15 bg-[#082127] flex items-center gap-3 cursor-pointer hover:border-[#26EFFD]/40 transition-colors">
                     <input
                       type="checkbox"
                       id="show_details_btn"
@@ -493,7 +493,7 @@ export default function ProjectsManager() {
                 <textarea
                   {...register('description')}
                   rows={2}
-                  className="w-full bg-[#050816] border border-white/15 focus:border-[#26EFFD] focus:ring-1 focus:ring-[#26EFFD] rounded-xl px-4 py-2.5 text-xs text-white placeholder-gray-500 outline-none transition-all resize-none"
+                  className="w-full bg-[#082127] border border-white/15 focus:border-[#26EFFD] focus:ring-1 focus:ring-[#26EFFD] rounded-xl px-4 py-2.5 text-xs text-white placeholder-gray-500 outline-none transition-all resize-none"
                   placeholder="e.g. تصاميم مستوحاة من ثقافة البوب آرت..."
                 />
               </div>
@@ -536,7 +536,7 @@ export default function ProjectsManager() {
                 
                 {/* Previews if any selected */}
                 {newGalleryPreviews.length > 0 && (
-                  <div className="grid grid-cols-5 gap-2 mb-3 max-h-28 overflow-y-auto p-2.5 bg-[#050816] rounded-2xl border border-white/10">
+                  <div className="grid grid-cols-5 gap-2 mb-3 max-h-28 overflow-y-auto p-2.5 bg-[#082127] rounded-2xl border border-white/10">
                     {newGalleryPreviews.map((url, idx) => (
                       <div key={idx} className="relative rounded-xl overflow-hidden border border-white/10 aspect-square group">
                         <img src={url} className="object-cover w-full h-full" alt="Upload Preview" />
@@ -574,7 +574,7 @@ export default function ProjectsManager() {
                   <label className="block text-xs font-bold text-gray-300 mb-2">
                     {t('existingDesigns')} ({existingGalleryImages.length})
                   </label>
-                  <div className="grid grid-cols-5 gap-3 max-h-36 overflow-y-auto p-2.5 bg-[#050816] rounded-2xl border border-white/10">
+                  <div className="grid grid-cols-5 gap-3 max-h-36 overflow-y-auto p-2.5 bg-[#082127] rounded-2xl border border-white/10">
                     {existingGalleryImages.map((imgUrl, index) => (
                       <div key={index} className="relative group rounded-xl overflow-hidden border border-white/10 aspect-square">
                         <img src={imgUrl} className="object-cover w-full h-full" alt="Design Item" />

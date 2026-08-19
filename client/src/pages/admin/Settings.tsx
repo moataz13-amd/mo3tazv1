@@ -498,7 +498,7 @@ export default function SettingsPage() {
                   <label className="block text-xs font-mono text-gray-400">{t('clientBrandLogos')}</label>
                   
                   {/* Logos List Grid */}
-                  <div className="grid grid-cols-2 sm:grid-cols-4 gap-3 bg-[#050816] p-3 rounded-2xl border border-glass-border max-h-48 overflow-y-auto">
+                  <div className="grid grid-cols-2 sm:grid-cols-4 gap-3 bg-[#082127] p-3 rounded-2xl border border-glass-border max-h-48 overflow-y-auto">
                     {clientLogos.length === 0 ? (
                       <div className="col-span-full py-4 text-center text-xs text-gray-500">{t('noLogosAdded')}</div>
                     ) : (
@@ -528,7 +528,7 @@ export default function SettingsPage() {
                         type="text"
                         value={newLogoName}
                         onChange={(e) => setNewLogoName(e.target.value)}
-                        className="input-field text-xs bg-[#050816]"
+                        className="input-field text-xs bg-[#082127]"
                         placeholder="e.g. Egyfield"
                       />
                     </div>
@@ -579,7 +579,7 @@ export default function SettingsPage() {
                   <label className="block text-xs font-mono text-gray-300">{t('marqueeRow1Tags')}</label>
                   
                   {/* Current Tags */}
-                  <div className="flex flex-wrap gap-2 p-3 bg-[#050816] border border-glass-border rounded-2xl min-h-12 items-center">
+                  <div className="flex flex-wrap gap-2 p-3 bg-[#082127] border border-glass-border rounded-2xl min-h-12 items-center">
                     {marqueeRow1.length === 0 ? (
                       <span className="text-xs text-gray-500">{t('noTagsRow1')}</span>
                     ) : (
@@ -613,12 +613,12 @@ export default function SettingsPage() {
                       onChange={(e) => setNewTagText1(e.target.value)}
                       onKeyDown={(e) => { if (e.key === 'Enter') { e.preventDefault(); handleAddTag1(); } }}
                       placeholder={t('typeTagText')}
-                      className="input-field text-xs bg-[#050816] flex-1"
+                      className="input-field text-xs bg-[#082127] flex-1"
                     />
                     <select
                       value={newTagVariant1}
                       onChange={(e) => setNewTagVariant1(e.target.value as 'solid' | 'glass')}
-                      className="input-field text-xs bg-[#050816] w-24 cursor-pointer"
+                      className="input-field text-xs bg-[#082127] w-24 cursor-pointer"
                     >
                       <option value="solid">{t('solid')}</option>
                       <option value="glass">{t('glass')}</option>
@@ -638,7 +638,7 @@ export default function SettingsPage() {
                   <label className="block text-xs font-mono text-gray-300">{t('marqueeRow2Tags')}</label>
                   
                   {/* Current Tags */}
-                  <div className="flex flex-wrap gap-2 p-3 bg-[#050816] border border-glass-border rounded-2xl min-h-12 items-center">
+                  <div className="flex flex-wrap gap-2 p-3 bg-[#082127] border border-glass-border rounded-2xl min-h-12 items-center">
                     {marqueeRow2.length === 0 ? (
                       <span className="text-xs text-gray-500">{t('noTagsRow2')}</span>
                     ) : (
@@ -672,12 +672,12 @@ export default function SettingsPage() {
                       onChange={(e) => setNewTagText2(e.target.value)}
                       onKeyDown={(e) => { if (e.key === 'Enter') { e.preventDefault(); handleAddTag2(); } }}
                       placeholder={t('typeTagText')}
-                      className="input-field text-xs bg-[#050816] flex-1"
+                      className="input-field text-xs bg-[#082127] flex-1"
                     />
                     <select
                       value={newTagVariant2}
                       onChange={(e) => setNewTagVariant2(e.target.value as 'solid' | 'glass')}
-                      className="input-field text-xs bg-[#050816] w-24 cursor-pointer"
+                      className="input-field text-xs bg-[#082127] w-24 cursor-pointer"
                     >
                       <option value="solid">{t('solid')}</option>
                       <option value="glass">{t('glass')}</option>
@@ -772,7 +772,7 @@ export default function SettingsPage() {
                 <div className="grid md:grid-cols-2 gap-4 border-t border-glass-border pt-4">
                   <div>
                     <label className="block text-xs font-mono text-gray-400 mb-1.5">{t('availabilityStatus')}</label>
-                    <select {...register('availability_status')} className="input-field text-sm bg-[#050816] w-full">
+                    <select {...register('availability_status')} className="input-field text-sm bg-[#082127] w-full">
                       <option value="available">{t('availableForWork')}</option>
                       <option value="busy">{t('busyHighLoad')}</option>
                       <option value="unavailable">{t('notAvailable')}</option>
@@ -794,11 +794,11 @@ export default function SettingsPage() {
                   {socialLinks.length > 0 && (
                     <div className="space-y-2 mb-4">
                       {socialLinks.map((link) => (
-                        <div key={link.id} className="flex items-center gap-2 p-2 rounded-xl border border-glass-border bg-[#050816]">
+                        <div key={link.id} className="flex items-center gap-2 p-2 rounded-xl border border-glass-border bg-[#082127]">
                           <select
                             value={link.platform}
                             onChange={(e) => handleUpdateSocialLink(link.id, { platform: e.target.value })}
-                            className="input-field py-1.5 px-2 text-xs bg-[#050816] w-32 flex-shrink-0 cursor-pointer"
+                            className="input-field py-1.5 px-2 text-xs bg-[#082127] w-32 flex-shrink-0 cursor-pointer"
                           >
                             {SOCIAL_PLATFORMS.map((p) => (
                               <option key={p} value={p} className="bg-[#090d1f] text-white">{SOCIAL_PLATFORM_LABELS[p]}</option>
@@ -809,7 +809,7 @@ export default function SettingsPage() {
                             onChange={(e) => handleUpdateSocialLink(link.id, { url: e.target.value })}
                             placeholder="https://..."
                             dir="ltr"
-                            className="input-field py-1.5 px-2 text-xs bg-[#050816] flex-1 min-w-0 text-left"
+                            className="input-field py-1.5 px-2 text-xs bg-[#082127] flex-1 min-w-0 text-left"
                           />
                           <label className="flex items-center gap-1.5 text-[10px] font-bold text-gray-300 cursor-pointer select-none flex-shrink-0">
                             <input
@@ -837,7 +837,7 @@ export default function SettingsPage() {
                     <select
                       value={newSocialPlatform}
                       onChange={(e) => setNewSocialPlatform(e.target.value)}
-                      className="input-field py-2 px-2 text-xs bg-[#050816] w-32 flex-shrink-0 cursor-pointer"
+                      className="input-field py-2 px-2 text-xs bg-[#082127] w-32 flex-shrink-0 cursor-pointer"
                     >
                       {SOCIAL_PLATFORMS.map((p) => (
                         <option key={p} value={p} className="bg-[#090d1f] text-white">{SOCIAL_PLATFORM_LABELS[p]}</option>
@@ -849,7 +849,7 @@ export default function SettingsPage() {
                       onKeyDown={(e) => { if (e.key === 'Enter') { e.preventDefault(); handleAddSocialLink(); } }}
                       placeholder="https://behance.net/yourname"
                       dir="ltr"
-                      className="input-field py-2 px-2 text-xs bg-[#050816] flex-1 min-w-0 text-left"
+                      className="input-field py-2 px-2 text-xs bg-[#082127] flex-1 min-w-0 text-left"
                     />
                     <button
                       type="button"

@@ -220,7 +220,7 @@ export default function DesignsManager() {
           <select
             value={selectedProjectId}
             onChange={(e) => setSelectedProjectId(e.target.value)}
-            className="input-field py-1 px-3 text-xs bg-[#050816] max-w-xs cursor-pointer"
+            className="input-field py-1 px-3 text-xs bg-[#082127] max-w-xs cursor-pointer"
           >
             <option value="all">{t('allCategories')} ({allDesigns.length})</option>
             {projects?.map((p) => (
@@ -301,7 +301,7 @@ export default function DesignsManager() {
       {/* Add Design Modal */}
       {isModalOpen && (
         <div className="modal-overlay">
-          <div className="modal-content max-w-md bg-[#050816] border border-glass-border">
+          <div className="modal-content max-w-md bg-[#082127] border border-glass-border">
             <div className="flex items-center justify-between mb-6 pb-4 border-b border-glass-border">
               <h3 className="text-lg font-black text-white tracking-wide">
                 {t('uploadNewDesign')}
@@ -318,7 +318,7 @@ export default function DesignsManager() {
                 {/* Custom Trigger Button */}
                 <div
                   onClick={() => setIsCategoryDropdownOpen(!isCategoryDropdownOpen)}
-                  className="input-field text-sm bg-[#050816] w-full flex items-center justify-between cursor-pointer select-none"
+                  className="input-field text-sm bg-[#082127] w-full flex items-center justify-between cursor-pointer select-none"
                   style={{
                     paddingRight: '2.5rem',
                     backgroundImage: "url(\"data:image/svg+xml;charset=UTF-8,%3csvg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 24 24' fill='none' stroke='%2300E5FF' stroke-width='2.5' stroke-linecap='round' stroke-linejoin='round'%3e%3cpolyline points='6 9 12 15 18 9'%3e%3c/polyline%3e%3c/svg%3e\")",

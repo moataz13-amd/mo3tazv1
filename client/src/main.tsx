@@ -37,10 +37,10 @@ ReactDOM.createRoot(document.getElementById('root')!).render(
                 borderRadius: '12px',
               },
               success: {
-                iconTheme: { primary: '#00BFFF', secondary: '#050816' },
+                iconTheme: { primary: '#00BFFF', secondary: '#082127' },
               },
               error: {
-                iconTheme: { primary: '#ef4444', secondary: '#050816' },
+                iconTheme: { primary: '#ef4444', secondary: '#082127' },
               },
             }}
           />

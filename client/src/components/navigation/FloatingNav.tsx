@@ -302,12 +302,12 @@ export default function FloatingNav({ projectTitle }: { projectTitle?: string })
               animate={{ x: 0 }}
               exit={{ x: '100%' }}
               transition={{ type: 'spring', damping: 28, stiffness: 280, mass: 0.8 }}
-              className="fixed top-[68px] right-0 bottom-0 z-40 md:hidden flex flex-col"
+              className="fixed top-0 right-0 bottom-0 z-40 md:hidden flex flex-col"
               dir="rtl"
               style={{
                 width: '78vw',
                 maxWidth: '320px',
-                background: 'linear-gradient(160deg, #070e1a 0%, #040912 100%)',
+                background: 'linear-gradient(160deg, #082127 0%, #021014 100%)',
                 borderLeft: '1px solid rgba(0, 229, 255, 0.15)',
                 boxShadow: '-20px 0 60px rgba(0,0,0,0.8)',
               }}

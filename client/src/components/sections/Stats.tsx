@@ -107,34 +107,37 @@ const Stats = memo(function Stats() {
   const containerRef = useRef<HTMLElement>(null);
   const settings = useSettingsStore((state) => state.settings);
 
-  const stat1Val = settings?.stat2_value || '';
-  const stat1Lbl = settings?.stat2_label || '';
+  const stat1Val = settings?.stat2_value || '75';
+  const stat1Lbl = settings?.stat2_label || 'تصميم محترفي';
+
+  const stat2Val = settings?.stat3_value || '2';
+  const stat2Lbl = settings?.stat3_label || 'سنوات خبرة';
   
-  const stat3Val = settings?.stat1_value || '';
-  const stat3Lbl = settings?.stat1_label || '';
+  const stat3Val = settings?.stat1_value || '4';
+  const stat3Lbl = settings?.stat1_label || 'شركات ومؤسسات';
 
   const statsData: StatItem[] = [
-    ...(stat1Val ? [{
+    {
       id: 1,
       value: stat1Val.startsWith('+') ? stat1Val : `+${stat1Val}`,
       label: stat1Lbl,
       icon: ClipboardCheck,
       progressTarget: 0.85,
-    }] : []),
+    },
     {
       id: 2,
-      value: '+2',
-      label: 'سنوات خبرة',
+      value: stat2Val.startsWith('+') ? stat2Val : `+${stat2Val}`,
+      label: stat2Lbl,
       icon: Calendar,
       progressTarget: 0.65,
     },
-    ...(stat3Val ? [{
+    {
       id: 3,
       value: stat3Val.startsWith('+') ? stat3Val : `+${stat3Val}`,
       label: stat3Lbl,
       icon: Users,
       progressTarget: 0.90,
-    }] : []),
+    },
   ];
 
   const { scrollYProgress } = useScroll({

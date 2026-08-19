@@ -50,6 +50,32 @@ const CyanStar = () => (
   </svg>
 );
 
+const defaultClientLogos = [
+  { name: 'بيرفكت', src: '/logos/perfect.png' },
+  { name: 'EGYFIELD', src: '/logos/egyfield.png' },
+  { name: 'معتز', src: '/logos/moataz.png' },
+  { name: 'المعاهد التعليمية', src: '/logos/institutes.png' },
+];
+
+const defaultRow1Tags = [
+  { text: 'تصميم الهوية', variant: 'glass' as const },
+  { text: 'تصميم الشعارات', variant: 'solid' as const },
+  { text: 'براندنج', variant: 'solid' as const },
+  { text: 'تصاميم سوشيال ميديا', variant: 'solid' as const },
+  { text: 'تصميم الشعارات', variant: 'solid' as const },
+  { text: 'براندنج', variant: 'solid' as const },
+  { text: 'تصاميم سوشيال ميديا', variant: 'solid' as const },
+];
+
+const defaultRow2Tags = [
+  { text: 'المطبوعات', variant: 'glass' as const },
+  { text: 'براندنج', variant: 'solid' as const },
+  { text: 'واجهات المستخدم', variant: 'solid' as const },
+  { text: 'تصميم التغليف', variant: 'solid' as const },
+  { text: 'إنفوجرافيك', variant: 'solid' as const },
+  { text: 'تصميم العروض التقديمية', variant: 'glass' as const },
+];
+
 const Hero = memo(function Hero() {
   const heroRef = useRef<HTMLDivElement>(null);
   const settings = useSettingsStore((state) => state.settings);
@@ -61,10 +87,11 @@ const Hero = memo(function Hero() {
     staleTime: 120_000,
   });
 
-  const headline = settings?.hero_headline || '';
-  const subheadline = settings?.hero_subheadline || '';
-  const clientLogos = fetchedLogos && fetchedLogos.length > 0 ? fetchedLogos : [];
-  const parseTags = (tags: any) => {
+  const headline = settings?.hero_headline || "حين يجتمع الإبداع مع التفاصيل\nتولد تصاميم استثنائية.";
+  const subheadline = settings?.hero_subheadline || "موثوق من قبل";
+  const clientLogos = fetchedLogos && fetchedLogos.length > 0 ? fetchedLogos : defaultClientLogos;
+
+  const parseTags = (tags: any, fallback: any) => {
     if (Array.isArray(tags) && tags.length > 0) return tags;
     if (typeof tags === 'string') {
       try {
@@ -72,11 +99,11 @@ const Hero = memo(function Hero() {
         if (Array.isArray(parsed) && parsed.length > 0) return parsed;
       } catch {}
     }
-    return [];
+    return fallback;
   };
 
-  const row1Tags = parseTags(settings?.marquee_row1);
-  const row2Tags = parseTags(settings?.marquee_row2);
+  const row1Tags = parseTags(settings?.marquee_row1, defaultRow1Tags);
+  const row2Tags = parseTags(settings?.marquee_row2, defaultRow2Tags);
 
   const headlineLines = headline.split('\n');
 
@@ -226,11 +253,13 @@ const Hero = memo(function Hero() {
             className="flex flex-col items-center gap-8"
           >
             {/* Label */}
-            <div className="glow-pill">
-              <CyanStar />
-              <span>{subheadline}</span>
-              <CyanStar />
-            </div>
+            {subheadline && (
+              <div className="glow-pill">
+                <CyanStar />
+                <span>{subheadline}</span>
+                <CyanStar />
+              </div>
+            )}
 
             {/* Client logos */}
             <div className="flex items-center gap-10 md:gap-14 flex-wrap justify-center">

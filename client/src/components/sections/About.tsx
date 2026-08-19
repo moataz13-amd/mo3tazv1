@@ -8,24 +8,24 @@ const About = memo(function About() {
   const isInView = useInView(ref, { once: true, margin: '-80px' });
   const settings = useSettingsStore((state) => state.settings);
 
-  const name = settings?.name || '';
-  const title = settings?.title || '';
-  const bio = settings?.about_description || '';
-  const location = settings?.location || '';
-  const avatar = settings?.avatar || '';
-  const sectionTitle = settings?.about_section_title || '';
-  const sectionHeading = settings?.about_section_heading || '';
-  const ctaText = settings?.about_cta_text || '';
+  const name = settings?.name || "معتز جمعة";
+  const title = settings?.title || "جونيور جرافيك ديزاينر";
+  const bio = settings?.about_description || "الإبداع ليس ما نفعله فقط بل ما نتركه في أذهان عملائنا\nمن تصميم الهوية البصرية إلى المحتوى الإبداعي الذي يبرز علامتك التجارية.";
+  const location = settings?.location || "البحيرة، مصر";
+  const avatar = settings?.avatar || "/me2.png";
+  const sectionTitle = settings?.about_section_title || "نبذة عني";
+  const sectionHeading = settings?.about_section_heading || "نحول الأفكار إلى تصاميم مؤثرة";
+  const ctaText = settings?.about_cta_text || "لنعمل معاً الآن";
   
-  const stat1Value = settings?.stat1_value || '';
-  const stat1Label = settings?.stat1_label || '';
-  const stat2Value = settings?.stat2_value || '';
-  const stat2Label = settings?.stat2_label || '';
+  const stat1Value = settings?.stat1_value || "+4";
+  const stat1Label = settings?.stat1_label || "شركات";
+  const stat2Value = settings?.stat2_value || "+75";
+  const stat2Label = settings?.stat2_label || "تصميم";
 
-  const bioLines = bio ? bio.split('\n') : [];
+  const bioLines = bio.split('\n');
 
   // Check if we need to render the default stylized heading
-  const isDefaultHeading = false;
+  const isDefaultHeading = !settings?.about_section_heading || settings?.about_section_heading === "نحول الأفكار إلى تصاميم مؤثرة";
 
   return (
     <section id="about" className="relative py-2 md:py-4 overflow-hidden" dir="rtl">

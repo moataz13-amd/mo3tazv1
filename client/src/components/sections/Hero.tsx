@@ -56,13 +56,6 @@ const CyanStar = () => (
   </svg>
 );
 
-// const defaultClientLogos = [
-//   { name: 'بيرفكت', src: '/logos/perfect.png' },
-//   { name: 'EGYFIELD', src: '/logos/egyfield.png' },
-//   { name: 'معتز', src: '/logos/moataz.png' },
-//   { name: 'المعاهد التعليمية', src: '/logos/institutes.png' },
-// ];
-
 const defaultRow1Tags = [
   { text: 'تصميم الهوية', variant: 'glass' as const },
   { text: 'تصميم الشعارات', variant: 'solid' as const },
@@ -95,7 +88,7 @@ const Hero = memo(function Hero() {
 
   const headline = settings?.hero_headline || "حين يجتمع الإبداع مع التفاصيل\nتولد تصاميم استثنائية.";
   const subheadline = settings?.hero_subheadline || "موثوق من قبل";
-  const clientLogos = fetchedLogos && fetchedLogos.length > 0 ? fetchedLogos : defaultClientLogos;
+  const clientLogos = fetchedLogos || [];
 
   const parseTags = (tags: any, fallback: any) => {
     if (Array.isArray(tags) && tags.length > 0) return tags;

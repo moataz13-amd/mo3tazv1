@@ -10,6 +10,34 @@ const Spark8Icon = () => (
   </svg>
 );
 
+const ClientLogoItem = memo(function ClientLogoItem({ logo, index }: { logo: { name: string; src: string }; index: number }) {
+  return (
+    <motion.div
+      initial={{ opacity: 0, y: 20 }}
+      animate={{ opacity: 1, y: 0 }}
+      transition={{ duration: 0.5, delay: 0.9 + index * 0.1 }}
+      className="flex items-center justify-center h-10 md:h-12 transition-all duration-300"
+      style={{
+        filter: 'none',
+        opacity: 0.8,
+      }}
+      onMouseEnter={(e) => {
+        e.currentTarget.style.opacity = '1';
+      }}
+      onMouseLeave={(e) => {
+        e.currentTarget.style.opacity = '0.8';
+      }}
+    >
+      <img
+        src={logo.src}
+        alt={logo.name || 'Client Logo'}
+        className="h-full w-auto object-contain max-w-[120px]"
+        loading="lazy" decoding="async"
+      />
+    </motion.div>
+  );
+});
+
 const CyanStar = () => (
   <svg 
     width="16" 
@@ -207,30 +235,7 @@ const Hero = memo(function Hero() {
             {/* Client logos */}
             <div className="flex items-center gap-10 md:gap-14 flex-wrap justify-center">
               {clientLogos.map((logo, index) => (
-                <motion.div
-                  key={`${logo.name}-${index}`}
-                  initial={{ opacity: 0, y: 20 }}
-                  animate={{ opacity: 1, y: 0 }}
-                  transition={{ duration: 0.5, delay: 0.9 + index * 0.1 }}
-                  className="flex items-center justify-center h-10 md:h-12 transition-all duration-300"
-                  style={{
-                    filter: 'none',
-                    opacity: 0.8,
-                  }}
-                  onMouseEnter={(e) => {
-                    e.currentTarget.style.opacity = '1';
-                  }}
-                  onMouseLeave={(e) => {
-                    e.currentTarget.style.opacity = '0.8';
-                  }}
-                >
-                  <img
-                    src={logo.src}
-                    alt={logo.name || 'Client Logo'}
-                    className="h-full w-auto object-contain max-w-[120px]"
-                    loading="lazy" decoding="async"
-                  />
-                </motion.div>
+                <ClientLogoItem key={`${logo.name}-${index}`} logo={logo} index={index} />
               ))}
             </div>
           </motion.div>

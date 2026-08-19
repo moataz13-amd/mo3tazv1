@@ -141,6 +141,8 @@ export interface SiteSettings {
   stat1_label?: string;
   stat2_value?: string;
   stat2_label?: string;
+  stat3_value?: string;
+  stat3_label?: string;
   client_logos?: ClientLogo[];
   marquee_row1?: MarqueeTag[];
   marquee_row2?: MarqueeTag[];

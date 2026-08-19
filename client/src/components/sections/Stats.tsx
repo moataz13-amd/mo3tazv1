@@ -107,14 +107,14 @@ const Stats = memo(function Stats() {
   const containerRef = useRef<HTMLElement>(null);
   const settings = useSettingsStore((state) => state.settings);
 
-  const stat1Val = settings?.stat2_value || '75';
-  const stat1Lbl = settings?.stat2_label || 'تصميم محترفي';
+  const stat1Val = settings?.stat1_value || '75';
+  const stat1Lbl = settings?.stat1_label || 'تصميم محترفي';
 
-  const stat2Val = '2';
-  const stat2Lbl = 'سنوات خبرة';
+  const stat2Val = settings?.stat2_value || '2';
+  const stat2Lbl = settings?.stat2_label || 'سنوات خبرة';
   
-  const stat3Val = settings?.stat1_value || '4';
-  const stat3Lbl = settings?.stat1_label || 'شركات ومؤسسات';
+  const stat3Val = settings?.stat3_value || '4';
+  const stat3Lbl = settings?.stat3_label || 'شركات ومؤسسات';
 
   const statsData: StatItem[] = [
     {

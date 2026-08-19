@@ -113,8 +113,8 @@ const Stats = memo(function Stats() {
   const stat2Val = settings?.stat2_value || '2';
   const stat2Lbl = settings?.stat2_label || 'سنوات خبرة';
   
-  const stat3Val = settings?.stat3_value || '4';
-  const stat3Lbl = settings?.stat3_label || 'شركات ومؤسسات';
+  const stat3Val = settings?.stat3_value || '40';
+  const stat3Lbl = settings?.stat3_label || 'عميل';
 
   const statsData: StatItem[] = [
     {

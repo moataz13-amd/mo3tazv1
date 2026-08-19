@@ -224,7 +224,7 @@ export default function FloatingNav({ projectTitle }: { projectTitle?: string })
           initial={{ y: -80 }}
           animate={{ y: 0 }}
           transition={{ delay: 0.2, duration: 0.5, ease: [0.22, 1, 0.36, 1] }}
-          className="flex items-center justify-between px-4 py-3 mx-3 mt-3"
+          className="flex items-center justify-between px-4 py-3 mx-3 mt-2"
           style={{
             background: 'linear-gradient(135deg, rgba(255, 255, 255, 0.08) 0%, rgba(255, 255, 255, 0.03) 100%)',
             backdropFilter: 'blur(24px)',

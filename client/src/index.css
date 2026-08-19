@@ -79,10 +79,10 @@
 [data-theme="dark"] {
   --primary: #00E5FF;
   --secondary: #4F46E5;
-  --bg: #050816;
-  --bg-surface: #0A0F24;
-  --bg-card: rgba(10, 15, 36, 0.9);
-  --card-bg: rgba(11, 18, 36, 0.65);
+  --bg: #082127;
+  --bg-surface: #0b2b33;
+  --bg-card: rgba(11, 43, 51, 0.9);
+  --card-bg: rgba(11, 43, 51, 0.65);
   --border: rgba(0, 229, 255, 0.2);
   --border-glass: rgba(255, 255, 255, 0.1);
   --text: #FFFFFF;
@@ -102,11 +102,12 @@
 
 html {
   overflow-x: clip;
+  background-color: #082127;
 }
 
 body {
   font-family: 'Milan Display', 'Cairo', 'Inter', 'Outfit', system-ui, sans-serif;
-  background-color: var(--bg);
+  background-color: #082127;
   color: var(--text);
   min-height: 100vh;
   overflow-x: clip;
@@ -121,7 +122,7 @@ body {
   width: 6px;
 }
 ::-webkit-scrollbar-track {
-  background: #050816;
+  background: #082127;
 }
 ::-webkit-scrollbar-thumb {
   background: linear-gradient(135deg, #00BFFF, #4F46E5);
@@ -223,7 +224,7 @@ body {
 
   .progress-bar-track {
     background: rgba(0, 191, 255, 0.1);
-    border-radius: 999px;
+    border-radius: 9999px;
     height: 8px;
     overflow: hidden;
     border: 1px solid rgba(0, 191, 255, 0.15);
@@ -231,7 +232,7 @@ body {
 
   .progress-bar-fill {
     height: 100%;
-    border-radius: 999px;
+    border-radius: 9999px;
     background: linear-gradient(90deg, #00BFFF, #4F46E5);
     box-shadow: 0 0 10px rgba(0, 191, 255, 0.5);
     transition: width 1.5s cubic-bezier(0.4, 0, 0.2, 1);
@@ -262,7 +263,7 @@ body {
     height: 16px;
     background: #00BFFF;
     border-radius: 50%;
-    border: 3px solid #050816;
+    border: 3px solid #082127;
     box-shadow: 0 0 15px rgba(0, 191, 255, 0.8), 0 0 30px rgba(0, 191, 255, 0.4);
     flex-shrink: 0;
   }
@@ -366,7 +367,7 @@ body {
    ANIMATED GRADIENT BACKGROUND
    ============================================ */
 .animated-bg {
-  background: linear-gradient(-45deg, #050816, #0a0f2c, #050816, #070d24);
+  background: linear-gradient(-45deg, #082127, #0b343d, #082127, #07272e);
   background-size: 400% 400%;
   animation: gradientShift 15s ease infinite;
 }

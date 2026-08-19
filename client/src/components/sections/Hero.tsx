@@ -56,12 +56,12 @@ const CyanStar = () => (
   </svg>
 );
 
-const defaultClientLogos = [
-  { name: 'بيرفكت', src: '/logos/perfect.png' },
-  { name: 'EGYFIELD', src: '/logos/egyfield.png' },
-  { name: 'معتز', src: '/logos/moataz.png' },
-  { name: 'المعاهد التعليمية', src: '/logos/institutes.png' },
-];
+// const defaultClientLogos = [
+//   { name: 'بيرفكت', src: '/logos/perfect.png' },
+//   { name: 'EGYFIELD', src: '/logos/egyfield.png' },
+//   { name: 'معتز', src: '/logos/moataz.png' },
+//   { name: 'المعاهد التعليمية', src: '/logos/institutes.png' },
+// ];
 
 const defaultRow1Tags = [
   { text: 'تصميم الهوية', variant: 'glass' as const },
@@ -117,66 +117,66 @@ const Hero = memo(function Hero() {
     <section
       id="home"
       ref={heroRef}
-      className="relative w-full flex flex-col items-center justify-between overflow-hidden"
+      className="relative min-h-[92vh] overflow-hidden bg-[#082127]"
       dir="rtl"
     >
       {/* ===== STRONG ANIMATED WAVE GRADIENT FROM TOP ===== */}
       <div className="absolute inset-0 overflow-hidden pointer-events-none z-0">
-        {/* Primary wave — large cyan glow flowing from top */}
+        {/* First wave — cyan primary, top right */}
         <motion.div
           animate={{
-            x: ['-10%', '15%', '-5%', '-10%'],
-            y: ['-20%', '-10%', '-25%', '-20%'],
-            scale: [1, 1.2, 0.95, 1],
-          }}
-          transition={{
-            duration: 16,
-            repeat: Infinity,
-            ease: 'easeInOut',
-          }}
-          className="absolute w-[900px] h-[700px] rounded-full"
-          style={{
-            top: '-15%',
-            left: '10%',
-            background: 'radial-gradient(ellipse, rgba(38,239,253,0.25) 0%, rgba(38,239,253,0.08) 40%, transparent 100%)',
-            filter: 'blur(60px)',
-          }}
-        />
-
-        {/* Secondary wave — indigo accent from top-right */}
-        <motion.div
-          animate={{
-            x: ['5%', '-20%', '10%', '5%'],
-            y: ['-15%', '-5%', '-20%', '-15%'],
-            scale: [1, 0.9, 1.15, 1],
-          }}
-          transition={{
-            duration: 20,
-            repeat: Infinity,
-            ease: 'easeInOut',
-          }}
-          className="absolute w-[800px] h-[600px] rounded-full"
-          style={{
-            top: '-10%',
-            right: '-5%',
-            background: 'radial-gradient(ellipse, rgba(79,70,229,0.22) 0%, rgba(79,70,229,0.06) 45%, transparent 70%)',
-            filter: 'blur(90px)',
-          }}
-        />
-
-        {/* Third wave — teal shimmer center-top */}
-        <motion.div
-          animate={{
-            x: ['0%', '10%', '-15%', '0%'],
-            y: ['-5%', '5%', '-10%', '-5%'],
-            scale: [1.1, 0.85, 1.2, 1.1],
+            x: ['0%', '12%', '-8%', '0%'],
+            y: ['0%', '-10%', '8%', '0%'],
+            scale: [1, 1.25, 0.95, 1],
           }}
           transition={{
             duration: 18,
             repeat: Infinity,
             ease: 'easeInOut',
           }}
-          className="absolute w-[700px] h-[500px] rounded-full"
+          className="absolute w-[800px] h-[600px] rounded-full"
+          style={{
+            top: '-10%',
+            right: '-10%',
+            background: 'radial-gradient(ellipse, rgba(0,229,255,0.22) 0%, rgba(0,191,255,0.08) 45%, transparent 70%)',
+            filter: 'blur(90px)',
+          }}
+        />
+
+        {/* Second wave — indigo depth, center bottom */}
+        <motion.div
+          animate={{
+            x: ['0%', '-15%', '10%', '0%'],
+            y: ['0%', '12%', '-10%', '0%'],
+            scale: [1.1, 0.9, 1.2, 1.1],
+          }}
+          transition={{
+            duration: 24,
+            repeat: Infinity,
+            ease: 'easeInOut',
+          }}
+          className="absolute w-[900px] h-[700px] rounded-full"
+          style={{
+            bottom: '-20%',
+            left: '10%',
+            background: 'radial-gradient(ellipse, rgba(79,70,229,0.18) 0%, rgba(99,102,241,0.06) 50%, transparent 70%)',
+            filter: 'blur(120px)',
+          }}
+        />
+
+        {/* Third wave — bright cyan accent, middle */}
+        <motion.div
+          animate={{
+            x: ['10%', '-8%', '12%', '10%'],
+            y: ['-5%', '15%', '-5%', '-5%'],
+            scale: [0.95, 1.15, 1, 0.95],
+          }}
+          transition={{
+            duration: 15,
+            repeat: Infinity,
+            ease: 'easeInOut',
+          }}
+          className="absolute w-[550px] h-[550px] rounded-full"
           style={{
             top: '0%',
             left: '30%',
@@ -185,32 +185,11 @@ const Hero = memo(function Hero() {
           }}
         />
 
-        {/* Fourth wave — subtle deep purple from left */}
-        <motion.div
-          animate={{
-            x: ['-5%', '10%', '-10%', '-5%'],
-            y: ['0%', '-15%', '5%', '0%'],
-            scale: [0.9, 1.1, 0.95, 0.9],
-          }}
-          transition={{
-            duration: 22,
-            repeat: Infinity,
-            ease: 'easeInOut',
-          }}
-          className="absolute w-[600px] h-[500px] rounded-full"
-          style={{
-            top: '5%',
-            left: '-5%',
-            background: 'radial-gradient(ellipse, rgba(124,58,237,0.12) 0%, transparent 60%)',
-            filter: 'blur(110px)',
-          }}
-        />
-
         {/* Top-to-bottom fade overlay for wave falloff */}
         <div
           className="absolute inset-0"
           style={{
-            background: 'linear-gradient(to bottom, transparent 0%, transparent 40%, rgba(5,8,22,0.5) 70%, var(--bg) 100%)',
+            background: 'linear-gradient(to bottom, transparent 0%, transparent 40%, rgba(8,33,39,0.5) 70%, #082127 100%)',
           }}
         />
       </div>

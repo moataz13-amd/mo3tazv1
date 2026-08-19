@@ -1,4 +1,4 @@
-import { memo, useRef } from 'react';
+import { memo, useRef, useState } from 'react';
 import { motion } from 'framer-motion';
 import { useQuery } from '@tanstack/react-query';
 import { useSettingsStore } from '../../store';
@@ -11,29 +11,35 @@ const Spark8Icon = () => (
 );
 
 const ClientLogoItem = memo(function ClientLogoItem({ logo, index }: { logo: { name: string; src: string }; index: number }) {
+  const [imgError, setImgError] = useState(false);
+
   return (
     <motion.div
       initial={{ opacity: 0, y: 20 }}
       animate={{ opacity: 1, y: 0 }}
       transition={{ duration: 0.5, delay: 0.9 + index * 0.1 }}
-      className="flex items-center justify-center h-10 md:h-12 transition-all duration-300"
-      style={{
-        filter: 'none',
-        opacity: 0.8,
-      }}
-      onMouseEnter={(e) => {
-        e.currentTarget.style.opacity = '1';
-      }}
-      onMouseLeave={(e) => {
-        e.currentTarget.style.opacity = '0.8';
-      }}
+      className="flex items-center justify-center h-10 md:h-12 transition-all duration-300 px-3 py-1"
+      style={{ opacity: 0.8 }}
+      onMouseEnter={(e) => { e.currentTarget.style.opacity = '1'; }}
+      onMouseLeave={(e) => { e.currentTarget.style.opacity = '0.8'; }}
     >
-      <img
-        src={logo.src}
-        alt={logo.name || 'Client Logo'}
-        className="h-full w-auto object-contain max-w-[120px]"
-        loading="lazy" decoding="async"
-      />
+      {logo.src && !imgError ? (
+        <img
+          src={logo.src}
+          alt={logo.name || 'Client Logo'}
+          className="h-full w-auto object-contain max-w-[120px]"
+          loading="lazy"
+          decoding="async"
+          onError={() => setImgError(true)}
+        />
+      ) : (
+        <span 
+          className="text-lg md:text-xl font-bold tracking-wide text-white/80 hover:text-[#26EFFD] transition-colors"
+          style={{ fontFamily: "'Sahara Bold', 'Inter', sans-serif" }}
+        >
+          {logo.name}
+        </span>
+      )}
     </motion.div>
   );
 });

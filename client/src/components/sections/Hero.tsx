@@ -129,8 +129,8 @@ const Hero = memo(function Hero() {
           }}
           className="absolute w-[800px] h-[600px] rounded-full"
           style={{
-            top: '-10%',
-            right: '-10%',
+            top: '-50%',
+            right: '-30%',
             background: 'radial-gradient(ellipse, rgba(0,229,255,0.22) 0%, rgba(0,191,255,0.08) 45%, transparent 70%)',
             filter: 'blur(90px)',
           }}

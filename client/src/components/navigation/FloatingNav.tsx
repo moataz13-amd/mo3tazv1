@@ -1,8 +1,8 @@
 import { useEffect, useState } from 'react';
 import { useNavigate } from 'react-router-dom';
 import { motion, AnimatePresence } from 'framer-motion';
-import { Menu, X, ArrowRight } from 'lucide-react';
-import { useUIStore } from '../../store';
+import { Menu, X, ArrowRight, MessageCircle, Download } from 'lucide-react';
+import { useUIStore, useSettingsStore } from '../../store';
 
 const navItems = [
   { id: 'about', label: 'عنّي' },
@@ -121,7 +121,60 @@ export default function FloatingNav({ projectTitle }: { projectTitle?: string })
             background: 'linear-gradient(135deg, rgba(255, 255, 255, 0.08) 0%, rgba(255, 255, 255, 0.03) 100%)',
           }}
         >
-          {/* Logo / Back button */}
+          {/* CTA Button — right side in RTL (لنتحدث) */}
+          <motion.button
+            whileHover={{ scale: 1.02, x: 2, y: 2 }}
+            whileTap={{ scale: 0.98 }}
+            onClick={() => scrollToSection('contact')}
+            className="flex-shrink-0 cursor-pointer inline-flex items-center justify-center bg-[#00E5FF] text-black border-2 border-black shadow-[4px_4px_0px_#000000] hover:shadow-[2px_2px_0px_#000000] transition-all duration-150 leading-none select-none whitespace-nowrap"
+            style={{
+              width: '160px',
+              height: '50px',
+              fontSize: '18px',
+              fontWeight: 900,
+              borderRadius: '100px',
+              fontFamily: "'Sahara Bold', 'Inter', sans-serif",
+            }}
+          >
+            لنتحدث
+          </motion.button>
+
+          {/* Nav Links — center */}
+          <div className="flex items-center gap-7">
+            {navItems.map((item) => {
+              const isActive = activeSection === item.id;
+              return (
+                <button
+                  key={item.id}
+                  onClick={() => scrollToSection(item.id)}
+                  className="relative text-[14px] font-medium transition-all duration-300 cursor-pointer"
+                  style={{
+                    color: isActive
+                      ? '#00DFFF'
+                      : 'rgba(180, 220, 220, 0.65)',
+                    textShadow: isActive
+                      ? '0 0 12px rgba(0,191,255,0.5)'
+                      : 'none',
+                    fontFamily: "'Sahara Bold', 'Inter', sans-serif",
+                  }}
+                  onMouseEnter={(e) => {
+                    if (!isActive) {
+                      e.currentTarget.style.color = 'rgba(200, 240, 240, 0.9)';
+                    }
+                  }}
+                  onMouseLeave={(e) => {
+                    if (!isActive) {
+                      e.currentTarget.style.color = 'rgba(180, 220, 220, 0.65)';
+                    }
+                  }}
+                >
+                  {item.label}
+                </button>
+              );
+            })}
+          </div>
+
+          {/* Logo / Back button — left side in RTL */}
           {isProjectPage ? (
             <button
               onClick={() => navigate('/')}
@@ -162,59 +215,6 @@ export default function FloatingNav({ projectTitle }: { projectTitle?: string })
               </span>
             </button>
           )}
-
-          {/* Nav Links — center */}
-          <div className="flex items-center gap-7">
-            {navItems.map((item) => {
-              const isActive = activeSection === item.id;
-              return (
-                <button
-                  key={item.id}
-                  onClick={() => scrollToSection(item.id)}
-                  className="relative text-[14px] font-medium transition-all duration-300 cursor-pointer"
-                  style={{
-                    color: isActive
-                      ? '#00DFFF'
-                      : 'rgba(180, 220, 220, 0.65)',
-                    textShadow: isActive
-                      ? '0 0 12px rgba(0,191,255,0.5)'
-                      : 'none',
-                    fontFamily: "'Sahara Bold', 'Inter', sans-serif",
-                  }}
-                  onMouseEnter={(e) => {
-                    if (!isActive) {
-                      e.currentTarget.style.color = 'rgba(200, 240, 240, 0.9)';
-                    }
-                  }}
-                  onMouseLeave={(e) => {
-                    if (!isActive) {
-                      e.currentTarget.style.color = 'rgba(180, 220, 220, 0.65)';
-                    }
-                  }}
-                >
-                  {item.label}
-                </button>
-              );
-            })}
-          </div>
-
-          {/* CTA Button — left side in RTL (لنتحدث) */}
-          <motion.button
-            whileHover={{ scale: 1.02, x: 2, y: 2 }}
-            whileTap={{ scale: 0.98 }}
-            onClick={() => scrollToSection('contact')}
-            className="flex-shrink-0 cursor-pointer inline-flex items-center justify-center bg-[#00E5FF] text-black border-2 border-black shadow-[4px_4px_0px_#000000] hover:shadow-[2px_2px_0px_#000000] transition-all duration-150 leading-none select-none whitespace-nowrap"
-            style={{
-              width: '160px',
-              height: '50px',
-              fontSize: '18px',
-              fontWeight: 900,
-              borderRadius: '100px',
-              fontFamily: "'Sahara Bold', 'Inter', sans-serif",
-            }}
-          >
-            لنتحدث
-          </motion.button>
         </div>
       </motion.nav>
 
@@ -233,7 +233,30 @@ export default function FloatingNav({ projectTitle }: { projectTitle?: string })
             boxShadow: '0 8px 32px rgba(0, 0, 0, 0.3), inset 0 1px 1px rgba(255, 255, 255, 0.25)',
           }}
         >
-          {/* Logo right / Back button */}
+          {/* Right group: Menu only */}
+          <button
+            onClick={() => setMobileMenuOpen(!mobileMenuOpen)}
+            className="w-9 h-9 rounded-full flex items-center justify-center cursor-pointer transition-all duration-200"
+            style={{
+              background: mobileMenuOpen ? 'rgba(0, 229, 255, 0.2)' : 'rgba(255, 255, 255, 0.05)',
+              border: mobileMenuOpen ? '1px solid rgba(0, 229, 255, 0.5)' : '1px solid rgba(255, 255, 255, 0.1)',
+              color: mobileMenuOpen ? '#00E5FF' : 'rgba(180, 220, 220, 0.8)',
+            }}
+          >
+            <AnimatePresence mode="wait" initial={false}>
+              {mobileMenuOpen ? (
+                <motion.div key="close" initial={{ rotate: -90, opacity: 0 }} animate={{ rotate: 0, opacity: 1 }} exit={{ rotate: 90, opacity: 0 }} transition={{ duration: 0.15 }}>
+                  <X size={18} />
+                </motion.div>
+              ) : (
+                <motion.div key="menu" initial={{ rotate: 90, opacity: 0 }} animate={{ rotate: 0, opacity: 1 }} exit={{ rotate: -90, opacity: 0 }} transition={{ duration: 0.15 }}>
+                  <Menu size={18} />
+                </motion.div>
+              )}
+            </AnimatePresence>
+          </button>
+
+          {/* Logo left / Back button */}
           {isProjectPage ? (
             <button
               onClick={() => navigate('/')}
@@ -251,79 +274,50 @@ export default function FloatingNav({ projectTitle }: { projectTitle?: string })
               <img
                 src="/Mo3taz..svg"
                 alt="MO3TAZ."
-                style={{
-                  height: '24px',
-                  filter: 'brightness(0) saturate(100%) invert(75%) sepia(60%) saturate(500%) hue-rotate(145deg) brightness(1.1)',
-                }}
+                style={{ height: '26px' }}
               />
             </button>
           )}
-
-          {/* Left group: Menu + CTA */}
-          <div className="flex items-center gap-2">
-            <motion.button
-              whileHover={{ scale: 1.02 }}
-              whileTap={{ scale: 0.98 }}
-              onClick={() => { scrollToSection('contact'); setMobileMenuOpen(false); }}
-              className="flex-shrink-0 cursor-pointer inline-flex items-center justify-center bg-[#00E5FF] text-black border-2 border-black shadow-[3px_3px_0px_#000000] hover:shadow-[1px_1px_0px_#000000] transition-all duration-150 leading-none select-none whitespace-nowrap"
-              style={{
-                height: '38px',
-                padding: '0 18px',
-                fontSize: '14px',
-                fontWeight: 900,
-                borderRadius: '100px',
-                fontFamily: "'Sahara Bold', 'Inter', sans-serif",
-              }}
-            >
-              لنتحدث
-            </motion.button>
-
-            <button
-              onClick={() => setMobileMenuOpen(!mobileMenuOpen)}
-              className="w-9 h-9 rounded-full flex items-center justify-center cursor-pointer transition-colors"
-              style={{
-                background: mobileMenuOpen ? 'rgba(0, 229, 255, 0.15)' : 'rgba(255, 255, 255, 0.05)',
-                border: '1px solid rgba(255, 255, 255, 0.1)',
-                color: mobileMenuOpen ? '#00E5FF' : 'rgba(180, 220, 220, 0.8)',
-              }}
-            >
-              {mobileMenuOpen ? <X size={18} /> : <Menu size={18} />}
-            </button>
-          </div>
         </motion.div>
       </nav>
 
-      {/* Mobile sidebar popup */}
+      {/* Mobile Full-Height Sidebar */}
       <AnimatePresence>
         {mobileMenuOpen && (
           <>
-            {/* Backdrop */}
+            {/* Backdrop — behind navbar */}
             <motion.div
               initial={{ opacity: 0 }}
               animate={{ opacity: 1 }}
               exit={{ opacity: 0 }}
-              transition={{ duration: 0.2 }}
+              transition={{ duration: 0.3 }}
               onClick={() => setMobileMenuOpen(false)}
-              className="fixed inset-0 z-40 md:hidden bg-black/40 backdrop-blur-sm"
+              className="fixed inset-0 z-30 md:hidden"
+              style={{ background: 'rgba(0,0,0,0.6)', backdropFilter: 'blur(4px)' }}
             />
 
-            {/* Sidebar Panel */}
+            {/* Sidebar Panel — slides from right, behind navbar */}
             <motion.div
-              initial={{ opacity: 0, scale: 0.85, y: -20 }}
-              animate={{ opacity: 1, scale: 1, y: 0 }}
-              exit={{ opacity: 0, scale: 0.85, y: -20 }}
-              transition={{ type: 'spring', damping: 25, stiffness: 300 }}
-              className="fixed top-20 left-3 right-3 z-50 md:hidden overflow-hidden"
+              initial={{ x: '100%' }}
+              animate={{ x: 0 }}
+              exit={{ x: '100%' }}
+              transition={{ type: 'spring', damping: 28, stiffness: 280, mass: 0.8 }}
+              className="fixed top-[68px] right-0 bottom-0 z-40 md:hidden flex flex-col"
               dir="rtl"
               style={{
-                background: 'linear-gradient(135deg, rgba(12, 50, 55, 0.97) 0%, rgba(8, 30, 38, 0.98) 100%)',
-                backdropFilter: 'blur(24px)',
-                border: '1px solid rgba(0, 191, 200, 0.2)',
-                borderRadius: '24px',
-                boxShadow: '0 20px 60px rgba(0, 0, 0, 0.6), inset 0 1px 1px rgba(255, 255, 255, 0.1)',
+                width: '78vw',
+                maxWidth: '320px',
+                background: 'linear-gradient(160deg, #070e1a 0%, #040912 100%)',
+                borderLeft: '1px solid rgba(0, 229, 255, 0.15)',
+                boxShadow: '-20px 0 60px rgba(0,0,0,0.8)',
               }}
             >
-              <div className="px-6 py-8 flex flex-col gap-1">
+              {/* Sidebar top glow */}
+              <div className="absolute top-0 right-0 w-48 h-48 pointer-events-none" style={{ background: 'radial-gradient(ellipse at top right, rgba(0,229,255,0.12) 0%, transparent 70%)' }} />
+
+
+              {/* Nav Items */}
+              <div className="flex-1 flex flex-col justify-center px-6 gap-1 overflow-y-auto">
                 {[
                   { id: 'home', label: 'الرئيسية' },
                   { id: 'about', label: 'عنّي' },
@@ -336,29 +330,68 @@ export default function FloatingNav({ projectTitle }: { projectTitle?: string })
                   return (
                     <motion.button
                       key={item.id}
-                      initial={{ opacity: 0, x: -20 }}
+                      initial={{ opacity: 0, x: 30 }}
                       animate={{ opacity: 1, x: 0 }}
-                      transition={{ delay: i * 0.05, type: 'spring', damping: 20 }}
+                      transition={{ delay: 0.05 + i * 0.06, type: 'spring', damping: 22, stiffness: 200 }}
                       onClick={() => {
                         scrollToSection(item.id);
                         setMobileMenuOpen(false);
                       }}
-                      className="w-full text-right px-5 py-3.5 rounded-2xl transition-all duration-200 cursor-pointer"
+                      className="w-full text-right py-3 px-3 rounded-xl transition-all duration-200 cursor-pointer relative group"
                       style={{
-                        color: isActive ? '#00EFFF' : 'rgba(180, 220, 220, 0.7)',
-                        background: isActive ? 'rgba(0, 229, 255, 0.08)' : 'transparent',
-                        fontFamily: "'Sahara Bold', 'Inter', sans-serif",
-                        fontSize: '17px',
-                        fontWeight: 700,
-                        textShadow: isActive ? '0 0 12px rgba(0,191,255,0.3)' : 'none',
+                        color: isActive ? '#00E5FF' : 'rgba(220, 240, 245, 0.75)',
+                        fontFamily: "'Milan Display', 'Sahara Bold', 'Inter', sans-serif",
+                        fontSize: '26px',
+                        fontWeight: 900,
+                        letterSpacing: '-0.01em',
+                        background: isActive ? 'rgba(0,229,255,0.06)' : 'transparent',
+                        textShadow: isActive ? '0 0 20px rgba(0,229,255,0.4)' : 'none',
                       }}
                     >
+                      {/* Active indicator */}
+                      {isActive && (
+                        <motion.div
+                          layoutId="activeIndicator"
+                          className="absolute right-0 top-1/2 -translate-y-1/2 w-1 h-6 rounded-full"
+                          style={{ background: '#00E5FF', boxShadow: '0 0 10px rgba(0,229,255,0.8)' }}
+                        />
+                      )}
                       {item.label}
                     </motion.button>
                   );
                 })}
-
               </div>
+
+              {/* Bottom Actions */}
+              <motion.div
+                initial={{ opacity: 0, y: 20 }}
+                animate={{ opacity: 1, y: 0 }}
+                transition={{ delay: 0.45, duration: 0.4 }}
+                className="px-6 pb-10 pt-4 flex flex-col gap-3"
+              >
+                {/* Divider */}
+                <div className="mb-2" style={{ height: '1px', background: 'linear-gradient(90deg, rgba(0,229,255,0.2), transparent)' }} />
+
+                {/* Let's Talk CTA */}
+                <motion.button
+                  whileHover={{ scale: 1.02 }}
+                  whileTap={{ scale: 0.97 }}
+                  onClick={() => { scrollToSection('contact'); setMobileMenuOpen(false); }}
+                  className="w-full py-3.5 flex items-center justify-center gap-2.5 cursor-pointer font-black text-base"
+                  style={{
+                    background: '#00E5FF',
+                    color: '#000',
+                    borderRadius: '100px',
+                    border: '2px solid #000',
+                    boxShadow: '3px 3px 0px #000',
+                    fontFamily: "'Sahara Bold', 'Inter', sans-serif",
+                    fontSize: '16px',
+                  }}
+                >
+                  <MessageCircle size={16} />
+                  لنتحدث
+                </motion.button>
+              </motion.div>
             </motion.div>
           </>
         )}

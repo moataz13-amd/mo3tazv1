@@ -8,24 +8,24 @@ const About = memo(function About() {
   const isInView = useInView(ref, { once: true, margin: '-80px' });
   const settings = useSettingsStore((state) => state.settings);
 
-  const name = settings?.name || "معتز جمعة";
-  const title = settings?.title || "جونيور جرافيك ديزاينر";
-  const bio = settings?.about_description || "الإبداع ليس ما نفعله فقط بل ما نتركه في أذهان عملائنا\nمن تصميم الهوية البصرية إلى المحتوى الإبداعي الذي يبرز علامتك التجارية.";
-  const location = settings?.location || "البحيرة، مصر";
-  const avatar = settings?.avatar || "/me2.png";
-  const sectionTitle = settings?.about_section_title || "نبذة عني";
-  const sectionHeading = settings?.about_section_heading || "نحول الأفكار إلى تصاميم مؤثرة";
-  const ctaText = settings?.about_cta_text || "لنعمل معاً الآن";
+  const name = settings?.name || '';
+  const title = settings?.title || '';
+  const bio = settings?.about_description || '';
+  const location = settings?.location || '';
+  const avatar = settings?.avatar || '';
+  const sectionTitle = settings?.about_section_title || '';
+  const sectionHeading = settings?.about_section_heading || '';
+  const ctaText = settings?.about_cta_text || '';
   
-  const stat1Value = settings?.stat1_value || "+4";
-  const stat1Label = settings?.stat1_label || "شركات";
-  const stat2Value = settings?.stat2_value || "+75";
-  const stat2Label = settings?.stat2_label || "تصميم";
+  const stat1Value = settings?.stat1_value || '';
+  const stat1Label = settings?.stat1_label || '';
+  const stat2Value = settings?.stat2_value || '';
+  const stat2Label = settings?.stat2_label || '';
 
-  const bioLines = bio.split('\n');
+  const bioLines = bio ? bio.split('\n') : [];
 
   // Check if we need to render the default stylized heading
-  const isDefaultHeading = sectionHeading === "نحول الأفكار إلى تصاميم مؤثرة";
+  const isDefaultHeading = false;
 
   return (
     <section id="about" className="relative py-2 md:py-4 overflow-hidden" dir="rtl">
@@ -96,12 +96,14 @@ const About = memo(function About() {
           <div className="relative z-10 flex justify-center -mt-8 md:-mt-16 mb-8 md:mb-10 w-full pointer-events-none">
             {/* Profile Avatar Frame */}
             <div className="relative w-full max-w-[320px] md:max-w-[420px] flex items-center justify-center">
-              <img
-                src={avatar}
-                alt={name}
-                className="w-full max-h-[420px] md:max-h-[520px] object-contain transition-transform duration-500"
-                loading="lazy" decoding="async"
-              />
+              {avatar && (
+                <img
+                  src={avatar}
+                  alt={name}
+                  className="w-full max-h-[420px] md:max-h-[520px] object-contain transition-transform duration-500"
+                  loading="lazy" decoding="async"
+                />
+              )}
             </div>
           </div>
 

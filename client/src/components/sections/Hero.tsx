@@ -4,32 +4,6 @@ import { useQuery } from '@tanstack/react-query';
 import { useSettingsStore } from '../../store';
 import { clientLogosAPI } from '../../lib/api';
 
-const defaultClientLogos = [
-  { name: 'بيرفكت', src: '/logos/perfect.png' },
-  { name: 'EGYFIELD', src: '/logos/egyfield.png' },
-  { name: 'معتز', src: '/logos/moataz.png' },
-  { name: 'المعاهد التعليمية', src: '/logos/institutes.png' },
-];
-
-const defaultRow1Tags = [
-  { text: 'تصميم الهوية', variant: 'glass' as const },
-  { text: 'تصميم الشعارات', variant: 'solid' as const },
-  { text: 'براندنج', variant: 'solid' as const },
-  { text: 'تصاميم سوشيال ميديا', variant: 'solid' as const },
-  { text: 'تصميم الشعارات', variant: 'solid' as const },
-  { text: 'براندنج', variant: 'solid' as const },
-  { text: 'تصاميم سوشيال ميديا', variant: 'solid' as const },
-];
-
-const defaultRow2Tags = [
-  { text: 'المطبوعات', variant: 'glass' as const },
-  { text: 'براندنج', variant: 'solid' as const },
-  { text: 'واجهات المستخدم', variant: 'solid' as const },
-  { text: 'تصميم التغليف', variant: 'solid' as const },
-  { text: 'إنفوجرافيك', variant: 'solid' as const },
-  { text: 'تصميم العروض التقديمية', variant: 'glass' as const },
-];
-
 const Spark8Icon = () => (
   <svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="1.5" className="text-white/30 mx-4 flex-shrink-0 animate-pulse">
     <path d="M12 2v20M2 12h20M5 5l14 14M5 19L19 5" />
@@ -59,24 +33,22 @@ const Hero = memo(function Hero() {
     staleTime: 120_000,
   });
 
-  const headline = settings?.hero_headline || "حين يجتمع الإبداع مع التفاصيل\nتولد تصاميم استثنائية.";
-  const subheadline = settings?.hero_subheadline || "موثوق من قبل";
-  const clientLogos = fetchedLogos && fetchedLogos.length > 0 ? fetchedLogos : defaultClientLogos;
-  const lsRow1 = (() => { try { return JSON.parse(localStorage.getItem('portfolio_marquee_row1') || '[]'); } catch { return []; } })();
-  const lsRow2 = (() => { try { return JSON.parse(localStorage.getItem('portfolio_marquee_row2') || '[]'); } catch { return []; } })();
-  const parseTags = (tags: any, fallback: any) => {
-    if (Array.isArray(tags)) return tags;
+  const headline = settings?.hero_headline || '';
+  const subheadline = settings?.hero_subheadline || '';
+  const clientLogos = fetchedLogos && fetchedLogos.length > 0 ? fetchedLogos : [];
+  const parseTags = (tags: any) => {
+    if (Array.isArray(tags) && tags.length > 0) return tags;
     if (typeof tags === 'string') {
       try {
         const parsed = JSON.parse(tags);
-        if (Array.isArray(parsed)) return parsed;
+        if (Array.isArray(parsed) && parsed.length > 0) return parsed;
       } catch {}
     }
-    return fallback;
+    return [];
   };
 
-  const row1Tags = parseTags(settings?.marquee_row1, lsRow1.length ? lsRow1 : defaultRow1Tags);
-  const row2Tags = parseTags(settings?.marquee_row2, lsRow2.length ? lsRow2 : defaultRow2Tags);
+  const row1Tags = parseTags(settings?.marquee_row1);
+  const row2Tags = parseTags(settings?.marquee_row2);
 
   const headlineLines = headline.split('\n');
 

@@ -47,30 +47,28 @@ const Contact = memo(function Contact() {
   };
 
   const contactTabs = [
-    {
+    ...(settings?.email ? [{
       label: 'البريد الإلكتروني',
-      value: settings?.email || 'mizoelzyat@gmail.com',
-      href: `mailto:${settings?.email || 'mizoelzyat@gmail.com'}`,
+      value: settings.email,
+      href: `mailto:${settings.email}`,
       icon: <Mail className="text-[#26EFFD]" size={20} />,
       bgClass: 'bg-[#26EFFD] text-black',
       iconBgClass: 'bg-white',
       arrowColor: 'text-black/50',
-    },
-    {
+    }] : []),
+    ...(settings?.phone ? [{
       label: 'الهاتف',
-      value: settings?.phone || '+20 1271948128',
-      href: `tel:${settings?.phone || '+20 1271948128'}`,
+      value: settings.phone,
+      href: `tel:${settings.phone}`,
       icon: <Phone className="text-white" size={20} />,
       bgClass: 'bg-white text-black',
       iconBgClass: 'bg-[#26EFFD]',
       arrowColor: 'text-black/30',
-    },
-    {
+    }] : []),
+    ...(settings?.phone ? [{
       label: 'تواصل معنا',
       value: 'واتساب',
-      href: `https://wa.me/${
-        settings?.phone?.replace(/[^0-9]/g, '') || '201271948128'
-      }`,
+      href: `https://wa.me/${settings.phone.replace(/[^0-9]/g, '')}`,
       icon: (
         <svg className="text-white w-5 h-5 fill-current" viewBox="0 0 24 24">
           <path d="M.057 24l1.687-6.163c-1.041-1.804-1.588-3.849-1.587-5.946C.06 5.348 5.397.01 12.008.01c3.202.001 6.212 1.246 8.477 3.514 2.266 2.268 3.507 5.28 3.505 8.484-.004 6.657-5.34 11.997-11.953 11.997-2.005-.001-3.973-.502-5.724-1.455L0 24zm6.59-4.846c1.6.95 3.498 1.45 5.416 1.451 5.408 0 9.807-4.394 9.811-9.808.002-2.624-1.018-5.09-2.868-6.944-1.85-1.855-4.318-2.876-6.944-2.878-5.412 0-9.81 4.396-9.814 9.812-.001 1.914.501 3.784 1.455 5.394L2.617 21.39l4.03-.636z" />
@@ -79,7 +77,7 @@ const Contact = memo(function Contact() {
       bgClass: 'bg-white text-black',
       iconBgClass: 'bg-[#26EFFD]',
       arrowColor: 'text-black/30',
-    },
+    }] : []),
   ];
 
   return (

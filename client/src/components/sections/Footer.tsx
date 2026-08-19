@@ -151,14 +151,16 @@ const Footer = memo(function Footer() {
                 className="text-3xl md:text-4xl font-black mb-1"
                 style={{ fontFamily: "'Milan Display', 'Sahara Bold', sans-serif" }}
               >
-                معتز جمعة.
+                {settings?.name || ''}
               </h3>
-              <p 
-                className="text-sm font-black opacity-70 mb-6"
-                style={{ fontFamily: "'Sahara Bold', 'Inter', sans-serif" }}
-              >
-                جونيور جرافيك ديزاينر
-              </p>
+              {settings?.title && (
+                <p 
+                  className="text-sm font-black opacity-70 mb-6"
+                  style={{ fontFamily: "'Sahara Bold', 'Inter', sans-serif" }}
+                >
+                  {settings.title}
+                </p>
+              )}
             </div>
             
             {/* Social Icons */}
@@ -236,16 +238,20 @@ const Footer = memo(function Footer() {
               className="space-y-2 text-sm font-black opacity-80"
               style={{ fontFamily: "'Sahara Bold', sans-serif" }}
             >
-              <p className="ltr:text-left rtl:text-right">
-                <a href={`mailto:${settings?.email || 'mizoelzyat@gmail.com'}`} className="hover:underline">
-                  {settings?.email || 'mizoelzyat@gmail.com'}
-                </a>
-              </p>
-              <p className="ltr:text-left rtl:text-right">
-                <a href={`tel:${settings?.phone || '+20 1271946126'}`} className="hover:underline">
-                  {settings?.phone || '+20 1271946126'}
-                </a>
-              </p>
+              {settings?.email && (
+                <p className="ltr:text-left rtl:text-right">
+                  <a href={`mailto:${settings.email}`} className="hover:underline">
+                    {settings.email}
+                  </a>
+                </p>
+              )}
+              {settings?.phone && (
+                <p className="ltr:text-left rtl:text-right">
+                  <a href={`tel:${settings.phone}`} className="hover:underline">
+                    {settings.phone}
+                  </a>
+                </p>
+              )}
             </div>
           </div>
 

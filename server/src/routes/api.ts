@@ -1,6 +1,7 @@
 import { Router } from 'express';
 import bcrypt from 'bcryptjs';
 import jwt from 'jsonwebtoken';
+import nodemailer from 'nodemailer';
 import { db } from '../services/db';
 import { authenticate } from '../middleware/auth';
 import { upload, cloudinary, useCloudinary } from '../config/cloudinary';
@@ -9,6 +10,56 @@ import fs from 'fs';
 import path from 'path';
 
 dotenv.config();
+
+// ============================================
+// EMAIL TRANSPORTER
+// ============================================
+const createEmailTransporter = () => {
+  const gmailUser = process.env.GMAIL_USER;
+  const gmailPass = process.env.GMAIL_APP_PASSWORD;
+  if (!gmailUser || !gmailPass) return null;
+  return nodemailer.createTransport({
+    service: 'gmail',
+    auth: { user: gmailUser, pass: gmailPass },
+  });
+};
+
+const sendContactNotification = async (data: {
+  name: string;
+  email: string;
+  subject: string;
+  message: string;
+}) => {
+  const transporter = createEmailTransporter();
+  if (!transporter) return; // skip if not configured
+  const notifyEmail = process.env.NOTIFY_EMAIL || 'moatazgomaa.v1@gmail.com';
+  await transporter.sendMail({
+    from: `"Portfolio Contact" <${process.env.GMAIL_USER}>`,
+    to: notifyEmail,
+    subject: `📩 رسالة جديدة: ${data.subject}`,
+    html: `
+      <div dir="rtl" style="font-family: Arial, sans-serif; max-width: 600px; margin: 0 auto; background: #0a0a0a; color: #e0e0e0; border-radius: 12px; overflow: hidden;">
+        <div style="background: linear-gradient(135deg, #00E5FF, #0099BB); padding: 24px 32px;">
+          <h2 style="margin: 0; color: #000; font-size: 22px;">📩 رسالة جديدة من البورتفوليو</h2>
+        </div>
+        <div style="padding: 32px;">
+          <table style="width: 100%; border-collapse: collapse;">
+            <tr><td style="padding: 8px 0; color: #888; width: 100px;">الاسم</td><td style="padding: 8px 0; font-weight: bold; color: #fff;">${data.name}</td></tr>
+            <tr><td style="padding: 8px 0; color: #888;">البريد</td><td style="padding: 8px 0; color: #00E5FF;"><a href="mailto:${data.email}" style="color: #00E5FF;">${data.email}</a></td></tr>
+            <tr><td style="padding: 8px 0; color: #888;">الموضوع</td><td style="padding: 8px 0; color: #fff;">${data.subject}</td></tr>
+          </table>
+          <div style="margin-top: 20px; padding: 16px; background: #111; border-radius: 8px; border-right: 3px solid #00E5FF;">
+            <p style="margin: 0; line-height: 1.7; color: #ccc;">${data.message.replace(/\n/g, '<br>')}</p>
+          </div>
+          <div style="margin-top: 24px; text-align: center;">
+            <a href="mailto:${data.email}?subject=Re: ${encodeURIComponent(data.subject)}" style="display: inline-block; padding: 12px 28px; background: #00E5FF; color: #000; font-weight: bold; text-decoration: none; border-radius: 8px;">↩ رد مباشرة</a>
+          </div>
+        </div>
+      </div>
+    `,
+  });
+};
+
 
 const router = Router();
 const JWT_SECRET = process.env.JWT_SECRET || 'fallback-super-secret-key-1092';
@@ -359,6 +410,10 @@ router.post('/messages', async (req, res) => {
   try {
     const data = await db.createMessage(req.body);
     await db.logActivity('Comms Received', `Inquiry sent by: ${req.body.name}`);
+    // Send email notification (non-blocking)
+    sendContactNotification(req.body).catch((err) =>
+      console.warn('[Email] Failed to send notification:', err.message)
+    );
     res.status(201).json(data);
   } catch (err: any) {
     res.status(500).json({ message: err.message });

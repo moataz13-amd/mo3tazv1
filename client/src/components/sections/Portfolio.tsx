@@ -278,11 +278,9 @@ const Carousel3DSection = memo(function Carousel3DSection({
         {total === 0 ? (
           <div className="text-center py-16 sm:py-24">
             <div className="inline-flex flex-col items-center gap-3 px-8 py-10 rounded-3xl border-2 border-dashed border-white/15 bg-white/[0.02]">
-              <div className="text-3xl sm:text-4xl">🎨</div>
               <p className="text-gray-500 text-sm font-bold" style={{ fontFamily: "'Sahara Bold', 'Inter', sans-serif" }}>
                 لا توجد عناصر في هذا القسم بعد
               </p>
-              <p className="text-gray-600 text-xs">يتم إضافة التصاميم من لوحة التحكم</p>
             </div>
           </div>
         ) : (

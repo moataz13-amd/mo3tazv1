@@ -759,7 +759,7 @@ select.input-field option {
 }
 
 .admin-topbar {
-  background: rgba(5, 8, 22, 0.86) !important;
+  background: #082127 !important;
   border-color: rgba(34, 211, 214, 0.16) !important;
   box-shadow: 0 16px 40px rgba(0, 0, 0, 0.18);
 }

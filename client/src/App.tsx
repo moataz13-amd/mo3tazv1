@@ -63,12 +63,9 @@ const ProtectedRoute = ({ children }: { children: React.ReactNode }) => {
 };
 
 export default function App() {
-  const [showSplash, setShowSplash] = useState(() => {
-    return !sessionStorage.getItem('splash_shown');
-  });
+  const [showSplash, setShowSplash] = useState(true);
 
   const handleSplashComplete = () => {
-    sessionStorage.setItem('splash_shown', 'true');
     setShowSplash(false);
   };
 

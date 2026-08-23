@@ -1154,13 +1154,13 @@ select.input-field option {
   --admin-muted: #9fb0c8;
   --admin-soft: #6f86a8;
   --admin-page: #082127;
-  --admin-panel: #081126;
-  --admin-card: #0f1a32;
-  --admin-line: rgba(154, 179, 215, 0.18);
-  --admin-track: #17243d;
+  --admin-panel: #082127;
+  --admin-card: #082127;
+  --admin-line: rgba(38, 239, 253, 0.18);
+  --admin-track: #082127;
   --admin-cyan: #22d3d6;
-  --admin-blue: #47a8ff;
-  --admin-navy: #101a31;
+  --admin-blue: #22d3d6;
+  --admin-navy: #082127;
   --admin-violet: #9b7cff;
 }
 
@@ -1168,23 +1168,23 @@ select.input-field option {
 .admin-login {
   background:
     radial-gradient(circle at 18% 0%, rgba(34, 211, 214, 0.09), transparent 30%),
-    linear-gradient(180deg, #082127 0%, #081126 52%, #082127 100%) !important;
+    linear-gradient(180deg, #082127 0%, #06191e 52%, #082127 100%) !important;
 }
 
 .admin-content-shell > div:not(.admin-dashboard-frame),
 .admin-dashboard-frame {
   background:
-    linear-gradient(180deg, rgba(18, 29, 55, 0.96), rgba(8, 17, 38, 0.98)) !important;
+    linear-gradient(180deg, rgba(8, 33, 39, 0.96), rgba(6, 25, 30, 0.98)) !important;
   color: var(--admin-ink) !important;
-  border-color: rgba(154, 179, 215, 0.16) !important;
+  border-color: rgba(38, 239, 253, 0.16) !important;
   box-shadow: 0 30px 80px rgba(0, 0, 0, 0.42) !important;
 }
 
 .admin-content-shell > div:not(.admin-dashboard-frame) > div:first-child,
 .admin-dashboard-frame > div > div:first-child {
   background:
-    linear-gradient(135deg, #111b34 0%, #17213c 100%) !important;
-  border-color: rgba(154, 179, 215, 0.14) !important;
+    linear-gradient(135deg, #06191e 0%, #082127 100%) !important;
+  border-color: rgba(38, 239, 253, 0.14) !important;
 }
 
 .admin-content-shell > div:not(.admin-dashboard-frame) > div:first-child p,
@@ -1200,9 +1200,9 @@ select.input-field option {
 .admin-dashboard-frame .bg-white,
 .admin-dashboard-frame [class*="bg-[#edf4fb]"],
 .admin-dashboard-frame [class*="bg-[#f2f6fb]"] {
-  background: var(--admin-card) !important;
+  background: #082127 !important;
   color: var(--admin-ink) !important;
-  border-color: var(--admin-line) !important;
+  border-color: rgba(38, 239, 253, 0.15) !important;
   box-shadow: 0 18px 38px rgba(0, 0, 0, 0.28) !important;
 }
 
@@ -1221,7 +1221,7 @@ select.input-field option {
 .admin-content-shell [class*="bg-[#0b1224]"],
 .admin-dashboard-frame [class*="bg-[#e8eef6]"],
 .admin-dashboard-frame [class*="bg-[#dbe5f2]"] {
-  background-color: #121d37 !important;
+  background-color: #06191e !important;
 }
 
 .admin-content-shell .project-card.aspect-square {
@@ -1330,7 +1330,7 @@ select.input-field option {
 
 .admin-content-shell .modal-content,
 .admin-login .glass-card {
-  background: #0f1a32 !important;
+  background: #082127 !important;
   color: var(--admin-ink) !important;
   border-color: var(--admin-line) !important;
   box-shadow: 0 30px 80px rgba(0, 0, 0, 0.46) !important;

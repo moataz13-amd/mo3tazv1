@@ -71,7 +71,7 @@ export default function AdminLayout() {
 
   return (
     <div
-      className="admin-shell min-h-screen text-white flex transition-all duration-300"
+      className="admin-shell h-screen w-screen text-white flex overflow-hidden transition-all duration-300"
       dir={adminLanguage === 'ar' ? 'rtl' : 'ltr'}
       style={{ background: 'var(--bg)', fontFamily: "'Milan Display', 'Cairo', 'Inter', 'Outfit', sans-serif", fontSize: '17px' }}
     >
@@ -85,9 +85,9 @@ export default function AdminLayout() {
         ref={sidebarRef}
         className={`admin-sidebar-panel ${
           adminSidebarOpen ? '' : 'max-md:hidden'
-        } fixed md:relative top-0 bottom-0 ${
+        } fixed md:sticky top-0 h-screen ${
           adminLanguage === 'ar' ? 'right-0 border-l' : 'left-0 border-r'
-        } z-30 transition-all duration-300 flex flex-col border-glass-border bg-[rgba(5,8,22,0.95)] backdrop-blur-xl ${
+        } z-30 transition-all duration-300 flex flex-col border-glass-border bg-[rgba(5,8,22,0.95)] backdrop-blur-xl shrink-0 ${
           adminSidebarOpen ? 'w-64' : 'w-20'
         }`}
       >

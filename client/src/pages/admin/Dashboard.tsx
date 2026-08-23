@@ -65,13 +65,13 @@ const defaultVisitorData = [
 ];
 
 const defaultDeviceData = [
-  { name: 'Desktop', value: 65, color: '#1f6fb2' },
+  { name: 'Desktop', value: 65, color: '#082127' },
   { name: 'Mobile', value: 30, color: '#22d3d6' },
   { name: 'Tablet', value: 5, color: '#f59e0b' },
 ];
 
 const defaultBrowserData = [
-  { name: 'Google Chrome', value: 58, color: '#1f6fb2' },
+  { name: 'Google Chrome', value: 58, color: '#082127' },
   { name: 'Apple Safari', value: 22, color: '#22d3d6' },
   { name: 'Mozilla Firefox', value: 12, color: '#8b5cf6' },
   { name: 'Microsoft Edge', value: 8, color: '#f59e0b' },
@@ -84,7 +84,7 @@ const defaultLogs: ActivityLog[] = [
   { id: '4', action: 'Skills Updated', description: 'Modified React & Next.js level status', created_at: '2 days ago' },
 ];
 
-const palette = ['#1f6fb2', '#22d3d6', '#17213c', '#8b5cf6', '#f59e0b', '#ef476f'];
+const palette = ['#082127', '#22d3d6', '#082127', '#8b5cf6', '#f59e0b', '#ef476f'];
 
 const formatCompact = (value: number) =>
   new Intl.NumberFormat('en', {
@@ -313,7 +313,7 @@ export default function Dashboard() {
 
         <div className="grid gap-4 p-4 lg:grid-cols-12 lg:p-6">
           <section className="lg:col-span-3 space-y-4">
-            <div className="rounded-[20px] bg-[#0f4d7a] p-5 text-white shadow-[0_18px_36px_rgba(15,77,122,0.24)]">
+            <div className="rounded-[20px] bg-[#082127] p-5 text-white shadow-[0_18px_36px_rgba(8,33,39,0.3)]">
               <div className="flex items-center justify-between">
                 <div>
                   <p className="text-xs font-bold uppercase tracking-wide text-[#b9d1e7]">{copy.portfolioPulse}</p>
@@ -336,7 +336,7 @@ export default function Dashboard() {
                 ))}
               </div>
 
-              <div className="mt-5 flex items-center justify-between rounded-2xl bg-[#17365c]/75 px-4 py-3">
+              <div className="mt-5 flex items-center justify-between rounded-2xl bg-black/25 px-4 py-3 border border-white/10">
                 <div>
                   <p className="text-[11px] text-[#b9d1e7]">{copy.bestDays}</p>
                   <p className="text-sm font-black">{topVisitorDay.label}</p>
@@ -478,7 +478,7 @@ export default function Dashboard() {
                 </div>
               </div>
 
-              <div className="rounded-[20px] bg-[#17213c] p-5 text-white shadow-[0_16px_34px_rgba(23,33,60,0.22)]">
+              <div className="rounded-[20px] bg-[#082127] p-5 text-white shadow-[0_16px_34px_rgba(8,33,39,0.3)]">
                 <div className="mb-4 flex items-center justify-between">
                   <h3 className="text-base font-black">{copy.annualPlan}</h3>
                   <TrendingUp size={18} className="text-[#22d3d6]" />
@@ -570,7 +570,7 @@ export default function Dashboard() {
           </section>
 
           <section className="grid gap-4 lg:col-span-12 lg:grid-cols-12">
-            <div className="rounded-[20px] bg-[#0f4d7a] p-5 text-white shadow-[0_18px_36px_rgba(15,77,122,0.24)] lg:col-span-6">
+            <div className="rounded-[20px] bg-[#082127] p-5 text-white shadow-[0_18px_36px_rgba(8,33,39,0.3)] lg:col-span-6">
               <div className="mb-4 flex flex-wrap items-center justify-between gap-3">
                 <div>
                   <h3 className="text-base font-black">{copy.compareTraffic}</h3>
@@ -595,7 +595,7 @@ export default function Dashboard() {
                     <YAxis tickLine={false} axisLine={false} tick={{ fill: '#b9d1e7', fontSize: 10 }} />
                     <ChartTooltip
                       contentStyle={{
-                        background: '#17213c',
+                        background: '#082127',
                         border: '1px solid rgba(255,255,255,0.12)',
                         borderRadius: '14px',
                         color: '#ffffff'

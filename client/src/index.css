@@ -1337,21 +1337,22 @@ select.input-field option {
 }
 
 .admin-dashboard-frame > div {
-  background: #0b162d !important;
+  background: #082127 !important;
   border-color: var(--admin-line) !important;
 }
 
 .admin-dashboard-frame [class*="bg-[#c7d6e8]"],
 .admin-dashboard-frame [class*="bg-[#dce7f4]"] {
-  background: #0b162d !important;
+  background: #082127 !important;
 }
 
-.admin-dashboard-frame [class*="bg-[#0f4d7a]"] {
-  background: linear-gradient(180deg, #0d4269, #0b3152) !important;
+.admin-dashboard-frame [class*="bg-[#0f4d7a]"],
+.admin-dashboard-frame [class*="bg-[#082127]"] {
+  background: #082127 !important;
 }
 
 .admin-dashboard-frame [class*="bg-[#17213c]"] {
-  background: #111b34 !important;
+  background: #082127 !important;
 }
 
 .admin-dashboard-frame [class*="text-[#4a5c78]"],

@@ -92,12 +92,12 @@ export default function AdminLayout() {
         }`}
       >
         {/* Header/Logo */}
-        <div className="h-16 flex items-center justify-center px-4 border-b border-glass-border flex-shrink-0">
-          <Link to="/" className="flex items-center gap-2.5 overflow-hidden">
+        <div className="h-16 flex items-center justify-center px-4 border-b border-glass-border flex-shrink-0 cursor-pointer">
+          <Link to="/" className="flex items-center gap-2.5 overflow-hidden group">
             <img
               src="/Mo3taz..svg"
               alt="MO3TAZ."
-              className="h-6 w-auto object-contain"
+              className="h-6 w-auto object-contain transition-transform group-hover:scale-105"
               style={{
                 filter: 'brightness(0) saturate(100%) invert(75%) sepia(60%) saturate(500%) hue-rotate(145deg) brightness(1.1)',
               }}
@@ -111,7 +111,7 @@ export default function AdminLayout() {
         </div>
 
         {/* Sidebar Nav Items */}
-        <nav className="flex-1 px-3 py-4 space-y-3 overflow-y-auto">
+        <nav className="flex-1 px-3 py-2 space-y-1.5 overflow-y-auto">
           {adminNavItems.map((item) => {
             const isActive = location.pathname === item.path;
             const Icon = item.icon;
@@ -121,7 +121,7 @@ export default function AdminLayout() {
               <Link
                 key={item.path}
                 to={item.path}
-                className={`flex items-center gap-3 px-3 py-2.5 transition-all duration-150 group relative border ${
+                className={`flex items-center gap-3 px-3 py-2 transition-all duration-150 group relative border ${
                   isActive
                     ? 'bg-[#22d3d6] text-[#17213c] border-[#22d3d6] shadow-[0_12px_24px_rgba(34,211,214,0.24)] font-black rounded-2xl'
                     : 'text-[#aab8d1] border-transparent hover:text-white hover:bg-white/10 hover:border-white/10 rounded-2xl'
@@ -133,7 +133,7 @@ export default function AdminLayout() {
                     isActive ? 'text-[#17213c]' : 'text-[#aab8d1] group-hover:text-white'
                   }`}
                 />
-                {adminSidebarOpen && <span className="whitespace-nowrap font-black tracking-wide text-sm uppercase">{itemLabel}</span>}
+                {adminSidebarOpen && <span className="whitespace-nowrap font-black tracking-wide text-xs uppercase">{itemLabel}</span>}
 
                 {/* Tooltip for collapsed mode */}
                 {!adminSidebarOpen && (
@@ -147,10 +147,10 @@ export default function AdminLayout() {
         </nav>
 
         {/* Footer/Logout */}
-        <div className="p-3 border-t border-glass-border">
+        <div className="p-3 border-t border-glass-border flex-shrink-0">
           <button
             onClick={handleLogout}
-            className="w-full flex items-center gap-3 px-3 py-2.5 transition-all duration-150 border border-transparent text-red-300 hover:text-white hover:bg-red-500/15 hover:border-red-400/25 rounded-2xl cursor-pointer group relative"
+            className="w-full flex items-center gap-3 px-3 py-2 transition-all duration-150 border border-transparent text-red-300 hover:text-white hover:bg-red-500/15 hover:border-red-400/25 rounded-2xl cursor-pointer group relative"
           >
             <LogOut size={18} className="flex-shrink-0 group-hover:scale-110 transition-transform" />
             {adminSidebarOpen && <span className="whitespace-nowrap font-black tracking-wide text-xs uppercase">{t('exitSystem')}</span>}
@@ -178,17 +178,6 @@ export default function AdminLayout() {
             <h2 className="font-black text-white text-xl tracking-wider uppercase">
               {currentTitle}
             </h2>
-          </div>
-
-          <div className="flex items-center gap-4">
-            <a
-              href="/"
-              target="_blank"
-              rel="noopener noreferrer"
-              className="neon-btn px-4 py-1.5 text-xs flex items-center gap-2"
-            >
-              {t('publicPlatform')}
-            </a>
           </div>
         </header>
 

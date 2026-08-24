@@ -34,7 +34,6 @@ const CarouselCard = memo(function CarouselCard({
   onPrev,
   onNext,
   onNavigate,
-  hideText,
 }: {
   project: Project;
   offset: number;
@@ -43,7 +42,6 @@ const CarouselCard = memo(function CarouselCard({
   onPrev: () => void;
   onNext: () => void;
   onNavigate: (p: Project) => void;
-  hideText?: boolean;
 }) {
   // Responsive transform values for mobile vs desktop
   const xOffset = isSmallScreen ? 44 : 55;
@@ -55,15 +53,8 @@ const CarouselCard = memo(function CarouselCard({
   const handleClick = useCallback(() => {
     if (offset === -1) onPrev();
     else if (offset === 1) onNext();
-  }, [offset, onPrev, onNext]);
-
-  const handleViewClick = useCallback(
-    (e: React.MouseEvent) => {
-      e.stopPropagation();
-      onNavigate(project);
-    },
-    [project, onNavigate],
-  );
+    else if (offset === 0) onNavigate(project);
+  }, [offset, onPrev, onNext, onNavigate, project]);
 
   return (
     <motion.div
@@ -80,10 +71,10 @@ const CarouselCard = memo(function CarouselCard({
         ease: [0.25, 0.1, 0.25, 1],   // cubic-bezier – buttery smooth
         duration: 0.55,
       }}
-      className={`absolute top-0 w-full max-w-[960px] h-full rounded-[20px] sm:rounded-[32px] md:rounded-[42px] overflow-hidden select-none ${
+      className={`absolute top-0 w-full max-w-[960px] h-full rounded-[20px] sm:rounded-[32px] md:rounded-[42px] overflow-hidden select-none cursor-pointer group ${
         isActive
-          ? 'border-2 border-[#26EFFD] shadow-[0_0_30px_rgba(38,239,253,0.35),0_8px_24px_rgba(0,0,0,0.7)] cursor-default'
-          : 'border border-white/10 cursor-pointer'
+          ? 'border-2 border-[#26EFFD] shadow-[0_0_30px_rgba(38,239,253,0.35),0_8px_24px_rgba(0,0,0,0.7)]'
+          : 'border border-white/10'
       }`}
       style={{
         zIndex,
@@ -98,65 +89,10 @@ const CarouselCard = memo(function CarouselCard({
         <img
           src={project.cover_image}
           alt={project.title}
-          className="w-full h-full object-cover"
+          className="w-full h-full object-cover group-hover:scale-105 transition-transform duration-500"
           loading="lazy"
           decoding="async"
         />
-
-        {/* Clean overlay – only at the bottom for text readability */}
-        <div
-          className="absolute inset-0 flex flex-col justify-end p-4 sm:p-6 md:p-10 lg:p-12"
-          style={{
-            background: 'linear-gradient(to top, rgba(0,0,0,0.75) 0%, rgba(0,0,0,0.15) 35%, transparent 60%)',
-          }}
-        >
-          {!hideText && (
-          <div className="flex flex-col gap-1 max-w-2xl pb-10 sm:pb-0">
-            <h3
-              className="text-lg sm:text-2xl md:text-3xl lg:text-4xl font-extrabold text-white leading-tight"
-              style={{ fontFamily: "'Sahara Bold', 'Milan Display', sans-serif" }}
-            >
-              {project.title || project.internal_name || 'غير مسمى'}
-            </h3>
-            {project.description && (
-              <p className="text-gray-300 text-[11px] sm:text-xs md:text-sm line-clamp-1 sm:line-clamp-2 mt-0.5">
-                {project.description}
-              </p>
-            )}
-          </div>
-          )}
-
-          {/* View button – only when show_details_btn is explicitly true */}
-          {(() => {
-            const raw = (project as any).show_details_btn;
-            const showBtn = raw === true || raw === 'true';
-            return (
-              <AnimatePresence>
-                {isActive && showBtn && (
-                  <motion.div
-                    initial={{ opacity: 0, y: 12 }}
-                    animate={{ opacity: 1, y: 0 }}
-                    exit={{ opacity: 0, y: 8 }}
-                    transition={{ duration: 0.3, ease: 'easeOut' }}
-                    className="absolute bottom-3 left-3 sm:bottom-6 sm:left-6 md:bottom-10 md:left-10 z-30"
-                  >
-                    <button
-                      onClick={handleViewClick}
-                      className="px-4 py-1.5 sm:px-6 sm:py-2 md:px-8 md:py-2.5 bg-white text-black border-2 border-black rounded-full font-black text-[11px] sm:text-xs md:text-sm shadow-[2px_2px_0px_#000] sm:shadow-[3px_3px_0px_#000] hover:bg-[#26EFFD] active:scale-95 cursor-pointer flex items-center gap-1.5"
-                      style={{
-                        fontFamily: "'Sahara Bold', 'Inter', sans-serif",
-                        transition: 'box-shadow 0.15s, background 0.2s, transform 0.1s',
-                      }}
-                    >
-                      <span>عرض التفاصيل</span>
-                      <ExternalLink size={12} className="sm:w-3.5 sm:h-3.5" />
-                    </button>
-                  </motion.div>
-                )}
-              </AnimatePresence>
-            );
-          })()}
-        </div>
       </div>
     </motion.div>
   );
@@ -303,11 +239,37 @@ const Carousel3DSection = memo(function Carousel3DSection({
                 onPrev={handlePrev}
                 onNext={handleNext}
                 onNavigate={handleNavigate}
-                hideText={hideText}
               />
             ))}
           </div>
         </div>
+        )}
+
+        {/* Group / Project Title outside the card */}
+        {!hideText && total > 0 && items[currentIndex] && (
+          <AnimatePresence mode="wait">
+            <motion.div
+              key={items[currentIndex].id}
+              initial={{ opacity: 0, y: 8 }}
+              animate={{ opacity: 1, y: 0 }}
+              exit={{ opacity: 0, y: -8 }}
+              transition={{ duration: 0.25 }}
+              onClick={() => handleNavigate(items[currentIndex])}
+              className="text-center cursor-pointer group max-w-2xl mx-auto px-4 mt-1 mb-1"
+            >
+              <h3
+                className="text-2xl sm:text-3xl md:text-4xl font-black text-white group-hover:text-[#26EFFD] transition-colors duration-200"
+                style={{ fontFamily: "'Sahara Bold', 'Milan Display', sans-serif" }}
+              >
+                {items[currentIndex].title || items[currentIndex].internal_name || 'غير مسمى'}
+              </h3>
+              {items[currentIndex].description && (
+                <p className="text-gray-300 text-xs sm:text-sm mt-1.5 line-clamp-2 leading-relaxed">
+                  {items[currentIndex].description}
+                </p>
+              )}
+            </motion.div>
+          </AnimatePresence>
         )}
 
         {/* Navigation Buttons + Dashed Line */}
@@ -383,7 +345,6 @@ const Portfolio = memo(function Portfolio() {
         titlePrefix=""
         titleHighlight="الموك آب"
         items={mockupsList}
-        hideText
       />
 
       {/* 2. Featured Projects Section (Main Portfolio Section) */}

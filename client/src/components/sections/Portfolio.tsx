@@ -160,6 +160,52 @@ const Carousel3DSection = memo(function Carousel3DSection({
   const handleMouseEnter = useCallback(() => { isPausedRef.current = true; }, []);
   const handleMouseLeave = useCallback(() => { isPausedRef.current = false; }, []);
 
+  // Touch Swipe Handlers for mobile & tablet
+  const touchStartX = useRef<number | null>(null);
+  const touchStartY = useRef<number | null>(null);
+
+  const handleTouchStart = useCallback((e: React.TouchEvent) => {
+    touchStartX.current = e.touches[0].clientX;
+    touchStartY.current = e.touches[0].clientY;
+  }, []);
+
+  const handleTouchEnd = useCallback((e: React.TouchEvent) => {
+    if (touchStartX.current === null || touchStartY.current === null) return;
+    const deltaX = e.changedTouches[0].clientX - touchStartX.current;
+    const deltaY = e.changedTouches[0].clientY - touchStartY.current;
+    touchStartX.current = null;
+    touchStartY.current = null;
+
+    if (Math.abs(deltaX) > 35 && Math.abs(deltaX) > Math.abs(deltaY)) {
+      if (deltaX < 0) {
+        handleNext();
+      } else {
+        handlePrev();
+      }
+    }
+  }, [handleNext, handlePrev]);
+
+  // Mouse Swipe / Drag Handlers for desktop
+  const mouseStartX = useRef<number | null>(null);
+
+  const handleMouseDown = useCallback((e: React.MouseEvent) => {
+    mouseStartX.current = e.clientX;
+  }, []);
+
+  const handleMouseUp = useCallback((e: React.MouseEvent) => {
+    if (mouseStartX.current === null) return;
+    const deltaX = e.clientX - mouseStartX.current;
+    mouseStartX.current = null;
+
+    if (Math.abs(deltaX) > 40) {
+      if (deltaX < 0) {
+        handleNext();
+      } else {
+        handlePrev();
+      }
+    }
+  }, [handleNext, handlePrev]);
+
   // Pre-compute visible cards array (max 3 at a time) – avoids work inside render
   const visibleCards = useMemo(() => {
     const result: { project: Project; offset: number; isActive: boolean }[] = [];
@@ -210,7 +256,7 @@ const Carousel3DSection = memo(function Carousel3DSection({
           </h2>
         </div>
 
-        {/* 3D Stage – proportional aspect scaling on mobile */}
+        {/* 3D Stage with Touch & Mouse Swipe Support */}
         {total === 0 ? (
           <div className="text-center py-16 sm:py-24">
             <div className="inline-flex flex-col items-center gap-3 px-8 py-10 rounded-3xl border-2 border-dashed border-white/15 bg-white/[0.02]">
@@ -221,9 +267,14 @@ const Carousel3DSection = memo(function Carousel3DSection({
           </div>
         ) : (
         <div
-          className="relative w-full flex items-center justify-center min-h-[240px] sm:min-h-[360px] md:min-h-[520px] lg:min-h-[580px] py-2 sm:py-4"
+          className="relative w-full flex items-center justify-center min-h-[240px] sm:min-h-[360px] md:min-h-[520px] lg:min-h-[580px] py-2 sm:py-4 cursor-grab active:cursor-grabbing select-none"
           onMouseEnter={handleMouseEnter}
           onMouseLeave={handleMouseLeave}
+          onTouchStart={handleTouchStart}
+          onTouchEnd={handleTouchEnd}
+          onMouseDown={handleMouseDown}
+          onMouseUp={handleMouseUp}
+          style={{ touchAction: 'pan-y' }}
         >
           <div
             className="relative w-full max-w-[960px] h-[230px] sm:h-[340px] md:h-[480px] lg:h-[540px] flex items-center justify-center"
@@ -270,37 +321,6 @@ const Carousel3DSection = memo(function Carousel3DSection({
               )}
             </motion.div>
           </AnimatePresence>
-        )}
-
-        {/* Navigation Buttons + Dashed Line */}
-        {total > 0 && (
-        <div className="w-full max-w-[960px] mx-auto flex items-center justify-between gap-3 sm:gap-4 mt-1 sm:mt-2">
-          <button
-            onClick={handlePrev}
-            className="px-6 sm:px-10 md:px-14 py-2 sm:py-2.5 md:py-3 rounded-full bg-[#082127] border-[2.5px] border-[#26EFFD] text-[#26EFFD] font-black text-sm sm:text-base md:text-lg shadow-[3px_3px_0px_#26EFFD] sm:shadow-[5px_5px_0px_#26EFFD] hover:bg-[#26EFFD]/10 active:shadow-[0px_0px_0px_#26EFFD] active:translate-x-[3px] active:translate-y-[3px] sm:active:translate-x-[5px] sm:active:translate-y-[5px] cursor-pointer select-none"
-            style={{
-              fontFamily: "'Sahara Bold', 'Inter', sans-serif",
-              transition: 'all 0.15s ease-out',
-            }}
-          >
-            السابق
-          </button>
-
-          <div className="flex-1 h-[2px] flex items-center" aria-hidden>
-            <div className="w-full border-t-2 border-dashed border-[#26EFFD]/50" />
-          </div>
-
-          <button
-            onClick={handleNext}
-            className="px-6 sm:px-10 md:px-14 py-2 sm:py-2.5 md:py-3 rounded-full bg-[#082127] border-[2.5px] border-[#26EFFD] text-[#26EFFD] font-black text-sm sm:text-base md:text-lg shadow-[3px_3px_0px_#26EFFD] sm:shadow-[5px_5px_0px_#26EFFD] hover:bg-[#26EFFD]/10 active:shadow-[0px_0px_0px_#26EFFD] active:translate-x-[3px] active:translate-y-[3px] sm:active:translate-x-[5px] sm:active:translate-y-[5px] cursor-pointer select-none"
-            style={{
-              fontFamily: "'Sahara Bold', 'Inter', sans-serif",
-              transition: 'all 0.15s ease-out',
-            }}
-          >
-            التالي
-          </button>
-        </div>
         )}
       </motion.div>
     </section>

@@ -132,7 +132,7 @@ const About = memo(function About() {
             <div className="flex items-center gap-10" style={{ fontFamily: "'Sahara Bold', sans-serif" }}>
               {/* Stat 1 */}
               <div className="text-center">
-                <div className="text-4xl md:text-5xl lg:text-6xl font-bold text-white mb-2" style={{ fontFamily: "'Outfit', 'Inter', sans-serif" }}>
+                <div className="text-4xl md:text-5xl lg:text-6xl font-bold text-white mb-2" style={{ fontFamily: "'Milan Display', 'Sahara Bold', sans-serif" }}>
                   {stat1Value}
                 </div>
                 <div className="text-sm text-white/40 font-medium">{stat1Label}</div>
@@ -143,7 +143,7 @@ const About = memo(function About() {
 
               {/* Stat 2 */}
               <div className="text-center">
-                <div className="text-4xl md:text-5xl lg:text-6xl font-bold text-white mb-2" style={{ fontFamily: "'Outfit', 'Inter', sans-serif" }}>
+                <div className="text-4xl md:text-5xl lg:text-6xl font-bold text-white mb-2" style={{ fontFamily: "'Milan Display', 'Sahara Bold', sans-serif" }}>
                   {stat2Value}
                 </div>
                 <div className="text-sm text-white/40 font-medium">{stat2Label}</div>

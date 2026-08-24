@@ -82,7 +82,7 @@ const StatCard = memo(function StatCard({
             dir="ltr"
             className="text-4xl sm:text-5xl md:text-6xl font-extrabold text-white tracking-tight"
             style={{
-              fontFamily: "Georgia, 'Times New Roman', serif",
+              fontFamily: "'Milan Display', 'Sahara Bold', sans-serif",
               letterSpacing: '-0.02em',
             }}
           >

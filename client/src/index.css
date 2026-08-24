@@ -11,52 +11,52 @@
   font-display: swap;
 }
 
-/* Milan Display Black Swashes — Hero headline font */
+/* Milan Display Black Swashes — Latin / English font */
 @font-face {
   font-family: 'Milan Display';
-  src: url('./assets/font/MilanDisplay.woff2') format('woff2');
+  src: url('./assets/font/Milan Display Black Swashes.woff2') format('woff2');
   font-weight: 300;
   font-style: normal;
   font-display: swap;
 }
 @font-face {
   font-family: 'Milan Display';
-  src: url('./assets/font/MilanDisplay.woff2') format('woff2');
+  src: url('./assets/font/Milan Display Black Swashes.woff2') format('woff2');
   font-weight: 400;
   font-style: normal;
   font-display: swap;
 }
 @font-face {
   font-family: 'Milan Display';
-  src: url('./assets/font/MilanDisplay.woff2') format('woff2');
+  src: url('./assets/font/Milan Display Black Swashes.woff2') format('woff2');
   font-weight: 500;
   font-style: normal;
   font-display: swap;
 }
 @font-face {
   font-family: 'Milan Display';
-  src: url('./assets/font/MilanDisplay.woff2') format('woff2');
+  src: url('./assets/font/Milan Display Black Swashes.woff2') format('woff2');
   font-weight: 600;
   font-style: normal;
   font-display: swap;
 }
 @font-face {
   font-family: 'Milan Display';
-  src: url('./assets/font/MilanDisplay.woff2') format('woff2');
+  src: url('./assets/font/Milan Display Black Swashes.woff2') format('woff2');
   font-weight: 700;
   font-style: normal;
   font-display: swap;
 }
 @font-face {
   font-family: 'Milan Display';
-  src: url('./assets/font/MilanDisplay.woff2') format('woff2');
+  src: url('./assets/font/Milan Display Black Swashes.woff2') format('woff2');
   font-weight: 800;
   font-style: normal;
   font-display: swap;
 }
 @font-face {
   font-family: 'Milan Display';
-  src: url('./assets/font/MilanDisplay.woff2') format('woff2');
+  src: url('./assets/font/Milan Display Black Swashes.woff2') format('woff2');
   font-weight: 900;
   font-style: normal;
   font-display: swap;

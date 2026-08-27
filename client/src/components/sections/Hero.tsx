@@ -107,79 +107,7 @@ const Hero = memo(function Hero() {
       className="relative min-h-[92vh] overflow-hidden bg-transparent"
       dir="rtl"
     >
-      {/* ===== STRONG ANIMATED WAVE GRADIENT FROM TOP ===== */}
-      <div className="absolute inset-0 overflow-hidden pointer-events-none z-0">
-        {/* First wave — cyan primary, top right */}
-        <motion.div
-          animate={{
-            x: ['0%', '12%', '-8%', '0%'],
-            y: ['0%', '-10%', '8%', '0%'],
-            scale: [1, 1.25, 0.95, 1],
-          }}
-          transition={{
-            duration: 18,
-            repeat: Infinity,
-            ease: 'easeInOut',
-          }}
-          className="absolute w-[800px] h-[600px] rounded-full"
-          style={{
-            top: '-50%',
-            right: '-30%',
-            background: 'radial-gradient(ellipse, rgba(0,229,255,0.22) 0%, rgba(0,191,255,0.08) 45%, transparent 70%)',
-            filter: 'blur(90px)',
-          }}
-        />
 
-        {/* Second wave — indigo depth, center bottom */}
-        <motion.div
-          animate={{
-            x: ['0%', '-15%', '10%', '0%'],
-            y: ['0%', '12%', '-10%', '0%'],
-            scale: [1.1, 0.9, 1.2, 1.1],
-          }}
-          transition={{
-            duration: 24,
-            repeat: Infinity,
-            ease: 'easeInOut',
-          }}
-          className="absolute w-[900px] h-[700px] rounded-full"
-          style={{
-            bottom: '-20%',
-            left: '10%',
-            background: 'radial-gradient(ellipse, rgba(79,70,229,0.18) 0%, rgba(99,102,241,0.06) 50%, transparent 70%)',
-            filter: 'blur(120px)',
-          }}
-        />
-
-        {/* Third wave — bright cyan accent, middle */}
-        <motion.div
-          animate={{
-            x: ['10%', '-8%', '12%', '10%'],
-            y: ['-5%', '15%', '-5%', '-5%'],
-            scale: [0.95, 1.15, 1, 0.95],
-          }}
-          transition={{
-            duration: 15,
-            repeat: Infinity,
-            ease: 'easeInOut',
-          }}
-          className="absolute w-[550px] h-[550px] rounded-full"
-          style={{
-            top: '0%',
-            left: '30%',
-            background: 'radial-gradient(ellipse, rgba(0,191,255,0.18) 0%, rgba(6,182,212,0.06) 50%, transparent 70%)',
-            filter: 'blur(100px)',
-          }}
-        />
-
-        {/* Top-to-bottom fade overlay for wave falloff */}
-        <div
-          className="absolute inset-0"
-          style={{
-            background: 'linear-gradient(to bottom, transparent 0%, transparent 40%, rgba(8,33,39,0.2) 70%, transparent 100%)',
-          }}
-        />
-      </div>
 
       {/* Main headline content - takes up full viewport height on initial load */}
       <div className="relative z-10 flex flex-col items-center justify-center text-center px-6 max-w-5xl mx-auto min-h-[92vh] pt-28 pb-10">

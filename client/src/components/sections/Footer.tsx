@@ -264,7 +264,7 @@ const Footer = memo(function Footer() {
             className="w-full pt-4 border-t border-black/15 flex flex-col sm:flex-row gap-2 items-center justify-between text-[11px] font-bold opacity-75 text-black" 
             style={{ fontFamily: "'Sahara Bold', 'Inter', sans-serif" }}
           >
-            <span>© معتز جمعة. جميع الحقوق محفوظة</span>
+            <span> معتز جمعة. جميع الحقوق محفوظة</span>
             <span>تصميم و تطوير... معتز جمعة</span>
           </div>
         </div>

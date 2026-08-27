@@ -93,20 +93,20 @@ export default function SplashScreen({ onComplete }: { onComplete: () => void })
       className="fixed inset-0 w-screen h-screen h-[100dvh] z-[9999] bg-[#050505] flex flex-col justify-center items-center overflow-hidden pointer-events-none"
       dir="rtl"
     >
-      {/* Background Stacked Marquee Banners (Large Height & Font Sizes) */}
-      <div className="w-full h-full flex flex-col justify-between py-1 sm:py-2 scale-105">
+      {/* Background Stacked Marquee Banners (Large Height, Centered Text, No Gaps) */}
+      <div className="w-full h-full flex flex-col justify-stretch items-stretch gap-0 p-0 m-0 overflow-hidden">
         
         {/* Row 1: Slides Left on Finish */}
         <div 
-          className={`marquee-container w-full py-5 sm:py-7 md:py-8 bg-[#050505] transition-transform duration-700 ease-[cubic-bezier(0.77,0,0.175,1)] ${
+          className={`marquee-container flex-1 w-full flex items-center bg-[#050505] overflow-hidden transition-transform duration-700 ease-[cubic-bezier(0.77,0,0.175,1)] ${
             isOpening ? '-translate-x-full' : 'translate-x-0'
           }`}
         >
-          <div className="marquee-track marquee-track-left">
+          <div className="marquee-track marquee-track-left flex items-center">
             {[...row1, ...row1, ...row1, ...row1, ...row1].map((item, idx) => (
               <div key={`splash-r1-${idx}`} className="flex items-center flex-shrink-0">
                 <span
-                  className="text-3xl sm:text-4xl md:text-6xl font-black text-white select-none tracking-wide"
+                  className="text-3xl sm:text-5xl md:text-6xl lg:text-7xl font-black text-white select-none tracking-wide leading-none flex items-center"
                   style={{ fontFamily: "'Sahara Bold', 'Inter', sans-serif" }}
                 >
                   {item.text}
@@ -119,15 +119,15 @@ export default function SplashScreen({ onComplete }: { onComplete: () => void })
 
         {/* Row 2: FULL WIDTH CYAN BANNER - Slides Right on Finish */}
         <div 
-          className={`marquee-container w-full py-6 sm:py-8 md:py-10 bg-[#26EFFD] shadow-xl transition-transform duration-700 ease-[cubic-bezier(0.77,0,0.175,1)] ${
+          className={`marquee-container flex-1 w-full flex items-center bg-[#26EFFD] shadow-xl overflow-hidden transition-transform duration-700 ease-[cubic-bezier(0.77,0,0.175,1)] ${
             isOpening ? 'translate-x-full' : 'translate-x-0'
           }`}
         >
-          <div className="marquee-track marquee-track-right">
+          <div className="marquee-track marquee-track-right flex items-center">
             {[...row2, ...row2, ...row2, ...row2, ...row2].map((item, idx) => (
               <div key={`splash-r2-${idx}`} className="flex items-center flex-shrink-0">
                 <span
-                  className="text-3xl sm:text-4xl md:text-6xl font-black text-black select-none tracking-wide"
+                  className="text-3xl sm:text-5xl md:text-6xl lg:text-7xl font-black text-black select-none tracking-wide leading-none flex items-center"
                   style={{ fontFamily: "'Sahara Bold', 'Inter', sans-serif" }}
                 >
                   {item.text}
@@ -140,15 +140,15 @@ export default function SplashScreen({ onComplete }: { onComplete: () => void })
 
         {/* Row 3: Slides Left on Finish */}
         <div 
-          className={`marquee-container w-full py-5 sm:py-7 md:py-8 bg-[#050505] transition-transform duration-700 ease-[cubic-bezier(0.77,0,0.175,1)] ${
+          className={`marquee-container flex-1 w-full flex items-center bg-[#050505] overflow-hidden transition-transform duration-700 ease-[cubic-bezier(0.77,0,0.175,1)] ${
             isOpening ? '-translate-x-full' : 'translate-x-0'
           }`}
         >
-          <div className="marquee-track marquee-track-left">
+          <div className="marquee-track marquee-track-left flex items-center">
             {[...row3, ...row3, ...row3, ...row3, ...row3].map((item, idx) => (
               <div key={`splash-r3-${idx}`} className="flex items-center flex-shrink-0">
                 <span
-                  className="text-3xl sm:text-4xl md:text-6xl font-black text-white select-none tracking-wide"
+                  className="text-3xl sm:text-5xl md:text-6xl lg:text-7xl font-black text-white select-none tracking-wide leading-none flex items-center"
                   style={{ fontFamily: "'Sahara Bold', 'Inter', sans-serif" }}
                 >
                   {item.text}
@@ -161,15 +161,15 @@ export default function SplashScreen({ onComplete }: { onComplete: () => void })
 
         {/* Row 4: FULL WIDTH CYAN BANNER - Slides Right on Finish */}
         <div 
-          className={`marquee-container w-full py-6 sm:py-8 md:py-10 bg-[#26EFFD] shadow-xl transition-transform duration-700 ease-[cubic-bezier(0.77,0,0.175,1)] ${
+          className={`marquee-container flex-1 w-full flex items-center bg-[#26EFFD] shadow-xl overflow-hidden transition-transform duration-700 ease-[cubic-bezier(0.77,0,0.175,1)] ${
             isOpening ? 'translate-x-full' : 'translate-x-0'
           }`}
         >
-          <div className="marquee-track marquee-track-right">
+          <div className="marquee-track marquee-track-right flex items-center">
             {[...row1, ...row1, ...row1, ...row1, ...row1].map((item, idx) => (
               <div key={`splash-r4-${idx}`} className="flex items-center flex-shrink-0">
                 <span
-                  className="text-3xl sm:text-4xl md:text-6xl font-black text-black select-none tracking-wide"
+                  className="text-3xl sm:text-5xl md:text-6xl lg:text-7xl font-black text-black select-none tracking-wide leading-none flex items-center"
                   style={{ fontFamily: "'Sahara Bold', 'Inter', sans-serif" }}
                 >
                   {item.text}
@@ -182,15 +182,15 @@ export default function SplashScreen({ onComplete }: { onComplete: () => void })
 
         {/* Row 5: Slides Left on Finish */}
         <div 
-          className={`marquee-container w-full py-5 sm:py-7 md:py-8 bg-[#050505] transition-transform duration-700 ease-[cubic-bezier(0.77,0,0.175,1)] ${
+          className={`marquee-container flex-1 w-full flex items-center bg-[#050505] overflow-hidden transition-transform duration-700 ease-[cubic-bezier(0.77,0,0.175,1)] ${
             isOpening ? '-translate-x-full' : 'translate-x-0'
           }`}
         >
-          <div className="marquee-track marquee-track-left">
+          <div className="marquee-track marquee-track-left flex items-center">
             {[...row2, ...row2, ...row2, ...row2, ...row2].map((item, idx) => (
               <div key={`splash-r5-${idx}`} className="flex items-center flex-shrink-0">
                 <span
-                  className="text-3xl sm:text-4xl md:text-6xl font-black text-white select-none tracking-wide"
+                  className="text-3xl sm:text-5xl md:text-6xl lg:text-7xl font-black text-white select-none tracking-wide leading-none flex items-center"
                   style={{ fontFamily: "'Sahara Bold', 'Inter', sans-serif" }}
                 >
                   {item.text}

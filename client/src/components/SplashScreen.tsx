@@ -107,7 +107,7 @@ export default function SplashScreen({ onComplete }: { onComplete: () => void })
               <div key={`splash-r1-${idx}`} className="flex items-center flex-shrink-0">
                 <span
                   className="text-3xl sm:text-5xl md:text-6xl lg:text-7xl font-black text-white select-none tracking-wide leading-none flex items-center"
-                  style={{ fontFamily: "'Sahara Bold', 'Inter', sans-serif" }}
+                  style={{ fontFamily: "'Milan Display', 'Sahara Bold', 'Inter', sans-serif" }}
                 >
                   {item.text}
                 </span>
@@ -128,7 +128,7 @@ export default function SplashScreen({ onComplete }: { onComplete: () => void })
               <div key={`splash-r2-${idx}`} className="flex items-center flex-shrink-0">
                 <span
                   className="text-3xl sm:text-5xl md:text-6xl lg:text-7xl font-black text-black select-none tracking-wide leading-none flex items-center"
-                  style={{ fontFamily: "'Sahara Bold', 'Inter', sans-serif" }}
+                  style={{ fontFamily: "'Milan Display', 'Sahara Bold', 'Inter', sans-serif" }}
                 >
                   {item.text}
                 </span>
@@ -149,7 +149,7 @@ export default function SplashScreen({ onComplete }: { onComplete: () => void })
               <div key={`splash-r3-${idx}`} className="flex items-center flex-shrink-0">
                 <span
                   className="text-3xl sm:text-5xl md:text-6xl lg:text-7xl font-black text-white select-none tracking-wide leading-none flex items-center"
-                  style={{ fontFamily: "'Sahara Bold', 'Inter', sans-serif" }}
+                  style={{ fontFamily: "'Milan Display', 'Sahara Bold', 'Inter', sans-serif" }}
                 >
                   {item.text}
                 </span>
@@ -170,7 +170,7 @@ export default function SplashScreen({ onComplete }: { onComplete: () => void })
               <div key={`splash-r4-${idx}`} className="flex items-center flex-shrink-0">
                 <span
                   className="text-3xl sm:text-5xl md:text-6xl lg:text-7xl font-black text-black select-none tracking-wide leading-none flex items-center"
-                  style={{ fontFamily: "'Sahara Bold', 'Inter', sans-serif" }}
+                  style={{ fontFamily: "'Milan Display', 'Sahara Bold', 'Inter', sans-serif" }}
                 >
                   {item.text}
                 </span>
@@ -191,7 +191,7 @@ export default function SplashScreen({ onComplete }: { onComplete: () => void })
               <div key={`splash-r5-${idx}`} className="flex items-center flex-shrink-0">
                 <span
                   className="text-3xl sm:text-5xl md:text-6xl lg:text-7xl font-black text-white select-none tracking-wide leading-none flex items-center"
-                  style={{ fontFamily: "'Sahara Bold', 'Inter', sans-serif" }}
+                  style={{ fontFamily: "'Milan Display', 'Sahara Bold', 'Inter', sans-serif" }}
                 >
                   {item.text}
                 </span>

@@ -167,7 +167,7 @@ const Hero = memo(function Hero() {
       {row1Tags.length > 0 && (
         <div className="w-full mt-12 mb-16 z-30 flex flex-col gap-0 overflow-hidden">
           {/* Row 1: Left scrolling - Dark Background / White Text */}
-          <div className="marquee-container w-full py-6 bg-[#050505]">
+          <div className="marquee-container w-full py-10 bg-[#050505]">
             <div className="marquee-track marquee-track-left">
               {[...row1Tags, ...row1Tags, ...row1Tags, ...row1Tags, ...row1Tags].map((tag, idx) => (
                 <div key={`r1-${idx}`} className="flex items-center flex-shrink-0">
@@ -185,7 +185,7 @@ const Hero = memo(function Hero() {
 
           {/* Row 2: Right scrolling - FULL WIDTH SOLID CYAN/MINT BANNER / Black Text */}
           {row2Tags.length > 0 && (
-            <div className="marquee-container w-full py-6 bg-[#26EFFD]">
+            <div className="marquee-container w-full py-10 bg-[#26EFFD]">
               <div className="marquee-track marquee-track-right">
                 {[...row2Tags, ...row2Tags, ...row2Tags, ...row2Tags, ...row2Tags].map((tag, idx) => (
                   <div key={`r2-${idx}`} className="flex items-center flex-shrink-0">

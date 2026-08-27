@@ -15,13 +15,13 @@ const ClientLogoItem = memo(function ClientLogoItem({ logo }: { logo: { name: st
 
   return (
     <div
-      className="flex items-center justify-center h-10 md:h-12 px-3 py-1 opacity-80 hover:opacity-100 transition-opacity duration-200"
+      className="flex items-center justify-center h-14 md:h-16 px-4 py-1 opacity-80 hover:opacity-100 transition-opacity duration-200"
     >
       {logo.src && !imgError ? (
         <img
           src={logo.src}
           alt={logo.name || 'Client Logo'}
-          className="h-full w-auto object-contain max-w-[120px]"
+          className="h-full w-auto object-contain max-w-[160px]"
           loading="eager"
           decoding="async"
           onError={() => setImgError(true)}

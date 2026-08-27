@@ -81,9 +81,14 @@ interface SettingsState {
   setLoading: (loading: boolean) => void;
 }
 
-export const useSettingsStore = create<SettingsState>((set) => ({
-  settings: null,
-  isLoading: true,
-  setSettings: (settings) => set({ settings, isLoading: false }),
-  setLoading: (loading) => set({ isLoading: loading }),
-}));
+export const useSettingsStore = create<SettingsState>()(
+  persist(
+    (set) => ({
+      settings: null,
+      isLoading: true,
+      setSettings: (settings) => set({ settings, isLoading: false }),
+      setLoading: (loading) => set({ isLoading: loading }),
+    }),
+    { name: 'portfolio-settings' }
+  )
+);

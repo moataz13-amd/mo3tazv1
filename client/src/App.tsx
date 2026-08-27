@@ -105,11 +105,7 @@ export default function App() {
     return () => clearInterval(id);
   }, []);
 
-  const isReady = isSuccess || isError;
 
-  if (!isReady) {
-    return <div className="min-h-screen bg-[#050505]" />;
-  }
 
   return (
     <>

@@ -112,7 +112,7 @@ body {
   background-repeat: repeat-y;
   background-position: top center;
   background-size: 100% auto;
-  background-attachment: fixed;
+  background: fixed;
   color: var(--text);
   min-height: 100vh;
   overflow-x: clip;

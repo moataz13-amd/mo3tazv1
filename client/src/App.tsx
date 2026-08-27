@@ -108,7 +108,7 @@ export default function App() {
   const isReady = isSuccess || isError;
 
   if (!isReady) {
-    return <LoadingScreen />;
+    return <div className="min-h-screen bg-[#050505]" />;
   }
 
   return (

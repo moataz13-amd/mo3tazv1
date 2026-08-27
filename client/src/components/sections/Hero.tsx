@@ -184,10 +184,7 @@ const Hero = memo(function Hero() {
       {/* Main headline content - takes up full viewport height on initial load */}
       <div className="relative z-10 flex flex-col items-center justify-center text-center px-6 max-w-5xl mx-auto min-h-[92vh] pt-28 pb-10">
         {/* Arabic Hero Headline */}
-        <motion.h1
-          initial={{ opacity: 0, y: 40 }}
-          animate={{ opacity: 1, y: 0 }}
-          transition={{ duration: 0.9, delay: 0.3, ease: [0.22, 1, 0.36, 1] }}
+        <h1
           className="hero-headline leading-tight mb-14"
           style={{
             fontFamily: "'Milan Display', 'Sahara Bold', 'Inter', sans-serif",
@@ -214,7 +211,7 @@ const Hero = memo(function Hero() {
               </span>
             </>
           )}
-        </motion.h1>
+        </h1>
 
         {/* Trusted By Section */}
         {clientLogos.length > 0 && (

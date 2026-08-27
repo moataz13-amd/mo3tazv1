@@ -45,8 +45,7 @@ const defaultRow3Items = [
 ];
 
 export default function SplashScreen({ onComplete }: { onComplete: () => void }) {
-  const [progress, setProgress] = useState(0);
-  const [fadeOut, setFadeOut] = useState(false);
+  const [isOpening, setIsOpening] = useState(false);
   const settings = useSettingsStore((state) => state.settings);
 
   const parseTags = (tags: any, fallback: any) => {
@@ -75,42 +74,34 @@ export default function SplashScreen({ onComplete }: { onComplete: () => void })
   };
 
   const finishLoading = useCallback(() => {
-    setProgress(100);
-    setFadeOut(true);
-    setTimeout(() => onComplete(), 600);
+    setIsOpening(true);
+    setTimeout(() => {
+      onComplete();
+    }, 750);
   }, [onComplete]);
 
   useEffect(() => {
-    const startTime = Date.now();
-    const minDuration = 2200; // 2.2s visible display time
+    const timer = setTimeout(() => {
+      finishLoading();
+    }, 1800);
 
-    const interval = setInterval(() => {
-      const elapsed = Date.now() - startTime;
-      const calculatedProgress = Math.min(Math.round((elapsed / minDuration) * 100), 100);
-      setProgress(calculatedProgress);
-
-      if (elapsed >= minDuration) {
-        clearInterval(interval);
-        finishLoading();
-      }
-    }, 30);
-
-    return () => clearInterval(interval);
+    return () => clearTimeout(timer);
   }, [finishLoading]);
 
   return (
     <div
-      className={`fixed inset-0 z-[9999] flex flex-col justify-center items-center overflow-hidden transition-opacity duration-600 ${
-        fadeOut ? 'opacity-0 pointer-events-none' : 'opacity-100'
-      }`}
-      style={{ background: '#050505' }}
+      className="fixed inset-0 z-[9999] flex flex-col justify-center items-center overflow-hidden pointer-events-none"
       dir="rtl"
     >
-      {/* Background Stacked Full-Width Marquee Banners 100% Matching Reference */}
-      <div className="absolute inset-0 flex flex-col justify-center gap-0 pointer-events-none z-10 scale-105">
+      {/* Background Stacked Marquee Banners */}
+      <div className="absolute inset-0 flex flex-col justify-center gap-0 scale-105">
         
-        {/* Row 1: Left Scroll - Black Background / White Text */}
-        <div className="marquee-container w-full py-4 bg-[#050505]">
+        {/* Row 1: Slides Left on Finish */}
+        <div 
+          className={`marquee-container w-full py-4 bg-[#050505] transition-transform duration-700 ease-[cubic-bezier(0.77,0,0.175,1)] ${
+            isOpening ? '-translate-x-full' : 'translate-x-0'
+          }`}
+        >
           <div className="marquee-track marquee-track-left">
             {[...row1, ...row1, ...row1, ...row1, ...row1].map((item, idx) => (
               <div key={`splash-r1-${idx}`} className="flex items-center flex-shrink-0">
@@ -126,8 +117,12 @@ export default function SplashScreen({ onComplete }: { onComplete: () => void })
           </div>
         </div>
 
-        {/* Row 2: Right Scroll - FULL WIDTH SOLID CYAN/MINT BANNER / Black Text */}
-        <div className="marquee-container w-full py-5 bg-[#26EFFD] shadow-lg">
+        {/* Row 2: FULL WIDTH CYAN BANNER - Slides Right on Finish */}
+        <div 
+          className={`marquee-container w-full py-5 bg-[#26EFFD] shadow-lg transition-transform duration-700 ease-[cubic-bezier(0.77,0,0.175,1)] ${
+            isOpening ? 'translate-x-full' : 'translate-x-0'
+          }`}
+        >
           <div className="marquee-track marquee-track-right">
             {[...row2, ...row2, ...row2, ...row2, ...row2].map((item, idx) => (
               <div key={`splash-r2-${idx}`} className="flex items-center flex-shrink-0">
@@ -143,8 +138,12 @@ export default function SplashScreen({ onComplete }: { onComplete: () => void })
           </div>
         </div>
 
-        {/* Row 3: Left Scroll - Black Background / White Text */}
-        <div className="marquee-container w-full py-4 bg-[#050505]">
+        {/* Row 3: Slides Left on Finish */}
+        <div 
+          className={`marquee-container w-full py-4 bg-[#050505] transition-transform duration-700 ease-[cubic-bezier(0.77,0,0.175,1)] ${
+            isOpening ? '-translate-x-full' : 'translate-x-0'
+          }`}
+        >
           <div className="marquee-track marquee-track-left">
             {[...row3, ...row3, ...row3, ...row3, ...row3].map((item, idx) => (
               <div key={`splash-r3-${idx}`} className="flex items-center flex-shrink-0">
@@ -160,8 +159,12 @@ export default function SplashScreen({ onComplete }: { onComplete: () => void })
           </div>
         </div>
 
-        {/* Row 4: Right Scroll - FULL WIDTH SOLID CYAN/MINT BANNER / Black Text */}
-        <div className="marquee-container w-full py-5 bg-[#26EFFD] shadow-lg">
+        {/* Row 4: FULL WIDTH CYAN BANNER - Slides Right on Finish */}
+        <div 
+          className={`marquee-container w-full py-5 bg-[#26EFFD] shadow-lg transition-transform duration-700 ease-[cubic-bezier(0.77,0,0.175,1)] ${
+            isOpening ? 'translate-x-full' : 'translate-x-0'
+          }`}
+        >
           <div className="marquee-track marquee-track-right">
             {[...row1, ...row1, ...row1, ...row1, ...row1].map((item, idx) => (
               <div key={`splash-r4-${idx}`} className="flex items-center flex-shrink-0">
@@ -177,8 +180,12 @@ export default function SplashScreen({ onComplete }: { onComplete: () => void })
           </div>
         </div>
 
-        {/* Row 5: Left Scroll - Black Background / White Text */}
-        <div className="marquee-container w-full py-4 bg-[#050505]">
+        {/* Row 5: Slides Left on Finish */}
+        <div 
+          className={`marquee-container w-full py-4 bg-[#050505] transition-transform duration-700 ease-[cubic-bezier(0.77,0,0.175,1)] ${
+            isOpening ? '-translate-x-full' : 'translate-x-0'
+          }`}
+        >
           <div className="marquee-track marquee-track-left">
             {[...row2, ...row2, ...row2, ...row2, ...row2].map((item, idx) => (
               <div key={`splash-r5-${idx}`} className="flex items-center flex-shrink-0">
@@ -195,74 +202,6 @@ export default function SplashScreen({ onComplete }: { onComplete: () => void })
         </div>
 
       </div>
-
-      {/* Center Floating Glass Card with Logo & Progress Bar */}
-      <div className="relative z-30 flex flex-col items-center justify-center gap-6 px-10 py-8 rounded-3xl bg-[#082127]/95 backdrop-blur-2xl border-2 border-[#26EFFD]/40 shadow-[0_0_80px_rgba(38,239,253,0.35)]">
-        <div className="relative flex items-center justify-center">
-          <img
-            src="/Mo3taz..svg"
-            alt="MO3TAZ."
-            style={{
-              height: '56px',
-              filter:
-                'brightness(0) saturate(100%) invert(75%) sepia(60%) saturate(500%) hue-rotate(145deg) brightness(1.1)',
-              animation: 'splashLogoGlow 2s ease-in-out infinite',
-            }}
-            onError={(e) => {
-              (e.target as HTMLImageElement).style.display = 'none';
-              const fallback = (e.target as HTMLImageElement).nextElementSibling as HTMLElement;
-              if (fallback) fallback.style.display = 'flex';
-            }}
-          />
-          <span
-            className="font-black text-4xl tracking-tight"
-            style={{
-              display: 'none',
-              fontFamily: "'Milan Display', 'Outfit', sans-serif",
-              color: '#26EFFD',
-              textShadow: '0 0 30px rgba(38,239,253,0.6)',
-            }}
-          >
-            MO3TAZ.
-          </span>
-        </div>
-
-        {/* Progress Bar Container */}
-        <div className="flex flex-col items-center gap-2 w-full">
-          <div
-            style={{
-              width: '240px',
-              height: '5px',
-              background: 'rgba(255,255,255,0.1)',
-              borderRadius: '10px',
-              overflow: 'hidden',
-              position: 'relative',
-            }}
-          >
-            <div
-              style={{
-                width: `${progress}%`,
-                height: '100%',
-                borderRadius: '10px',
-                background: 'linear-gradient(90deg, #26EFFD, #00E5FF)',
-                boxShadow: '0 0 16px rgba(38,239,253,1)',
-                transition: 'width 0.1s linear',
-              }}
-            />
-          </div>
-          <span className="text-xs font-mono text-[#26EFFD] tracking-widest font-black">
-            {progress}%
-          </span>
-        </div>
-      </div>
-
-      {/* Inline Keyframes */}
-      <style>{`
-        @keyframes splashLogoGlow {
-          0%, 100% { filter: brightness(0) saturate(100%) invert(75%) sepia(60%) saturate(500%) hue-rotate(145deg) brightness(1.1) drop-shadow(0 0 10px rgba(38,239,253,0.4)); }
-          50% { filter: brightness(0) saturate(100%) invert(75%) sepia(60%) saturate(500%) hue-rotate(145deg) brightness(1.35) drop-shadow(0 0 26px rgba(38,239,253,0.85)); }
-        }
-      `}</style>
     </div>
   );
 }

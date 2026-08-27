@@ -1,29 +1,47 @@
 import { useState, useEffect, useCallback } from 'react';
 import { useSettingsStore } from '../store';
 
-const StarDivider = ({ color = "#26EFFD" }: { color?: string }) => (
-  <svg width="18" height="18" viewBox="0 0 24 24" fill={color} className="mx-4 flex-shrink-0">
-    <path d="M12 0L14.59 9.41L24 12L14.59 14.59L12 24L9.41 14.59L0 12L9.41 9.41L12 0Z" />
+const Star4Icon = ({ fill = '#b0b0b0' }: { fill?: string }) => (
+  <svg width="20" height="20" viewBox="0 0 24 24" fill={fill} className="mx-6 flex-shrink-0 inline-block align-middle">
+    <path d="M12 0C12 7 7 12 0 12C7 12 12 17 12 24C12 17 17 12 24 12C17 12 12 7 12 0Z" />
   </svg>
 );
 
-const defaultRow1Tags = [
-  { text: 'تصميم الهوية' },
-  { text: 'تصميم الشعارات' },
-  { text: 'براندنج' },
-  { text: 'تصاميم سوشيال ميديا' },
-  { text: 'تصميم الشعارات' },
-  { text: 'براندنج' },
-  { text: 'تصاميم سوشيال ميديا' },
+const FlowerIcon = ({ fill = '#b0b0b0' }: { fill?: string }) => (
+  <svg width="22" height="22" viewBox="0 0 24 24" fill="none" stroke={fill} strokeWidth="2.5" strokeLinecap="round" strokeLinejoin="round" className="mx-6 flex-shrink-0 inline-block align-middle">
+    <circle cx="12" cy="12" r="2.5" fill={fill} />
+    <path d="M12 2v4M12 18v4M2 12h4M18 12h4M4.93 4.93l2.83 2.83M16.24 16.24l2.83 2.83M4.93 19.07l2.83-2.83M16.24 7.76l2.83-2.83" />
+  </svg>
+);
+
+const SunburstIcon = ({ fill = '#b0b0b0' }: { fill?: string }) => (
+  <svg width="22" height="22" viewBox="0 0 24 24" fill={fill} className="mx-6 flex-shrink-0 inline-block align-middle">
+    <path d="M12 0L14.3 4.8L19.3 2.7L18.1 8L23.4 9.2L19.7 13.1L23.4 17L18.1 18.2L19.3 23.5L14.3 21.4L12 26L9.7 21.4L4.7 23.5L5.9 18.2L0.6 17L4.3 13.1L0.6 9.2L5.9 8L4.7 2.7L9.7 4.8L12 0Z" />
+  </svg>
+);
+
+const defaultRow1Items = [
+  { text: 'النمو', icon: 'star' },
+  { text: 'إعلانات ميتا', icon: 'sunburst' },
+  { text: 'إعلانات جوجل', icon: 'flower' },
+  { text: 'براندنج', icon: 'star' },
+  { text: 'تصميم الهوية', icon: 'flower' },
 ];
 
-const defaultRow2Tags = [
-  { text: 'المطبوعات' },
-  { text: 'براندنج' },
-  { text: 'واجهات المستخدم' },
-  { text: 'تصميم التغليف' },
-  { text: 'إنفوجرافيك' },
-  { text: 'تصميم العروض التقديمية' },
+const defaultRow2Items = [
+  { text: 'تطبيقات الجوال', icon: 'flower' },
+  { text: 'تطوير الواجهات', icon: 'star' },
+  { text: 'البرمجة', icon: 'sunburst' },
+  { text: 'واجهات المستخدم', icon: 'flower' },
+  { text: 'تصميم الشعارات', icon: 'star' },
+];
+
+const defaultRow3Items = [
+  { text: 'تصميم المنتجات', icon: 'sunburst' },
+  { text: 'الاستراتيجية', icon: 'star' },
+  { text: 'تصاميم سوشيال ميديا', icon: 'flower' },
+  { text: 'المطبوعات', icon: 'star' },
+  { text: 'تصميم التغليف', icon: 'sunburst' },
 ];
 
 export default function SplashScreen({ onComplete }: { onComplete: () => void }) {
@@ -33,21 +51,28 @@ export default function SplashScreen({ onComplete }: { onComplete: () => void })
 
   const parseTags = (tags: any, fallback: any) => {
     if (Array.isArray(tags) && tags.length > 0) {
-      return tags.map((t) => (typeof t === 'string' ? { text: t } : t));
+      return tags.map((t, idx) => (typeof t === 'string' ? { text: t, icon: idx % 3 === 0 ? 'star' : idx % 3 === 1 ? 'flower' : 'sunburst' } : t));
     }
     if (typeof tags === 'string') {
       try {
         const parsed = JSON.parse(tags);
         if (Array.isArray(parsed) && parsed.length > 0) {
-          return parsed.map((t: any) => (typeof t === 'string' ? { text: t } : t));
+          return parsed.map((t: any, idx: number) => (typeof t === 'string' ? { text: t, icon: idx % 3 === 0 ? 'star' : idx % 3 === 1 ? 'flower' : 'sunburst' } : t));
         }
       } catch {}
     }
     return fallback;
   };
 
-  const row1Tags = parseTags(settings?.marquee_row1, defaultRow1Tags);
-  const row2Tags = parseTags(settings?.marquee_row2, defaultRow2Tags);
+  const row1 = parseTags(settings?.marquee_row1, defaultRow1Items);
+  const row2 = parseTags(settings?.marquee_row2, defaultRow2Items);
+  const row3 = defaultRow3Items;
+
+  const renderIcon = (type: string, fill: string) => {
+    if (type === 'flower') return <FlowerIcon fill={fill} />;
+    if (type === 'sunburst') return <SunburstIcon fill={fill} />;
+    return <Star4Icon fill={fill} />;
+  };
 
   const finishLoading = useCallback(() => {
     setProgress(100);
@@ -57,7 +82,7 @@ export default function SplashScreen({ onComplete }: { onComplete: () => void })
 
   useEffect(() => {
     const startTime = Date.now();
-    const minDuration = 2200; // Minimum 2.2 seconds display time
+    const minDuration = 2200; // 2.2s visible display time
 
     const interval = setInterval(() => {
       const elapsed = Date.now() - startTime;
@@ -78,111 +103,97 @@ export default function SplashScreen({ onComplete }: { onComplete: () => void })
       className={`fixed inset-0 z-[9999] flex flex-col justify-center items-center overflow-hidden transition-opacity duration-600 ${
         fadeOut ? 'opacity-0 pointer-events-none' : 'opacity-100'
       }`}
-      style={{ background: '#082127' }}
+      style={{ background: '#050505' }}
       dir="rtl"
     >
-      {/* Background glowing ambience */}
-      <div
-        className="absolute pointer-events-none z-0"
-        style={{
-          width: '800px',
-          height: '800px',
-          top: '50%',
-          left: '50%',
-          transform: 'translate(-50%, -50%)',
-          background: 'radial-gradient(ellipse, rgba(38,239,253,0.18) 0%, rgba(8,33,39,0) 70%)',
-        }}
-      />
-
-      {/* Stacked Full-Width Marquee Rows Matching Reference Image */}
-      <div className="absolute inset-0 flex flex-col justify-center gap-3 py-6 pointer-events-none z-10 opacity-90 scale-105">
-        {/* Row 1: Left Scroll - Dark Teal */}
-        <div className="marquee-container w-full py-0">
+      {/* Background Stacked Full-Width Marquee Banners 100% Matching Reference */}
+      <div className="absolute inset-0 flex flex-col justify-center gap-0 pointer-events-none z-10 scale-105">
+        
+        {/* Row 1: Left Scroll - Black Background / White Text */}
+        <div className="marquee-container w-full py-4 bg-[#050505]">
           <div className="marquee-track marquee-track-left">
-            {[...row1Tags, ...row1Tags, ...row1Tags, ...row1Tags, ...row1Tags].map((tag, idx) => (
-              <div key={`s1-${idx}`} className="flex items-center flex-shrink-0">
-                <div
-                  className="px-8 py-3.5 rounded-xl text-lg md:text-xl font-black select-none flex-shrink-0 shadow-sm"
-                  style={{
-                    background: '#0a3740',
-                    color: '#26EFFD',
-                    border: '1px solid rgba(38,239,253,0.3)',
-                    fontFamily: "'Sahara Bold', 'Inter', sans-serif",
-                  }}
+            {[...row1, ...row1, ...row1, ...row1, ...row1].map((item, idx) => (
+              <div key={`splash-r1-${idx}`} className="flex items-center flex-shrink-0">
+                <span
+                  className="text-2xl md:text-4xl font-black text-white select-none tracking-wide"
+                  style={{ fontFamily: "'Sahara Bold', 'Inter', sans-serif" }}
                 >
-                  {tag.text}
-                </div>
-                <StarDivider color="#26EFFD" />
+                  {item.text}
+                </span>
+                {renderIcon(item.icon, '#a0a0a0')}
               </div>
             ))}
           </div>
         </div>
 
-        {/* Row 2: Right Scroll - Solid Cyan (#26EFFD) */}
-        <div className="marquee-container w-full py-0">
+        {/* Row 2: Right Scroll - FULL WIDTH SOLID CYAN/MINT BANNER / Black Text */}
+        <div className="marquee-container w-full py-5 bg-[#26EFFD] shadow-lg">
           <div className="marquee-track marquee-track-right">
-            {[...row2Tags, ...row2Tags, ...row2Tags, ...row2Tags, ...row2Tags].map((tag, idx) => (
-              <div key={`s2-${idx}`} className="flex items-center flex-shrink-0">
-                <div
-                  className="px-8 py-3.5 rounded-xl text-lg md:text-xl font-black select-none flex-shrink-0 shadow-md"
-                  style={{
-                    background: '#26EFFD',
-                    color: '#082127',
-                    border: 'none',
-                    fontFamily: "'Sahara Bold', 'Inter', sans-serif",
-                  }}
+            {[...row2, ...row2, ...row2, ...row2, ...row2].map((item, idx) => (
+              <div key={`splash-r2-${idx}`} className="flex items-center flex-shrink-0">
+                <span
+                  className="text-2xl md:text-4xl font-black text-black select-none tracking-wide"
+                  style={{ fontFamily: "'Sahara Bold', 'Inter', sans-serif" }}
                 >
-                  {tag.text}
-                </div>
-                <StarDivider color="#26EFFD" />
+                  {item.text}
+                </span>
+                {renderIcon(item.icon, '#000000')}
               </div>
             ))}
           </div>
         </div>
 
-        {/* Row 3: Left Scroll - Dark Teal */}
-        <div className="marquee-container w-full py-0">
+        {/* Row 3: Left Scroll - Black Background / White Text */}
+        <div className="marquee-container w-full py-4 bg-[#050505]">
           <div className="marquee-track marquee-track-left">
-            {[...row1Tags, ...row1Tags, ...row1Tags, ...row1Tags, ...row1Tags].map((tag, idx) => (
-              <div key={`s3-${idx}`} className="flex items-center flex-shrink-0">
-                <div
-                  className="px-8 py-3.5 rounded-xl text-lg md:text-xl font-black select-none flex-shrink-0 shadow-sm"
-                  style={{
-                    background: '#0a3740',
-                    color: '#26EFFD',
-                    border: '1px solid rgba(38,239,253,0.3)',
-                    fontFamily: "'Sahara Bold', 'Inter', sans-serif",
-                  }}
+            {[...row3, ...row3, ...row3, ...row3, ...row3].map((item, idx) => (
+              <div key={`splash-r3-${idx}`} className="flex items-center flex-shrink-0">
+                <span
+                  className="text-2xl md:text-4xl font-black text-white select-none tracking-wide"
+                  style={{ fontFamily: "'Sahara Bold', 'Inter', sans-serif" }}
                 >
-                  {tag.text}
-                </div>
-                <StarDivider color="#26EFFD" />
+                  {item.text}
+                </span>
+                {renderIcon(item.icon, '#a0a0a0')}
               </div>
             ))}
           </div>
         </div>
 
-        {/* Row 4: Right Scroll - Solid Cyan (#26EFFD) */}
-        <div className="marquee-container w-full py-0">
+        {/* Row 4: Right Scroll - FULL WIDTH SOLID CYAN/MINT BANNER / Black Text */}
+        <div className="marquee-container w-full py-5 bg-[#26EFFD] shadow-lg">
           <div className="marquee-track marquee-track-right">
-            {[...row2Tags, ...row2Tags, ...row2Tags, ...row2Tags, ...row2Tags].map((tag, idx) => (
-              <div key={`s4-${idx}`} className="flex items-center flex-shrink-0">
-                <div
-                  className="px-8 py-3.5 rounded-xl text-lg md:text-xl font-black select-none flex-shrink-0 shadow-md"
-                  style={{
-                    background: '#26EFFD',
-                    color: '#082127',
-                    border: 'none',
-                    fontFamily: "'Sahara Bold', 'Inter', sans-serif",
-                  }}
+            {[...row1, ...row1, ...row1, ...row1, ...row1].map((item, idx) => (
+              <div key={`splash-r4-${idx}`} className="flex items-center flex-shrink-0">
+                <span
+                  className="text-2xl md:text-4xl font-black text-black select-none tracking-wide"
+                  style={{ fontFamily: "'Sahara Bold', 'Inter', sans-serif" }}
                 >
-                  {tag.text}
-                </div>
-                <StarDivider color="#26EFFD" />
+                  {item.text}
+                </span>
+                {renderIcon(item.icon, '#000000')}
               </div>
             ))}
           </div>
         </div>
+
+        {/* Row 5: Left Scroll - Black Background / White Text */}
+        <div className="marquee-container w-full py-4 bg-[#050505]">
+          <div className="marquee-track marquee-track-left">
+            {[...row2, ...row2, ...row2, ...row2, ...row2].map((item, idx) => (
+              <div key={`splash-r5-${idx}`} className="flex items-center flex-shrink-0">
+                <span
+                  className="text-2xl md:text-4xl font-black text-white select-none tracking-wide"
+                  style={{ fontFamily: "'Sahara Bold', 'Inter', sans-serif" }}
+                >
+                  {item.text}
+                </span>
+                {renderIcon(item.icon, '#a0a0a0')}
+              </div>
+            ))}
+          </div>
+        </div>
+
       </div>
 
       {/* Center Floating Glass Card with Logo & Progress Bar */}

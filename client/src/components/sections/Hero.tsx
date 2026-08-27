@@ -4,8 +4,8 @@ import { useQuery } from '@tanstack/react-query';
 import { useSettingsStore } from '../../store';
 import { clientLogosAPI } from '../../lib/api';
 
-const StarDivider = () => (
-  <svg width="14" height="14" viewBox="0 0 24 24" fill="#26EFFD" className="mx-3.5 flex-shrink-0 opacity-80">
+const StarDivider = ({ fill = "#26EFFD" }: { fill?: string }) => (
+  <svg width="18" height="18" viewBox="0 0 24 24" fill={fill} className="mx-5 flex-shrink-0">
     <path d="M12 0L14.59 9.41L24 12L14.59 14.59L12 24L9.41 14.59L0 12L9.41 9.41L12 0Z" />
   </svg>
 );
@@ -235,50 +235,42 @@ const Hero = memo(function Hero() {
         )}
       </div>
 
-      {/* Infinite Marquee Service Carousel - Pushed below the fold */}
+      {/* Infinite Marquee Service Carousel - Matching Reference 100% */}
       {row1Tags.length > 0 && (
-        <div className="marquee-container mt-12 mb-16 w-full z-30">
-          {/* Row 1: Left scrolling */}
-          <div className="marquee-track marquee-track-left">
-            {[...row1Tags, ...row1Tags, ...row1Tags, ...row1Tags].map((tag, idx) => (
-              <div key={`r1-${idx}`} className="flex items-center flex-shrink-0">
-                <div
-                  className="px-6 py-2.5 rounded-xl text-sm md:text-base font-bold select-none flex-shrink-0"
-                  style={{
-                    background: tag.variant === 'solid' ? '#26EFFD' : '#0c3b47',
-                    color: tag.variant === 'solid' ? '#082127' : '#26EFFD',
-                    border: tag.variant === 'solid' ? 'none' : '1px solid rgba(38,239,253,0.35)',
-                    fontFamily: "'Sahara Bold', 'Inter', sans-serif",
-                    fontSize: '15px',
-                  }}
-                >
-                  {tag.text}
-                </div>
-                <StarDivider />
-              </div>
-            ))}
-          </div>
-
-          {/* Row 2: Right scrolling */}
-          {row2Tags.length > 0 && (
-            <div className="marquee-track marquee-track-right mt-3">
-              {[...row2Tags, ...row2Tags, ...row2Tags, ...row2Tags].map((tag, idx) => (
-                <div key={`r2-${idx}`} className="flex items-center flex-shrink-0">
-                  <div
-                    className="px-6 py-2.5 rounded-xl text-sm md:text-base font-bold select-none flex-shrink-0"
-                    style={{
-                      background: tag.variant === 'solid' ? '#26EFFD' : '#0c3b47',
-                      color: tag.variant === 'solid' ? '#082127' : '#26EFFD',
-                      border: tag.variant === 'solid' ? 'none' : '1px solid rgba(38,239,253,0.35)',
-                      fontFamily: "'Sahara Bold', 'Inter', sans-serif",
-                      fontSize: '15px',
-                    }}
+        <div className="w-full mt-12 mb-16 z-30 flex flex-col gap-0 overflow-hidden">
+          {/* Row 1: Left scrolling - Dark Background / White Text */}
+          <div className="marquee-container w-full py-4 bg-[#050505]">
+            <div className="marquee-track marquee-track-left">
+              {[...row1Tags, ...row1Tags, ...row1Tags, ...row1Tags, ...row1Tags].map((tag, idx) => (
+                <div key={`r1-${idx}`} className="flex items-center flex-shrink-0">
+                  <span
+                    className="text-2xl md:text-3xl font-black text-white select-none tracking-wide"
+                    style={{ fontFamily: "'Sahara Bold', 'Inter', sans-serif" }}
                   >
                     {tag.text}
-                  </div>
+                  </span>
                   <StarDivider />
                 </div>
               ))}
+            </div>
+          </div>
+
+          {/* Row 2: Right scrolling - FULL WIDTH SOLID CYAN/MINT BANNER / Black Text */}
+          {row2Tags.length > 0 && (
+            <div className="marquee-container w-full py-4 bg-[#26EFFD] shadow-md">
+              <div className="marquee-track marquee-track-right">
+                {[...row2Tags, ...row2Tags, ...row2Tags, ...row2Tags, ...row2Tags].map((tag, idx) => (
+                  <div key={`r2-${idx}`} className="flex items-center flex-shrink-0">
+                    <span
+                      className="text-2xl md:text-3xl font-black text-black select-none tracking-wide"
+                      style={{ fontFamily: "'Sahara Bold', 'Inter', sans-serif" }}
+                    >
+                      {tag.text}
+                    </span>
+                    <StarDivider fill="#000000" />
+                  </div>
+                ))}
+              </div>
             </div>
           )}
         </div>

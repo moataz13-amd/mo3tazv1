@@ -90,7 +90,7 @@ export default function SplashScreen({ onComplete }: { onComplete: () => void })
 
   return (
     <div
-      className="fixed inset-0 w-screen h-screen h-[100dvh] z-[9999] bg-[#050505] flex flex-col justify-center items-center overflow-hidden pointer-events-none"
+      className="fixed inset-0 w-screen h-screen h-[100dvh] z-[9999] bg-transparent flex flex-col justify-center items-center overflow-hidden pointer-events-none"
       dir="rtl"
     >
       {/* Background Stacked Marquee Banners (Large Height, Centered Text, No Gaps) */}

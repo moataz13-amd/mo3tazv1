@@ -1,7 +1,9 @@
 import { lazy, Suspense, useEffect, useState } from 'react';
 import { Routes, Route, Navigate } from 'react-router-dom';
-import { useAuthStore } from './store';
-import { analyticsAPI } from './lib/api';
+import { useQuery } from '@tanstack/react-query';
+import { useAuthStore, useSettingsStore } from './store';
+import { analyticsAPI, settingsAPI } from './lib/api';
+import type { SiteSettings } from './types';
 import Portfolio from './pages/Portfolio';
 import SplashScreen from './components/SplashScreen';
 
@@ -64,6 +66,24 @@ const ProtectedRoute = ({ children }: { children: React.ReactNode }) => {
 
 export default function App() {
   const [showSplash, setShowSplash] = useState(true);
+  const setSettings = useSettingsStore((state) => state.setSettings);
+
+  const { data: settings, isSuccess, isError } = useQuery({
+    queryKey: ['settings'],
+    queryFn: () => settingsAPI.get().then((r) => r.data as SiteSettings),
+    retry: 1,
+  });
+
+  useEffect(() => {
+    if (settings) {
+      setSettings(settings);
+      document.title = settings.seo_title || `${settings.name} | ${settings.title}`;
+      const metaDesc = document.querySelector('meta[name="description"]');
+      if (metaDesc) {
+        metaDesc.setAttribute('content', settings.seo_description || '');
+      }
+    }
+  }, [settings, setSettings]);
 
   const handleSplashComplete = () => {
     setShowSplash(false);
@@ -84,6 +104,12 @@ export default function App() {
     const id = setInterval(warm, 5 * 60_000);
     return () => clearInterval(id);
   }, []);
+
+  const isReady = isSuccess || isError;
+
+  if (!isReady) {
+    return <LoadingScreen />;
+  }
 
   return (
     <>

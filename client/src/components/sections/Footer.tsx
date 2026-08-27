@@ -139,16 +139,16 @@ const Footer = memo(function Footer() {
           </div>
 
           {/* Dashed Separator Line with Semi-Circle Ticket Punch-Hole Cutouts */}
-          <div className="w-full relative flex items-center justify-center my-6">
-            {/* Left Notch Punch Hole */}
+          <div className="w-[calc(100%+3rem)] sm:w-[calc(100%+5rem)] md:w-[calc(100%+6rem)] -mx-6 sm:-mx-10 md:-mx-12 relative flex items-center justify-center my-6">
+            {/* Left Notch Punch Hole - Centered on left edge */}
             <div 
-              className="absolute -left-6 sm:-left-10 md:-left-12 w-8 h-8 sm:w-10 sm:h-10 rounded-full bg-[#082127] border-2 border-black z-20"
+              className="absolute left-0 -translate-x-1/2 w-7 h-7 sm:w-9 sm:h-9 rounded-full bg-[#082127] border-2 border-black z-20"
             />
             {/* Dashed Horizontal Line */}
             <div className="w-full border-t-2 border-dashed border-black/40" />
-            {/* Right Notch Punch Hole */}
+            {/* Right Notch Punch Hole - Centered on right edge */}
             <div 
-              className="absolute -right-6 sm:-right-10 md:-right-12 w-8 h-8 sm:w-10 sm:h-10 rounded-full bg-[#082127] border-2 border-black z-20"
+              className="absolute right-0 translate-x-1/2 w-7 h-7 sm:w-9 sm:h-9 rounded-full bg-[#082127] border-2 border-black z-20"
             />
           </div>
 

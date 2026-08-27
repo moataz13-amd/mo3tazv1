@@ -104,7 +104,7 @@ const Hero = memo(function Hero() {
     <section
       id="home"
       ref={heroRef}
-      className="relative min-h-[92vh] overflow-hidden bg-[#082127]"
+      className="relative min-h-[92vh] overflow-hidden bg-transparent"
       dir="rtl"
     >
       {/* ===== STRONG ANIMATED WAVE GRADIENT FROM TOP ===== */}
@@ -176,7 +176,7 @@ const Hero = memo(function Hero() {
         <div
           className="absolute inset-0"
           style={{
-            background: 'linear-gradient(to bottom, transparent 0%, transparent 40%, rgba(8,33,39,0.5) 70%, #082127 100%)',
+            background: 'linear-gradient(to bottom, transparent 0%, transparent 40%, rgba(8,33,39,0.2) 70%, transparent 100%)',
           }}
         />
       </div>

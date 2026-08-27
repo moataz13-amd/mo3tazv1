@@ -19,7 +19,7 @@ type FormData = z.infer<typeof schema>;
 
 const Contact = memo(function Contact() {
   const ref = useRef(null);
-  const isInView = useInView(ref, { once: true, margin: '-40px' });
+  const isInView = useInView(ref, { once: true, margin: '100px' });
   const settings = useSettingsStore((state) => state.settings);
   
   const [isSubmitSuccess, setIsSubmitSuccess] = useState(false);
@@ -88,7 +88,7 @@ const Contact = memo(function Contact() {
         ref={ref}
         initial={{ opacity: 0, y: 40 }}
         animate={isInView ? { opacity: 1, y: 0 } : {}}
-        transition={{ duration: 0.8, ease: [0.22, 1, 0.36, 1] }}
+        transition={{ duration: 0.35, ease: [0.22, 1, 0.36, 1] }}
         className="max-w-4xl mx-auto"
       >
         {/* Header */}

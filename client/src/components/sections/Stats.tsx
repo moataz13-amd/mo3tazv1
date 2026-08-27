@@ -36,7 +36,7 @@ const StatCard = memo(function StatCard({
       initial={{ opacity: 0, y: 40 }}
       whileInView={{ opacity: 1, y: 0 }}
       viewport={{ once: true }}
-      transition={{ duration: 0.6, delay: index * 0.15 }}
+      transition={{ duration: 0.3, delay: index * 0.05 }}
       className="w-full flex items-center justify-center group"
     >
       <div
@@ -169,7 +169,7 @@ const Stats = memo(function Stats() {
           initial={{ opacity: 0, y: 20 }}
           whileInView={{ opacity: 1, y: 0 }}
           viewport={{ once: true }}
-          transition={{ duration: 0.6 }}
+          transition={{ duration: 0.3 }}
           className="text-center"
         >
           <h2

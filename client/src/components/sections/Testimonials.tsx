@@ -58,7 +58,7 @@ const defaultTestimonials: Testimonial[] = [
 
 const Testimonials = memo(function Testimonials() {
   const ref = useRef(null);
-  const isInView = useInView(ref, { once: true });
+  const isInView = useInView(ref, { once: true, margin: '100px' });
   const [current, setCurrent] = useState(0);
   const [direction, setDirection] = useState(0);
 
@@ -98,7 +98,7 @@ const Testimonials = memo(function Testimonials() {
         ref={ref}
         initial={{ opacity: 0, y: 40 }}
         animate={isInView ? { opacity: 1, y: 0 } : {}}
-        transition={{ duration: 0.7 }}
+        transition={{ duration: 0.35 }}
         className="max-w-4xl mx-auto"
       >
         {/* Header */}

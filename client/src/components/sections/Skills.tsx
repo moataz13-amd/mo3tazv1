@@ -41,7 +41,7 @@ const processSteps: StepItem[] = [
 
 const Skills = memo(function Skills() {
   const ref = useRef(null);
-  const isInView = useInView(ref, { once: true, margin: '-40px' });
+  const isInView = useInView(ref, { once: true, margin: '100px' });
 
   return (
     <section id="skills" className="py-12 md:py-20 px-6 relative overflow-hidden" dir="rtl">
@@ -52,7 +52,7 @@ const Skills = memo(function Skills() {
         ref={ref}
         initial={{ opacity: 0, y: 30 }}
         animate={isInView ? { opacity: 1, y: 0 } : {}}
-        transition={{ duration: 0.7 }}
+        transition={{ duration: 0.35 }}
         className="max-w-5xl mx-auto relative"
       >
         {/* Section Header */}
@@ -94,7 +94,7 @@ const Skills = memo(function Skills() {
               key={item.id}
               initial={{ opacity: 0, y: 30 }}
               animate={isInView ? { opacity: 1, y: 0 } : {}}
-              transition={{ delay: i * 0.12, duration: 0.6 }}
+              transition={{ delay: i * 0.05, duration: 0.3 }}
               className="flex items-start gap-4 md:gap-8 relative py-8 md:py-12 border-b border-[#0c5a6b]/20 last:border-0 group"
             >
               {/* Right Column (Large Gradient Number) */}

@@ -118,7 +118,7 @@ const Carousel3DSection = memo(function Carousel3DSection({
 }: Carousel3DSectionProps) {
   const navigate = useNavigate();
   const ref = useRef(null);
-  const isInView = useInView(ref, { once: false, margin: '-20px' });
+  const isInView = useInView(ref, { once: false, margin: '100px' });
   const isSmallScreen = useIsMobile();
 
   const [currentIndex, setCurrentIndex] = useState(0);
@@ -232,7 +232,7 @@ const Carousel3DSection = memo(function Carousel3DSection({
         ref={ref}
         initial={{ opacity: 0, y: 30 }}
         animate={isInView ? { opacity: 1, y: 0 } : {}}
-        transition={{ duration: 0.6, ease: 'easeOut' }}
+        transition={{ duration: 0.3, ease: 'easeOut' }}
         className="max-w-7xl mx-auto flex flex-col gap-8 md:gap-10"
       >
         {/* Header */}

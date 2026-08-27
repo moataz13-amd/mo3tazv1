@@ -41,7 +41,7 @@ const defaultServices: Service[] = [
 
 const Services = memo(function Services() {
   const ref = useRef(null);
-  const isInView = useInView(ref, { once: true, margin: '-40px' });
+  const isInView = useInView(ref, { once: true, margin: '100px' });
 
   const { data: services } = useQuery({
     queryKey: ['services'],
@@ -58,7 +58,7 @@ const Services = memo(function Services() {
         ref={ref}
         initial={{ opacity: 0, y: 30 }}
         animate={isInView ? { opacity: 1, y: 0 } : {}}
-        transition={{ duration: 0.7 }}
+        transition={{ duration: 0.35 }}
         className="max-w-5xl mx-auto flex flex-col gap-12"
       >
         {/* Services Cards Stack */}
@@ -79,7 +79,7 @@ const Services = memo(function Services() {
                 <motion.div
                   initial={{ opacity: 0, y: 40 }}
                   animate={isInView ? { opacity: 1, y: 0 } : {}}
-                  transition={{ delay: i * 0.15, duration: 0.6 }}
+                  transition={{ delay: i * 0.05, duration: 0.3 }}
                   className="relative overflow-hidden rounded-[40px] md:rounded-[50px] p-10 md:py-8 md:px-14 flex flex-col md:flex-row items-center justify-between gap-6 md:gap-10 min-h-[340px] md:h-[440px] transition-all duration-300 hover:scale-[1.01]"
                   style={{
                     background: isOdd ? '#26EFFD' : '#FFFFFF',

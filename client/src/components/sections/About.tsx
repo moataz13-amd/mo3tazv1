@@ -5,7 +5,7 @@ import { useSettingsStore } from '../../store';
 
 const About = memo(function About() {
   const ref = useRef(null);
-  const isInView = useInView(ref, { once: true, margin: '-80px' });
+  const isInView = useInView(ref, { once: true, margin: '100px' });
   const settings = useSettingsStore((state) => state.settings);
 
   const name = settings?.name || "معتز جمعة";
@@ -38,7 +38,7 @@ const About = memo(function About() {
         <motion.div
           initial={{ opacity: 0, y: 20 }}
           animate={isInView ? { opacity: 1, y: 0 } : {}}
-          transition={{ duration: 0.8, ease: [0.22, 1, 0.36, 1] }}
+          transition={{ duration: 0.35, ease: [0.22, 1, 0.36, 1] }}
           className="text-center mb-16"
         >
           <div
@@ -83,7 +83,7 @@ const About = memo(function About() {
         <motion.div
           initial={{ opacity: 0, y: 40 }}
           animate={isInView ? { opacity: 1, y: 0 } : {}}
-          transition={{ duration: 0.8, delay: 0.2, ease: [0.22, 1, 0.36, 1] }}
+          transition={{ duration: 0.35, ease: [0.22, 1, 0.36, 1] }}
           className="relative w-full p-6 md:p-12 overflow-visible flex flex-col items-center"
         >
           {/* Location Pin - Top Right */}
@@ -196,7 +196,7 @@ const About = memo(function About() {
           initial={{ opacity: 0, y: 20 }}
           whileInView={{ opacity: 1, y: 0 }}
           viewport={{ once: true }}
-          transition={{ duration: 0.8, delay: 0.1 }}
+          transition={{ duration: 0.35 }}
           className="flex items-center justify-center mt-16 md:mt-24 mb-10 pb-2"
         >
           {/* Text "أثر دائم" with shine beam */}

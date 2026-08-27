@@ -84,7 +84,7 @@ const Spark8Icon = () => (
 
 function TimelineItem({ item, index }: { item: typeof defaultTimelineData[0]; index: number }) {
   const ref = useRef(null);
-  const isInView = useInView(ref, { once: true, margin: '-80px' });
+  const isInView = useInView(ref, { once: true, margin: '100px' });
   const isLeft = index % 2 === 0;
 
   return (
@@ -92,7 +92,7 @@ function TimelineItem({ item, index }: { item: typeof defaultTimelineData[0]; in
       ref={ref}
       initial={{ opacity: 0, x: isLeft ? -40 : 40 }}
       animate={isInView ? { opacity: 1, x: 0 } : {}}
-      transition={{ delay: 0.1, duration: 0.6 }}
+      transition={{ duration: 0.35 }}
       className={`flex items-center gap-4 ${isLeft ? 'md:flex-row' : 'md:flex-row-reverse'}`}
     >
       {/* Card */}
@@ -172,7 +172,7 @@ function TimelineItem({ item, index }: { item: typeof defaultTimelineData[0]; in
 const Experience = memo(function Experience() {
   const [filter, setFilter] = useState<FilterType>('all');
   const ref = useRef(null);
-  const isInView = useInView(ref, { once: true });
+  const isInView = useInView(ref, { once: true, margin: '100px' });
 
   const { data: dbEntries = [] } = useQuery({
     queryKey: ['experience'],
@@ -194,7 +194,7 @@ const Experience = memo(function Experience() {
         ref={ref}
         initial={{ opacity: 0, y: 40 }}
         animate={isInView ? { opacity: 1, y: 0 } : {}}
-        transition={{ duration: 0.7 }}
+        transition={{ duration: 0.35 }}
         className="max-w-4xl mx-auto"
       >
 

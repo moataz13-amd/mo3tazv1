@@ -108,16 +108,25 @@ html {
 body {
   font-family: 'Milan Display', 'Cairo', 'Inter', 'Outfit', system-ui, sans-serif;
   background-color: #082127;
-  background-image: url('./assets/PortfolioBg.svg');
-  background-repeat: repeat-y;
-  background-position: top center;
-  background-size: 100% auto;
-  background-attachment: fixed;
   color: var(--text);
   min-height: 100vh;
   overflow-x: clip;
   -webkit-font-smoothing: antialiased;
   -moz-osx-font-smoothing: grayscale;
+}
+
+body::before {
+  content: '';
+  position: fixed;
+  inset: 0;
+  z-index: 0;
+  background-image: url('./assets/PortfolioBg.svg');
+  background-repeat: repeat-y;
+  background-position: top center;
+  background-size: 100% auto;
+  pointer-events: none;
+  will-change: transform;
+  transform: translateZ(0);
 }
 
 /* ============================================

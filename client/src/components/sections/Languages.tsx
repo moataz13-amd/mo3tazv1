@@ -25,7 +25,7 @@ const defaultLanguages = [
 
 const Languages = memo(function Languages() {
   const ref = useRef(null);
-  const isInView = useInView(ref, { once: true, margin: '-80px' });
+  const isInView = useInView(ref, { once: true, margin: '100px' });
 
   const { data: dbLanguages = [] } = useQuery({
     queryKey: ['languages'],
@@ -43,7 +43,7 @@ const Languages = memo(function Languages() {
         ref={ref}
         initial={{ opacity: 0, y: 40 }}
         animate={isInView ? { opacity: 1, y: 0 } : {}}
-        transition={{ duration: 0.7 }}
+        transition={{ duration: 0.35 }}
         className="max-w-5xl mx-auto"
       >
         <div className="p-8" style={{
@@ -76,7 +76,7 @@ const Languages = memo(function Languages() {
                 key={lang.name}
                 initial={{ opacity: 0, x: i % 2 === 0 ? -20 : 20 }}
                 animate={isInView ? { opacity: 1, x: 0 } : {}}
-                transition={{ delay: i * 0.2, duration: 0.6 }}
+                transition={{ delay: i * 0.05, duration: 0.3 }}
                 className="p-5 transition-all duration-150 group"
                 style={{
                   background: '#000000',

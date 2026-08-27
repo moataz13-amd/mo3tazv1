@@ -559,11 +559,11 @@ body::before {
 }
 
 .marquee-track-left {
-  animation: marquee-scroll-left 30s linear infinite;
+  animation: marquee-scroll-left 50s linear infinite;
 }
 
 .marquee-track-right {
-  animation: marquee-scroll-right 30s linear infinite;
+  animation: marquee-scroll-right 50s linear infinite;
 }
 
 .marquee-track:hover {

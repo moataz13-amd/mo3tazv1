@@ -4,9 +4,9 @@ import { useQuery } from '@tanstack/react-query';
 import { useSettingsStore } from '../../store';
 import { clientLogosAPI } from '../../lib/api';
 
-const Spark8Icon = () => (
-  <svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="1.5" className="text-white/30 mx-4 flex-shrink-0 animate-pulse">
-    <path d="M12 2v20M2 12h20M5 5l14 14M5 19L19 5" />
+const StarDivider = () => (
+  <svg width="14" height="14" viewBox="0 0 24 24" fill="#26EFFD" className="mx-3.5 flex-shrink-0 opacity-80">
+    <path d="M12 0L14.59 9.41L24 12L14.59 14.59L12 24L9.41 14.59L0 12L9.41 9.41L12 0Z" />
   </svg>
 );
 
@@ -241,42 +241,42 @@ const Hero = memo(function Hero() {
           {/* Row 1: Left scrolling */}
           <div className="marquee-track marquee-track-left">
             {[...row1Tags, ...row1Tags, ...row1Tags, ...row1Tags].map((tag, idx) => (
-              <div key={`r1-${idx}`} className="flex items-center">
+              <div key={`r1-${idx}`} className="flex items-center flex-shrink-0">
                 <div
-                  className="px-6 py-2 rounded-full text-sm select-none flex-shrink-0"
+                  className="px-6 py-2.5 rounded-xl text-sm md:text-base font-bold select-none flex-shrink-0"
                   style={{
-                    background: tag.variant === 'solid' ? 'var(--primary)' : 'var(--card-bg)',
-                    color: tag.variant === 'solid' ? '#000000' : 'var(--primary)',
-                    border: tag.variant === 'solid' ? 'none' : '1px solid var(--primary)',
+                    background: tag.variant === 'solid' ? '#26EFFD' : '#0c3b47',
+                    color: tag.variant === 'solid' ? '#082127' : '#26EFFD',
+                    border: tag.variant === 'solid' ? 'none' : '1px solid rgba(38,239,253,0.35)',
                     fontFamily: "'Sahara Bold', 'Inter', sans-serif",
                     fontSize: '15px',
                   }}
                 >
                   {tag.text}
                 </div>
-                <Spark8Icon />
+                <StarDivider />
               </div>
             ))}
           </div>
 
           {/* Row 2: Right scrolling */}
           {row2Tags.length > 0 && (
-            <div className="marquee-track marquee-track-right mt-1">
+            <div className="marquee-track marquee-track-right mt-3">
               {[...row2Tags, ...row2Tags, ...row2Tags, ...row2Tags].map((tag, idx) => (
-                <div key={`r2-${idx}`} className="flex items-center">
+                <div key={`r2-${idx}`} className="flex items-center flex-shrink-0">
                   <div
-                    className="px-6 py-2 rounded-full text-sm select-none flex-shrink-0"
+                    className="px-6 py-2.5 rounded-xl text-sm md:text-base font-bold select-none flex-shrink-0"
                     style={{
-                      background: tag.variant === 'solid' ? 'var(--primary)' : 'var(--card-bg)',
-                      color: tag.variant === 'solid' ? '#000000' : 'var(--primary)',
-                      border: tag.variant === 'solid' ? 'none' : '1px solid var(--primary)',
+                      background: tag.variant === 'solid' ? '#26EFFD' : '#0c3b47',
+                      color: tag.variant === 'solid' ? '#082127' : '#26EFFD',
+                      border: tag.variant === 'solid' ? 'none' : '1px solid rgba(38,239,253,0.35)',
                       fontFamily: "'Sahara Bold', 'Inter', sans-serif",
                       fontSize: '15px',
                     }}
                   >
                     {tag.text}
                   </div>
-                  <Spark8Icon />
+                  <StarDivider />
                 </div>
               ))}
             </div>

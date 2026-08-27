@@ -119,7 +119,7 @@ export default function SplashScreen({ onComplete }: { onComplete: () => void })
 
         {/* Row 2: FULL WIDTH CYAN BANNER - Slides Right on Finish */}
         <div 
-          className={`marquee-container flex-1 w-full flex items-center bg-[#26EFFD] shadow-xl overflow-hidden transition-transform duration-700 ease-[cubic-bezier(0.77,0,0.175,1)] ${
+          className={`marquee-container flex-1 w-full flex items-center bg-[#26EFFD] overflow-hidden transition-transform duration-700 ease-[cubic-bezier(0.77,0,0.175,1)] ${
             isOpening ? 'translate-x-full' : 'translate-x-0'
           }`}
         >
@@ -161,7 +161,7 @@ export default function SplashScreen({ onComplete }: { onComplete: () => void })
 
         {/* Row 4: FULL WIDTH CYAN BANNER - Slides Right on Finish */}
         <div 
-          className={`marquee-container flex-1 w-full flex items-center bg-[#26EFFD] shadow-xl overflow-hidden transition-transform duration-700 ease-[cubic-bezier(0.77,0,0.175,1)] ${
+          className={`marquee-container flex-1 w-full flex items-center bg-[#26EFFD] overflow-hidden transition-transform duration-700 ease-[cubic-bezier(0.77,0,0.175,1)] ${
             isOpening ? 'translate-x-full' : 'translate-x-0'
           }`}
         >

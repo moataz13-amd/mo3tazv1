@@ -10,25 +10,19 @@ const Spark8Icon = () => (
   </svg>
 );
 
-const ClientLogoItem = memo(function ClientLogoItem({ logo, index }: { logo: { name: string; src: string }; index: number }) {
+const ClientLogoItem = memo(function ClientLogoItem({ logo }: { logo: { name: string; src: string } }) {
   const [imgError, setImgError] = useState(false);
 
   return (
-    <motion.div
-      initial={{ opacity: 0, y: 20 }}
-      animate={{ opacity: 1, y: 0 }}
-      transition={{ duration: 0.5, delay: 0.9 + index * 0.1 }}
-      className="flex items-center justify-center h-10 md:h-12 transition-all duration-300 px-3 py-1"
-      style={{ opacity: 0.8 }}
-      onMouseEnter={(e) => { e.currentTarget.style.opacity = '1'; }}
-      onMouseLeave={(e) => { e.currentTarget.style.opacity = '0.8'; }}
+    <div
+      className="flex items-center justify-center h-10 md:h-12 px-3 py-1 opacity-80 hover:opacity-100 transition-opacity duration-200"
     >
       {logo.src && !imgError ? (
         <img
           src={logo.src}
           alt={logo.name || 'Client Logo'}
           className="h-full w-auto object-contain max-w-[120px]"
-          loading="lazy"
+          loading="eager"
           decoding="async"
           onError={() => setImgError(true)}
         />
@@ -40,7 +34,7 @@ const ClientLogoItem = memo(function ClientLogoItem({ logo, index }: { logo: { n
           {logo.name}
         </span>
       )}
-    </motion.div>
+    </div>
   );
 });
 
@@ -224,12 +218,7 @@ const Hero = memo(function Hero() {
 
         {/* Trusted By Section */}
         {clientLogos.length > 0 && (
-          <motion.div
-            initial={{ opacity: 0, y: 30 }}
-            animate={{ opacity: 1, y: 0 }}
-            transition={{ duration: 0.7, delay: 0.7 }}
-            className="flex flex-col items-center gap-8"
-          >
+          <div className="flex flex-col items-center gap-8">
             {/* Label */}
             {subheadline && (
               <div className="glow-pill">
@@ -242,10 +231,10 @@ const Hero = memo(function Hero() {
             {/* Client logos */}
             <div className="flex items-center gap-10 md:gap-14 flex-wrap justify-center">
               {clientLogos.map((logo, index) => (
-                <ClientLogoItem key={`${logo.name}-${index}`} logo={logo} index={index} />
+                <ClientLogoItem key={`${logo.name}-${index}`} logo={logo} />
               ))}
             </div>
-          </motion.div>
+          </div>
         )}
       </div>
 

@@ -257,7 +257,7 @@ const Hero = memo(function Hero() {
 
           {/* Row 2: Right scrolling - FULL WIDTH SOLID CYAN/MINT BANNER / Black Text */}
           {row2Tags.length > 0 && (
-            <div className="marquee-container w-full py-4 bg-[#26EFFD] shadow-md">
+            <div className="marquee-container w-full py-4 bg-[#26EFFD]">
               <div className="marquee-track marquee-track-right">
                 {[...row2Tags, ...row2Tags, ...row2Tags, ...row2Tags, ...row2Tags].map((tag, idx) => (
                   <div key={`r2-${idx}`} className="flex items-center flex-shrink-0">
@@ -275,14 +275,6 @@ const Hero = memo(function Hero() {
           )}
         </div>
       )}
-
-      {/* Bottom fade */}
-      <div
-        className="absolute bottom-0 left-0 right-0 h-32 pointer-events-none"
-        style={{
-          background: 'linear-gradient(to top, var(--bg, #082127), transparent)',
-        }}
-      />
     </section>
   );
 });

@@ -2,20 +2,20 @@ import { useState, useEffect, useCallback } from 'react';
 import { useSettingsStore } from '../store';
 
 const Star4Icon = ({ fill = '#b0b0b0' }: { fill?: string }) => (
-  <svg width="20" height="20" viewBox="0 0 24 24" fill={fill} className="mx-4 sm:mx-6 flex-shrink-0 inline-block align-middle">
+  <svg width="28" height="28" viewBox="0 0 24 24" fill={fill} className="mx-6 sm:mx-10 flex-shrink-0 inline-block align-middle">
     <path d="M12 0C12 7 7 12 0 12C7 12 12 17 12 24C12 17 17 12 24 12C17 12 12 7 12 0Z" />
   </svg>
 );
 
 const FlowerIcon = ({ fill = '#b0b0b0' }: { fill?: string }) => (
-  <svg width="22" height="22" viewBox="0 0 24 24" fill="none" stroke={fill} strokeWidth="2.5" strokeLinecap="round" strokeLinejoin="round" className="mx-4 sm:mx-6 flex-shrink-0 inline-block align-middle">
+  <svg width="30" height="30" viewBox="0 0 24 24" fill="none" stroke={fill} strokeWidth="2.5" strokeLinecap="round" strokeLinejoin="round" className="mx-6 sm:mx-10 flex-shrink-0 inline-block align-middle">
     <circle cx="12" cy="12" r="2.5" fill={fill} />
     <path d="M12 2v4M12 18v4M2 12h4M18 12h4M4.93 4.93l2.83 2.83M16.24 16.24l2.83 2.83M4.93 19.07l2.83-2.83M16.24 7.76l2.83-2.83" />
   </svg>
 );
 
 const SunburstIcon = ({ fill = '#b0b0b0' }: { fill?: string }) => (
-  <svg width="22" height="22" viewBox="0 0 24 24" fill={fill} className="mx-4 sm:mx-6 flex-shrink-0 inline-block align-middle">
+  <svg width="30" height="30" viewBox="0 0 24 24" fill={fill} className="mx-6 sm:mx-10 flex-shrink-0 inline-block align-middle">
     <path d="M12 0L14.3 4.8L19.3 2.7L18.1 8L23.4 9.2L19.7 13.1L23.4 17L18.1 18.2L19.3 23.5L14.3 21.4L12 26L9.7 21.4L4.7 23.5L5.9 18.2L0.6 17L4.3 13.1L0.6 9.2L5.9 8L4.7 2.7L9.7 4.8L12 0Z" />
   </svg>
 );
@@ -93,12 +93,12 @@ export default function SplashScreen({ onComplete }: { onComplete: () => void })
       className="fixed inset-0 w-screen h-screen h-[100dvh] z-[9999] bg-[#050505] flex flex-col justify-center items-center overflow-hidden pointer-events-none"
       dir="rtl"
     >
-      {/* Background Stacked Marquee Banners (Stretching 100% Fullscreen on Mobile, Tablet & Desktop) */}
-      <div className="w-full h-full flex flex-col justify-between py-2 sm:py-4 scale-105">
+      {/* Background Stacked Marquee Banners (Large Height & Font Sizes) */}
+      <div className="w-full h-full flex flex-col justify-between py-1 sm:py-2 scale-105">
         
         {/* Row 1: Slides Left on Finish */}
         <div 
-          className={`marquee-container w-full py-3 sm:py-4 bg-[#050505] transition-transform duration-700 ease-[cubic-bezier(0.77,0,0.175,1)] ${
+          className={`marquee-container w-full py-5 sm:py-7 md:py-8 bg-[#050505] transition-transform duration-700 ease-[cubic-bezier(0.77,0,0.175,1)] ${
             isOpening ? '-translate-x-full' : 'translate-x-0'
           }`}
         >
@@ -106,7 +106,7 @@ export default function SplashScreen({ onComplete }: { onComplete: () => void })
             {[...row1, ...row1, ...row1, ...row1, ...row1].map((item, idx) => (
               <div key={`splash-r1-${idx}`} className="flex items-center flex-shrink-0">
                 <span
-                  className="text-xl sm:text-2xl md:text-4xl font-black text-white select-none tracking-wide"
+                  className="text-3xl sm:text-4xl md:text-6xl font-black text-white select-none tracking-wide"
                   style={{ fontFamily: "'Sahara Bold', 'Inter', sans-serif" }}
                 >
                   {item.text}
@@ -119,7 +119,7 @@ export default function SplashScreen({ onComplete }: { onComplete: () => void })
 
         {/* Row 2: FULL WIDTH CYAN BANNER - Slides Right on Finish */}
         <div 
-          className={`marquee-container w-full py-4 sm:py-5 bg-[#26EFFD] shadow-lg transition-transform duration-700 ease-[cubic-bezier(0.77,0,0.175,1)] ${
+          className={`marquee-container w-full py-6 sm:py-8 md:py-10 bg-[#26EFFD] shadow-xl transition-transform duration-700 ease-[cubic-bezier(0.77,0,0.175,1)] ${
             isOpening ? 'translate-x-full' : 'translate-x-0'
           }`}
         >
@@ -127,7 +127,7 @@ export default function SplashScreen({ onComplete }: { onComplete: () => void })
             {[...row2, ...row2, ...row2, ...row2, ...row2].map((item, idx) => (
               <div key={`splash-r2-${idx}`} className="flex items-center flex-shrink-0">
                 <span
-                  className="text-xl sm:text-2xl md:text-4xl font-black text-black select-none tracking-wide"
+                  className="text-3xl sm:text-4xl md:text-6xl font-black text-black select-none tracking-wide"
                   style={{ fontFamily: "'Sahara Bold', 'Inter', sans-serif" }}
                 >
                   {item.text}
@@ -140,7 +140,7 @@ export default function SplashScreen({ onComplete }: { onComplete: () => void })
 
         {/* Row 3: Slides Left on Finish */}
         <div 
-          className={`marquee-container w-full py-3 sm:py-4 bg-[#050505] transition-transform duration-700 ease-[cubic-bezier(0.77,0,0.175,1)] ${
+          className={`marquee-container w-full py-5 sm:py-7 md:py-8 bg-[#050505] transition-transform duration-700 ease-[cubic-bezier(0.77,0,0.175,1)] ${
             isOpening ? '-translate-x-full' : 'translate-x-0'
           }`}
         >
@@ -148,7 +148,7 @@ export default function SplashScreen({ onComplete }: { onComplete: () => void })
             {[...row3, ...row3, ...row3, ...row3, ...row3].map((item, idx) => (
               <div key={`splash-r3-${idx}`} className="flex items-center flex-shrink-0">
                 <span
-                  className="text-xl sm:text-2xl md:text-4xl font-black text-white select-none tracking-wide"
+                  className="text-3xl sm:text-4xl md:text-6xl font-black text-white select-none tracking-wide"
                   style={{ fontFamily: "'Sahara Bold', 'Inter', sans-serif" }}
                 >
                   {item.text}
@@ -161,7 +161,7 @@ export default function SplashScreen({ onComplete }: { onComplete: () => void })
 
         {/* Row 4: FULL WIDTH CYAN BANNER - Slides Right on Finish */}
         <div 
-          className={`marquee-container w-full py-4 sm:py-5 bg-[#26EFFD] shadow-lg transition-transform duration-700 ease-[cubic-bezier(0.77,0,0.175,1)] ${
+          className={`marquee-container w-full py-6 sm:py-8 md:py-10 bg-[#26EFFD] shadow-xl transition-transform duration-700 ease-[cubic-bezier(0.77,0,0.175,1)] ${
             isOpening ? 'translate-x-full' : 'translate-x-0'
           }`}
         >
@@ -169,7 +169,7 @@ export default function SplashScreen({ onComplete }: { onComplete: () => void })
             {[...row1, ...row1, ...row1, ...row1, ...row1].map((item, idx) => (
               <div key={`splash-r4-${idx}`} className="flex items-center flex-shrink-0">
                 <span
-                  className="text-xl sm:text-2xl md:text-4xl font-black text-black select-none tracking-wide"
+                  className="text-3xl sm:text-4xl md:text-6xl font-black text-black select-none tracking-wide"
                   style={{ fontFamily: "'Sahara Bold', 'Inter', sans-serif" }}
                 >
                   {item.text}
@@ -182,7 +182,7 @@ export default function SplashScreen({ onComplete }: { onComplete: () => void })
 
         {/* Row 5: Slides Left on Finish */}
         <div 
-          className={`marquee-container w-full py-3 sm:py-4 bg-[#050505] transition-transform duration-700 ease-[cubic-bezier(0.77,0,0.175,1)] ${
+          className={`marquee-container w-full py-5 sm:py-7 md:py-8 bg-[#050505] transition-transform duration-700 ease-[cubic-bezier(0.77,0,0.175,1)] ${
             isOpening ? '-translate-x-full' : 'translate-x-0'
           }`}
         >
@@ -190,7 +190,7 @@ export default function SplashScreen({ onComplete }: { onComplete: () => void })
             {[...row2, ...row2, ...row2, ...row2, ...row2].map((item, idx) => (
               <div key={`splash-r5-${idx}`} className="flex items-center flex-shrink-0">
                 <span
-                  className="text-xl sm:text-2xl md:text-4xl font-black text-white select-none tracking-wide"
+                  className="text-3xl sm:text-4xl md:text-6xl font-black text-white select-none tracking-wide"
                   style={{ fontFamily: "'Sahara Bold', 'Inter', sans-serif" }}
                 >
                   {item.text}

@@ -296,7 +296,7 @@ export default function FloatingNav({ projectTitle }: { projectTitle?: string })
               style={{ background: 'rgba(0,0,0,0.6)', backdropFilter: 'blur(4px)' }}
             />
 
-            {/* Sidebar Panel — slides from right, behind navbar */}
+            {/* Sidebar Panel — Pure Black background, slide from right */}
             <motion.div
               initial={{ x: '100%' }}
               animate={{ x: 0 }}
@@ -307,17 +307,13 @@ export default function FloatingNav({ projectTitle }: { projectTitle?: string })
               style={{
                 width: '78vw',
                 maxWidth: '320px',
-                background: 'linear-gradient(160deg, #082127 0%, #021014 100%)',
-                borderLeft: '1px solid rgba(0, 229, 255, 0.15)',
-                boxShadow: '-20px 0 60px rgba(0,0,0,0.8)',
+                background: '#000000',
+                borderLeft: '1px solid rgba(255, 255, 255, 0.1)',
+                boxShadow: '-20px 0 60px rgba(0,0,0,0.9)',
               }}
             >
-              {/* Sidebar top glow */}
-              <div className="absolute top-0 right-0 w-48 h-48 pointer-events-none" style={{ background: 'radial-gradient(ellipse at top right, rgba(0,229,255,0.12) 0%, transparent 70%)' }} />
-
-
               {/* Nav Items */}
-              <div className="flex-1 flex flex-col justify-center px-6 gap-1 overflow-y-auto">
+              <div className="flex-1 flex flex-col justify-center px-6 gap-2 overflow-y-auto">
                 {[
                   { id: 'home', label: 'الرئيسية' },
                   { id: 'about', label: 'عنّي' },
@@ -337,25 +333,17 @@ export default function FloatingNav({ projectTitle }: { projectTitle?: string })
                         scrollToSection(item.id);
                         setMobileMenuOpen(false);
                       }}
-                      className="w-full text-right py-3 px-3 rounded-xl transition-all duration-200 cursor-pointer relative group"
+                      className="w-full text-right py-3 px-2 rounded-xl transition-all duration-200 cursor-pointer relative"
                       style={{
-                        color: isActive ? '#00E5FF' : 'rgba(220, 240, 245, 0.75)',
+                        color: isActive ? '#00E5FF' : 'rgba(255, 255, 255, 0.8)',
                         fontFamily: "'Milan Display', 'Sahara Bold', 'Inter', sans-serif",
                         fontSize: '26px',
                         fontWeight: 900,
                         letterSpacing: '-0.01em',
-                        background: isActive ? 'rgba(0,229,255,0.06)' : 'transparent',
+                        background: 'transparent',
                         textShadow: isActive ? '0 0 20px rgba(0,229,255,0.4)' : 'none',
                       }}
                     >
-                      {/* Active indicator */}
-                      {isActive && (
-                        <motion.div
-                          layoutId="activeIndicator"
-                          className="absolute right-0 top-1/2 -translate-y-1/2 w-1 h-6 rounded-full"
-                          style={{ background: '#00E5FF', boxShadow: '0 0 10px rgba(0,229,255,0.8)' }}
-                        />
-                      )}
                       {item.label}
                     </motion.button>
                   );

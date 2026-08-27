@@ -108,6 +108,10 @@ html {
 body {
   font-family: 'Milan Display', 'Cairo', 'Inter', 'Outfit', system-ui, sans-serif;
   background-color: #082127;
+  background-image: url('./assets/PortfolioBg.svg');
+  background-repeat: repeat-y;
+  background-position: top center;
+  background-size: 100% auto;
   color: var(--text);
   min-height: 100vh;
   overflow-x: clip;

@@ -59,7 +59,7 @@ export default function Portfolio() {
   }, []);
 
   return (
-    <div className="relative min-h-screen text-white select-none" style={{ background: 'var(--bg)' }}>
+    <div className="relative min-h-screen text-white select-none bg-transparent">
 
       {/* Floating navigation bar */}
       <FloatingNav />

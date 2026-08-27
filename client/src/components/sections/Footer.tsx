@@ -98,7 +98,7 @@ const Footer = memo(function Footer() {
     }));
 
   return (
-    <footer className="w-full bg-[#082127] pt-10 pb-20 px-4 md:px-8 relative z-20" dir="rtl">
+    <footer className="w-full bg-transparent pt-10 pb-20 px-4 md:px-8 relative z-20" dir="rtl">
       {/* Ticket Wrapper to allow Notch Cutouts to overlay border cleanly */}
       <div className="max-w-4xl mx-auto relative">
         {/* Ticket Body Card */}

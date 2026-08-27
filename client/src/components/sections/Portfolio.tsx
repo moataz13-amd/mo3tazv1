@@ -73,7 +73,7 @@ const CarouselCard = memo(function CarouselCard({
       }}
       className={`absolute top-0 w-full max-w-[960px] h-full rounded-[20px] sm:rounded-[32px] md:rounded-[42px] overflow-hidden select-none cursor-pointer group ${
         isActive
-          ? 'border-2 border-[#26EFFD] shadow-[6px_6px_0px_rgba(38,239,253,0.6),0_8px_0px_rgba(0,0,0,0.9)]'
+          ? 'border-2 border-[#000000] shadow-[6px_6px_0px_rgba(0,0,0,0.6),0_8px_0px_rgba(0,0,0,0.9)]'
           : 'border border-white/10'
       }`}
       style={{

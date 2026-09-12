@@ -19,6 +19,17 @@ export default function FloatingNav({ projectTitle }: { projectTitle?: string })
   const isProjectPage = !!projectTitle;
 
   const scrollToSection = (id: string) => {
+    if (id === 'home') {
+      setActiveSection('home');
+      if (isProjectPage) {
+        navigate('/');
+      } else {
+        window.scrollTo({ top: 0, behavior: 'smooth' });
+        if ((window as any).lenis) (window as any).lenis.scrollTo(0, { duration: 1.2 });
+      }
+      return;
+    }
+
     const doScroll = () => {
       const el = document.getElementById(id);
       if (el) {
@@ -28,7 +39,7 @@ export default function FloatingNav({ projectTitle }: { projectTitle?: string })
           el.scrollIntoView({ behavior: 'smooth', block: 'start' });
         }
         setActiveSection(id);
-      } else if (id !== 'home') {
+      } else {
         const observer = new MutationObserver(() => {
           const found = document.getElementById(id);
           if (found) {
@@ -45,13 +56,10 @@ export default function FloatingNav({ projectTitle }: { projectTitle?: string })
         setTimeout(() => observer.disconnect(), 10000);
       }
     };
+
     if (isProjectPage) {
       navigate('/');
-      setTimeout(doScroll, 800);
-    } else if (id === 'home') {
-      window.scrollTo({ top: 0, behavior: 'smooth' });
-      if ((window as any).lenis) (window as any).lenis.scrollTo(0, { duration: 1.2 });
-      setActiveSection(id);
+      setTimeout(doScroll, 300);
     } else {
       doScroll();
     }

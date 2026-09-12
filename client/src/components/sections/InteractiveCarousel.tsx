@@ -1,19 +1,9 @@
-import { memo, useRef, useState, useCallback, useEffect } from 'react';
-import { motion } from 'framer-motion';
+import { memo } from 'react';
 import { useQuery } from '@tanstack/react-query';
 import { carouselsAPI } from '../../lib/api';
 import type { Carousel } from '../../types';
 
 export default memo(function InteractiveCarouselSection() {
-  const containerRef = useRef<HTMLDivElement>(null);
-  const [lightboxImage, setLightboxImage] = useState<string | null>(null);
-
-  // Drag / Touch scroll state
-  const isMouseDown = useRef(false);
-  const startX = useRef(0);
-  const scrollLeft = useRef(0);
-  const [isDragging, setIsDragging] = useState(false);
-
   // Fetch all carousels managed by Admin
   const { data: carousels } = useQuery({
     queryKey: ['carousels'],
@@ -25,92 +15,31 @@ export default memo(function InteractiveCarouselSection() {
   const images = activeCarousel?.images || [];
   const spacing = activeCarousel?.spacing ?? 16;
 
-  // Mouse Drag handlers for smooth horizontal pan
-  const handleMouseDown = (e: React.MouseEvent) => {
-    if (!containerRef.current) return;
-    isMouseDown.current = true;
-    startX.current = e.pageX - containerRef.current.offsetLeft;
-    scrollLeft.current = containerRef.current.scrollLeft;
-    setIsDragging(false);
-  };
-
-  const handleMouseMove = (e: React.MouseEvent) => {
-    if (!isMouseDown.current || !containerRef.current) return;
-    e.preventDefault();
-    const x = e.pageX - containerRef.current.offsetLeft;
-    const walk = (x - startX.current) * 1.5;
-    if (Math.abs(walk) > 5) setIsDragging(true);
-    containerRef.current.scrollLeft = scrollLeft.current - walk;
-  };
-
-  const handleMouseUpOrLeave = () => {
-    isMouseDown.current = false;
-    setTimeout(() => setIsDragging(false), 50);
-  };
-
-  // Auto-scroll effect (continuous moving marquee-style scroll)
-  useEffect(() => {
-    const el = containerRef.current;
-    if (!el) return;
-
-    let animationFrameId: number;
-    let speed = 0.8; // Smooth auto-scroll speed
-
-    const scrollStep = () => {
-      if (!isMouseDown.current && el) {
-        el.scrollLeft += speed;
-        // Loop back seamlessly when reaching the end
-        if (el.scrollLeft + el.clientWidth >= el.scrollWidth - 2) {
-          el.scrollLeft = 0;
-        }
-      }
-      animationFrameId = requestAnimationFrame(scrollStep);
-    };
-
-    animationFrameId = requestAnimationFrame(scrollStep);
-
-    return () => {
-      cancelAnimationFrame(animationFrameId);
-    };
-  }, []);
-
   if (!activeCarousel || images.length === 0) {
     return null;
   }
 
+  // Duplicate images for seamless infinite loop
+  const duplicatedImages = [...images, ...images];
+
   return (
-    <section className="w-full py-8 md:py-12 bg-transparent relative z-20 overflow-hidden" dir="rtl">
-      {/* Infinite/Pan Interactive Horizontal Carousel Container */}
-      <div
-        ref={containerRef}
-        onMouseDown={handleMouseDown}
-        onMouseMove={handleMouseMove}
-        onMouseUp={handleMouseUpOrLeave}
-        onMouseLeave={handleMouseUpOrLeave}
-        className="w-full overflow-x-auto scrollbar-none flex items-center py-6 px-4 md:px-12 cursor-grab active:cursor-grabbing select-none"
-        style={{
-          scrollBehavior: 'smooth',
-          WebkitOverflowScrolling: 'touch',
-        }}
-      >
+    <section className="w-full py-8 md:py-12 bg-transparent relative z-20 overflow-hidden" dir="ltr">
+      {/* Infinite Marquee Carousel */}
+      <div className="marquee-container">
         <div
-          className="flex items-center mx-auto"
+          className="marquee-track marquee-track-left"
           style={{ gap: `${spacing}px` }}
         >
-          {images.map((imgUrl, idx) => (
-            <motion.div
+          {duplicatedImages.map((imgUrl, idx) => (
+            <div
               key={`${imgUrl}-${idx}`}
-              whileHover={{ scale: 1.03, y: -6 }}
-              transition={{ type: 'spring', stiffness: 300, damping: 20 }}
-              onClick={() => {
-                if (!isDragging) setLightboxImage(imgUrl);
-              }}
-              className="relative flex-shrink-0 rounded-2xl md:rounded-3xl overflow-hidden border-2 border-black bg-[#082127] shadow-[6px_6px_0px_#000000] hover:shadow-[10px_10px_0px_#26EFFD] transition-all duration-300 group cursor-pointer"
+              className="relative flex-shrink-0 rounded-2xl md:rounded-3xl overflow-hidden border-2 border-black bg-[#082127]"
               style={{
                 width: '391px',
                 height: '524px',
                 maxWidth: '85vw',
                 maxHeight: '114vw',
+                marginRight: idx < duplicatedImages.length - 1 ? `${spacing}px` : '0px',
               }}
             >
               <img
@@ -120,36 +49,10 @@ export default memo(function InteractiveCarouselSection() {
                 loading="lazy"
                 decoding="async"
               />
-
-              {/* Hover overlay glow */}
-              <div className="absolute inset-0 bg-gradient-to-t from-black/60 via-transparent to-transparent opacity-0 group-hover:opacity-100 transition-opacity duration-300 flex items-end p-6">
-                <span
-                  className="text-white text-sm font-bold bg-[#082127]/90 border border-[#26EFFD] px-4 py-2 rounded-full shadow-[2px_2px_0px_#26EFFD]"
-                  style={{ fontFamily: "'Sahara Bold', 'Inter', sans-serif" }}
-                >
-                  اضغط للتكبير
-                </span>
-              </div>
-            </motion.div>
+            </div>
           ))}
         </div>
       </div>
-
-      {/* Lightbox */}
-      {lightboxImage && (
-        <div
-          onClick={() => setLightboxImage(null)}
-          className="fixed inset-0 bg-black/95 z-[100] flex items-center justify-center p-4 cursor-pointer"
-        >
-          <div className="relative max-w-[92vw] max-h-[90vh]">
-            <img
-              src={lightboxImage}
-              alt="Enlarged design"
-              className="max-w-full max-h-[90vh] object-contain rounded-2xl border-4 border-black shadow-[8px_8px_0px_#26EFFD]"
-            />
-          </div>
-        </div>
-      )}
     </section>
   );
 });

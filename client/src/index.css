@@ -566,9 +566,7 @@ body::before {
   animation: marquee-scroll-right 50s linear infinite;
 }
 
-.marquee-track:hover {
-  animation-play-state: paused;
-}
+
 
 @keyframes marquee-scroll-left {
   0% {

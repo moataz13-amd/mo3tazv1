@@ -1,8 +1,9 @@
 import { useEffect } from 'react';
+import { useLocation } from 'react-router-dom';
 import Lenis from '@studio-freight/lenis';
 import { useQuery } from '@tanstack/react-query';
 import { settingsAPI } from '../lib/api';
-import { useSettingsStore } from '../store';
+import { useSettingsStore, useUIStore } from '../store';
 import type { SiteSettings } from '../types';
 import ThreeCanvas from '../components/three/ThreeCanvas';
 import FloatingNav from '../components/navigation/FloatingNav';
@@ -16,6 +17,9 @@ import Contact from '../components/sections/Contact';
 import Footer from '../components/sections/Footer';
 
 export default function Portfolio() {
+  const location = useLocation();
+  const setActiveSection = useUIStore((state) => state.setActiveSection);
+
   const { data: settings } = useQuery({
     queryKey: ['settings'],
     queryFn: () => settingsAPI.get().then((r) => r.data as SiteSettings),
@@ -52,11 +56,29 @@ export default function Portfolio() {
 
     requestAnimationFrame(raf);
 
+    // Handle scroll from navigation state (e.g. returning from project page)
+    const targetSection = (location.state as { scrollTo?: string })?.scrollTo;
+    if (targetSection) {
+      setTimeout(() => {
+        if (targetSection === 'home') {
+          window.scrollTo({ top: 0, behavior: 'smooth' });
+          lenis.scrollTo(0, { duration: 1.2 });
+          setActiveSection('home');
+        } else {
+          const el = document.getElementById(targetSection);
+          if (el) {
+            lenis.scrollTo(el, { offset: -20, duration: 1.2 });
+            setActiveSection(targetSection);
+          }
+        }
+      }, 200);
+    }
+
     return () => {
       lenis.destroy();
       (window as any).lenis = undefined;
     };
-  }, []);
+  }, [location.state, setActiveSection]);
 
   return (
     <div className="relative min-h-screen text-white select-none bg-transparent">

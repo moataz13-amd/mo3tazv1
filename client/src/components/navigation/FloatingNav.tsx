@@ -175,19 +175,21 @@ export default function FloatingNav({ projectTitle }: { projectTitle?: string })
           </div>
 
           {/* Logo / Back button — left side in RTL */}
-          {isProjectPage ? (
-            <button
-              onClick={() => navigate('/')}
-              className="flex items-center gap-2 cursor-pointer flex-shrink-0 text-[rgba(180,220,220,0.7)] hover:text-[#00E5FF] transition-colors"
-              style={{ fontFamily: "'Sahara Bold', 'Inter', sans-serif" }}
-            >
-              <ArrowRight size={18} />
-              <span className="text-[14px] font-medium max-w-[140px] truncate">{projectTitle}</span>
-            </button>
-          ) : (
+          <div className="flex items-center gap-4 flex-shrink-0">
+            {isProjectPage && (
+              <button
+                onClick={() => navigate('/')}
+                className="flex items-center gap-2 cursor-pointer text-[rgba(180,220,220,0.7)] hover:text-[#00E5FF] transition-colors"
+                style={{ fontFamily: "'Sahara Bold', 'Inter', sans-serif" }}
+              >
+                <ArrowRight size={18} />
+                <span className="text-[14px] font-medium max-w-[140px] truncate">{projectTitle}</span>
+              </button>
+            )}
             <button
               onClick={() => scrollToSection('home')}
-              className="flex items-center cursor-pointer flex-shrink-0"
+              className="flex items-center cursor-pointer"
+              title="الصفحة الرئيسية"
             >
               <img
                 src="/Mo3taz..svg"
@@ -214,7 +216,7 @@ export default function FloatingNav({ projectTitle }: { projectTitle?: string })
                 MO3TAZ.
               </span>
             </button>
-          )}
+          </div>
         </div>
       </motion.nav>
 
@@ -257,19 +259,21 @@ export default function FloatingNav({ projectTitle }: { projectTitle?: string })
           </button>
 
           {/* Logo left / Back button */}
-          {isProjectPage ? (
-            <button
-              onClick={() => navigate('/')}
-              className="flex items-center gap-1.5 cursor-pointer flex-shrink-0 text-[rgba(180,220,220,0.7)] hover:text-[#00E5FF] transition-colors max-w-[140px]"
-              style={{ fontFamily: "'Sahara Bold', 'Inter', sans-serif" }}
-            >
-              <ArrowRight size={16} />
-              <span className="text-[13px] font-medium truncate">{projectTitle}</span>
-            </button>
-          ) : (
+          <div className="flex items-center gap-3 flex-shrink-0">
+            {isProjectPage && (
+              <button
+                onClick={() => navigate('/')}
+                className="flex items-center gap-1.5 cursor-pointer text-[rgba(180,220,220,0.7)] hover:text-[#00E5FF] transition-colors max-w-[120px]"
+                style={{ fontFamily: "'Sahara Bold', 'Inter', sans-serif" }}
+              >
+                <ArrowRight size={16} />
+                <span className="text-[13px] font-medium truncate">{projectTitle}</span>
+              </button>
+            )}
             <button
               onClick={() => { scrollToSection('home'); setMobileMenuOpen(false); }}
-              className="flex items-center cursor-pointer flex-shrink-0"
+              className="flex items-center cursor-pointer"
+              title="الصفحة الرئيسية"
             >
               <img
                 src="/Mo3taz..svg"
@@ -277,7 +281,7 @@ export default function FloatingNav({ projectTitle }: { projectTitle?: string })
                 style={{ height: '26px' }}
               />
             </button>
-          )}
+          </div>
         </motion.div>
       </nav>
 

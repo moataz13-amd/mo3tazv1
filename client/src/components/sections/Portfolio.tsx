@@ -363,7 +363,7 @@ const Portfolio = memo(function Portfolio() {
         id="mockups"
         subtitle=""
         titlePrefix=""
-        titleHighlight="الموك آب"
+        titleHighlight="الأعمال"
         items={mockupsList}
       />
 

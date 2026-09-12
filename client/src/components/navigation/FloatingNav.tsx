@@ -20,10 +20,21 @@ export default function FloatingNav({ projectTitle }: { projectTitle?: string })
 
   const scrollToSection = (id: string) => {
     if (id === 'home') {
-      setActiveSection('home');
       if (isProjectPage) {
         navigate('/');
+        setTimeout(() => {
+          const el = document.getElementById('portfolio');
+          if (el) {
+            if ((window as any).lenis) {
+              (window as any).lenis.scrollTo(el, { offset: -20, duration: 1.2 });
+            } else {
+              el.scrollIntoView({ behavior: 'smooth', block: 'start' });
+            }
+            setActiveSection('portfolio');
+          }
+        }, 300);
       } else {
+        setActiveSection('home');
         window.scrollTo({ top: 0, behavior: 'smooth' });
         if ((window as any).lenis) (window as any).lenis.scrollTo(0, { duration: 1.2 });
       }

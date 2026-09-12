@@ -48,6 +48,32 @@ export default memo(function InteractiveCarouselSection() {
     setTimeout(() => setIsDragging(false), 50);
   };
 
+  // Auto-scroll effect (continuous moving marquee-style scroll)
+  useEffect(() => {
+    const el = containerRef.current;
+    if (!el) return;
+
+    let animationFrameId: number;
+    let speed = 0.8; // Smooth auto-scroll speed
+
+    const scrollStep = () => {
+      if (!isMouseDown.current && el) {
+        el.scrollLeft += speed;
+        // Loop back seamlessly when reaching the end
+        if (el.scrollLeft + el.clientWidth >= el.scrollWidth - 2) {
+          el.scrollLeft = 0;
+        }
+      }
+      animationFrameId = requestAnimationFrame(scrollStep);
+    };
+
+    animationFrameId = requestAnimationFrame(scrollStep);
+
+    return () => {
+      cancelAnimationFrame(animationFrameId);
+    };
+  }, []);
+
   if (!activeCarousel || images.length === 0) {
     return null;
   }

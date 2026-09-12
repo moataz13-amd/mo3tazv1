@@ -90,8 +90,8 @@ export default function Portfolio() {
       {/* Main layout wrapper */}
       <main className="relative z-20 w-full flex flex-col gap-1 pt-[70px] md:pt-0">
         <Hero />
-        <InteractiveCarouselSection />
         <About />
+        <InteractiveCarouselSection />
         <Services />
         <Skills />
         <PortfolioSection />

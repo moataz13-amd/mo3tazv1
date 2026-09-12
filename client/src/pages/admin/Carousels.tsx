@@ -284,8 +284,8 @@ export default function CarouselsManager() {
 
       {/* Modal Form */}
       {isModalOpen && (
-        <div className="fixed inset-0 bg-black/80 backdrop-blur-md z-50 flex items-center justify-center p-4 overflow-y-auto">
-          <div className="glass-card border border-white/10 w-full max-w-3xl rounded-3xl p-6 md:p-8 relative bg-[#090D1A] my-8 max-h-[90vh] overflow-y-auto">
+        <div className="fixed inset-0 bg-black/80 backdrop-blur-md z-50 overflow-y-auto">
+          <div className="glass-card border border-white/10 w-full max-w-3xl rounded-3xl p-6 md:p-8 relative bg-[#090D1A] mx-auto my-8">
             {/* Modal Header */}
             <div className="flex items-center justify-between border-b border-glass-border pb-4 mb-6">
               <h2 className="text-xl md:text-2xl font-black text-white flex items-center gap-2">

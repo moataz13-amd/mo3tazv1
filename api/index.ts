@@ -701,6 +701,82 @@ app.delete('/api/client-logos/:id', authenticate, async (req, res) => {
   catch (err: any) { res.status(500).json({ message: err.message }); }
 });
 
+// ===== CAROUSELS =====
+app.get('/api/carousels', async (_req, res) => {
+  try {
+    const data = await db.getCarousels();
+    res.json(data);
+  } catch (err: any) { res.status(500).json({ message: err.message }); }
+});
+
+app.post('/api/carousels', authenticate, async (req: any, res) => {
+  try {
+    const files = req.files || [];
+    const uploadedUrls: string[] = [];
+    for (const file of files) {
+      if (file.fieldname === 'carousel_images' && file.buffer) {
+        const result = await uploadFile(file.buffer, 'portfolio_assets', file.mimetype);
+        if (result) uploadedUrls.push(result.url);
+      }
+    }
+
+    let existingImages: string[] = [];
+    if (req.body.existing_images) {
+      try { existingImages = JSON.parse(req.body.existing_images); } catch {}
+    }
+
+    const images = [...existingImages, ...uploadedUrls];
+    const carouselData = {
+      title: req.body.title || 'كاروسيل جديد',
+      spacing: Number(req.body.spacing) ?? 16,
+      images,
+      order: Number(req.body.order) || 0
+    };
+
+    const data = await db.createCarousel(carouselData);
+    await db.logActivity('Carousel Created', `Created carousel: ${carouselData.title}`);
+    res.status(201).json(data);
+  } catch (err: any) { res.status(500).json({ message: err.message }); }
+});
+
+app.put('/api/carousels/:id', authenticate, async (req: any, res) => {
+  try {
+    const files = req.files || [];
+    const uploadedUrls: string[] = [];
+    for (const file of files) {
+      if (file.fieldname === 'carousel_images' && file.buffer) {
+        const result = await uploadFile(file.buffer, 'portfolio_assets', file.mimetype);
+        if (result) uploadedUrls.push(result.url);
+      }
+    }
+
+    let existingImages: string[] = [];
+    if (req.body.existing_images) {
+      try { existingImages = JSON.parse(req.body.existing_images); } catch {}
+    }
+
+    const images = [...existingImages, ...uploadedUrls];
+    const updateData: any = {
+      title: req.body.title,
+      spacing: Number(req.body.spacing) ?? 16,
+      images,
+      order: Number(req.body.order) || 0
+    };
+
+    const data = await db.updateCarousel(String(req.params.id), updateData);
+    await db.logActivity('Carousel Updated', `Updated carousel: ${updateData.title}`);
+    res.json(data);
+  } catch (err: any) { res.status(500).json({ message: err.message }); }
+});
+
+app.delete('/api/carousels/:id', authenticate, async (req, res) => {
+  try {
+    await db.deleteCarousel(String(req.params.id));
+    await db.logActivity('Carousel Deleted', `Deleted carousel ID: ${req.params.id}`);
+    res.json({ message: 'Carousel deleted' });
+  } catch (err: any) { res.status(500).json({ message: err.message }); }
+});
+
 // REORDER — bulk update display order for an entity
 const REORDERABLE: Record<string, string> = {
   skills: 'skills',

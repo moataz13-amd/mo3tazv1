@@ -79,16 +79,7 @@ export default memo(function InteractiveCarouselSection() {
   }
 
   return (
-    <section className="w-full py-12 md:py-16 bg-transparent relative z-20 overflow-hidden" dir="rtl">
-      <div className="max-w-7xl mx-auto px-4 md:px-6 mb-6 text-center">
-        <h2
-          className="text-2xl md:text-3xl font-black text-white tracking-wide"
-          style={{ fontFamily: "'Milan Display', 'Sahara Bold', 'Inter', sans-serif" }}
-        >
-          {activeCarousel.title || 'معرض الكاروسيل'}
-        </h2>
-      </div>
-
+    <section className="w-full py-8 md:py-12 bg-transparent relative z-20 overflow-hidden" dir="rtl">
       {/* Infinite/Pan Interactive Horizontal Carousel Container */}
       <div
         ref={containerRef}

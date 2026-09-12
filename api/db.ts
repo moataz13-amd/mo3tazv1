@@ -693,4 +693,54 @@ export const db = {
     clearCache('settings');
     log('reorderClientLogos');
   },
+
+  // Carousels
+  getCarousels: async () => {
+    if (!supabase) return [];
+    try {
+      const { data, error } = await supabase.from('carousels').select('*').order('order', { ascending: true });
+      if (!error && data) return data;
+      if (error) console.warn('[DB] getCarousels error:', error.message);
+    } catch (e: any) {
+      console.warn('[DB] getCarousels exception:', e.message);
+    }
+    return [];
+  },
+
+  createCarousel: async (carousel: any) => {
+    if (!supabase) return null;
+    try {
+      const { data, error } = await supabase.from('carousels').insert(carousel).select().single();
+      if (!error && data) { clearCache('carousels'); return data; }
+      if (error) console.warn('[DB] createCarousel error:', error.message);
+    } catch (e: any) {
+      console.warn('[DB] createCarousel exception:', e.message);
+    }
+    return null;
+  },
+
+  updateCarousel: async (id: string, carousel: any) => {
+    if (!supabase) return null;
+    try {
+      const payload = { ...carousel, updated_at: new Date().toISOString() };
+      const { data, error } = await supabase.from('carousels').update(payload).eq('id', id).select().single();
+      if (!error && data) { clearCache('carousels'); return data; }
+      if (error) console.warn('[DB] updateCarousel error:', error.message);
+    } catch (e: any) {
+      console.warn('[DB] updateCarousel exception:', e.message);
+    }
+    return null;
+  },
+
+  deleteCarousel: async (id: string) => {
+    if (!supabase) return false;
+    try {
+      const { error } = await supabase.from('carousels').delete().eq('id', id);
+      if (!error) { clearCache('carousels'); return true; }
+      if (error) console.warn('[DB] deleteCarousel error:', error.message);
+    } catch (e: any) {
+      console.warn('[DB] deleteCarousel exception:', e.message);
+    }
+    return false;
+  },
 };

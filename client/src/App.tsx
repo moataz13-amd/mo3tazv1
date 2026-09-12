@@ -24,6 +24,7 @@ const AdminSettings = lazy(() => import('./pages/admin/Settings'));
 const AdminExperience = lazy(() => import('./pages/admin/Experience'));
 const AdminLanguages = lazy(() => import('./pages/admin/Languages'));
 const AdminClientLogos = lazy(() => import('./pages/admin/ClientLogos'));
+const AdminCarousels = lazy(() => import('./pages/admin/Carousels'));
 
 // Loading screen
 const LoadingScreen = () => (
@@ -131,6 +132,7 @@ export default function App() {
             <Route index element={<AdminDashboard />} />
             <Route path="projects" element={<AdminProjects />} />
             <Route path="designs" element={<AdminDesigns />} />
+            <Route path="carousels" element={<AdminCarousels />} />
             <Route path="skills" element={<AdminSkills />} />
             <Route path="services" element={<AdminServices />} />
             <Route path="testimonials" element={<AdminTestimonials />} />

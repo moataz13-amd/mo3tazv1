@@ -140,6 +140,13 @@ export const languagesAPI = {
   delete: (id: string) => api.delete(`/languages/${id}`),
 };
 
+export const carouselsAPI = {
+  getAll: () => api.get('/carousels'),
+  create: (data: FormData) => api.post('/carousels', data),
+  update: (id: string, data: FormData) => api.put(`/carousels/${id}`, data),
+  delete: (id: string) => api.delete(`/carousels/${id}`),
+};
+
 export const portfolioAPI = {
   getAll: () => api.get('/portfolio'),
 };

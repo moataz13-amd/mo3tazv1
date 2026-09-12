@@ -31,6 +31,16 @@ export interface Project {
   updated_at: string;
 }
 
+export interface Carousel {
+  id: string;
+  title: string;
+  spacing: number;
+  images: string[];
+  order: number;
+  created_at?: string;
+  updated_at?: string;
+}
+
 export interface Skill {
   id: string;
   name: string;

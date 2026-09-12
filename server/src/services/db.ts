@@ -1069,5 +1069,89 @@ export const db = {
     mock.client_logos = mock.client_logos.filter((l: any) => l.id !== id);
     db.saveMockData(mock);
     return true;
+  },
+
+  // Carousels
+  getCarousels: async () => {
+    if (!USE_MOCK) {
+      try {
+        const { data, error } = await supabase.from('carousels').select('*').order('order', { ascending: true });
+        if (!error && data) return data;
+        if (error) console.warn('Supabase getCarousels error:', error.message);
+      } catch (e: any) {
+        console.warn('Supabase getCarousels exception:', e.message);
+      }
+    }
+    const mock = db.getMockData();
+    return mock.carousels || [];
+  },
+
+  createCarousel: async (carousel: any) => {
+    if (!USE_MOCK) {
+      try {
+        const { data, error } = await supabase.from('carousels').insert(carousel).select().single();
+        if (!error && data) return data;
+        if (error) console.warn('Supabase createCarousel error:', error.message);
+      } catch (e: any) {
+        console.warn('Supabase createCarousel exception:', e.message);
+      }
+    }
+    const mock = db.getMockData();
+    if (!mock.carousels) mock.carousels = [];
+    const newCarousel = {
+      id: `car-${Date.now()}`,
+      created_at: new Date().toISOString(),
+      updated_at: new Date().toISOString(),
+      images: [],
+      spacing: 16,
+      order: mock.carousels.length + 1,
+      ...carousel
+    };
+    mock.carousels.push(newCarousel);
+    db.saveMockData(mock);
+    return newCarousel;
+  },
+
+  updateCarousel: async (id: string, carousel: any) => {
+    if (!USE_MOCK) {
+      try {
+        const payload = { ...carousel, updated_at: new Date().toISOString() };
+        const { data, error } = await supabase.from('carousels').update(payload).eq('id', id).select().single();
+        if (!error && data) return data;
+        if (error) console.warn('Supabase updateCarousel error:', error.message);
+      } catch (e: any) {
+        console.warn('Supabase updateCarousel exception:', e.message);
+      }
+    }
+    const mock = db.getMockData();
+    if (!mock.carousels) mock.carousels = [];
+    const idx = mock.carousels.findIndex((c: any) => c.id === id);
+    if (idx !== -1) {
+      mock.carousels[idx] = {
+        ...mock.carousels[idx],
+        ...carousel,
+        updated_at: new Date().toISOString()
+      };
+      db.saveMockData(mock);
+      return mock.carousels[idx];
+    }
+    return null;
+  },
+
+  deleteCarousel: async (id: string) => {
+    if (!USE_MOCK) {
+      try {
+        const { error } = await supabase.from('carousels').delete().eq('id', id);
+        if (!error) return true;
+        if (error) console.warn('Supabase deleteCarousel error:', error.message);
+      } catch (e: any) {
+        console.warn('Supabase deleteCarousel exception:', e.message);
+      }
+    }
+    const mock = db.getMockData();
+    if (!mock.carousels) mock.carousels = [];
+    mock.carousels = mock.carousels.filter((c: any) => c.id !== id);
+    db.saveMockData(mock);
+    return true;
   }
 };

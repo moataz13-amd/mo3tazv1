@@ -245,9 +245,21 @@ ALTER TABLE services ADD COLUMN IF NOT EXISTS price VARCHAR(100);
 -- Ensure testimonials columns exist
 ALTER TABLE testimonials ADD COLUMN IF NOT EXISTS status VARCHAR(50) DEFAULT 'active';
 
--- Seed Settings Row
-INSERT INTO settings (id, name, title, bio, email, hero_headline, hero_subheadline, about_section_title, about_section_heading, stat1_value, stat1_label, stat2_value, stat2_label)
-VALUES ('00000000-0000-0000-0000-000000000000', 'معتز جمعة', 'جونيور جرافيك ديزاينر', 'الإبداع ليس ما نفعله فقط بل ما نتركه في أذهان عملائنا من تصميم الهوية البصرية إلى المحتوى الإبداعي الذي يبرز علامتك التجارية.', 'hello@portfolio.dev', 'حين يجتمع الإبداع مع التفاصيل
-تولد تصاميم استثنائية.', 'موثوق من قبل', 'نبذة عني', 'نحول الأفكار إلى تصاميم مؤثرة', '+4', 'شركات', '+75', 'تصميم')
-ON CONFLICT (id) DO NOTHING;
+-- 14. carousels Table
+CREATE TABLE IF NOT EXISTS carousels (
+    id UUID PRIMARY KEY DEFAULT gen_random_uuid(),
+    title VARCHAR(255) NOT NULL,
+    spacing INTEGER DEFAULT 16,
+    images TEXT[] DEFAULT '{}',
+    "order" INTEGER DEFAULT 0,
+    created_at TIMESTAMP WITH TIME ZONE DEFAULT CURRENT_TIMESTAMP,
+    updated_at TIMESTAMP WITH TIME ZONE DEFAULT CURRENT_TIMESTAMP
+);
+
+-- Ensure carousels table migration safety
+ALTER TABLE carousels ADD COLUMN IF NOT EXISTS title VARCHAR(255);
+ALTER TABLE carousels ADD COLUMN IF NOT EXISTS spacing INTEGER DEFAULT 16;
+ALTER TABLE carousels ADD COLUMN IF NOT EXISTS images TEXT[] DEFAULT '{}';
+ALTER TABLE carousels ADD COLUMN IF NOT EXISTS "order" INTEGER DEFAULT 0;
+ALTER TABLE carousels ADD COLUMN IF NOT EXISTS updated_at TIMESTAMP WITH TIME ZONE DEFAULT CURRENT_TIMESTAMP;
 

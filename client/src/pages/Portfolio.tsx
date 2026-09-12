@@ -8,6 +8,7 @@ import type { SiteSettings } from '../types';
 import ThreeCanvas from '../components/three/ThreeCanvas';
 import FloatingNav from '../components/navigation/FloatingNav';
 import Hero from '../components/sections/Hero';
+import InteractiveCarouselSection from '../components/sections/InteractiveCarousel';
 import About from '../components/sections/About';
 import Skills from '../components/sections/Skills';
 import PortfolioSection from '../components/sections/Portfolio';
@@ -89,6 +90,7 @@ export default function Portfolio() {
       {/* Main layout wrapper */}
       <main className="relative z-20 w-full flex flex-col gap-1 pt-[70px] md:pt-0">
         <Hero />
+        <InteractiveCarouselSection />
         <About />
         <Services />
         <Skills />

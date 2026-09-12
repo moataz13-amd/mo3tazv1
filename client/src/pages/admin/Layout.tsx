@@ -10,7 +10,8 @@ import {
   Menu,
   X,
   ImagePlus,
-  Image as ImageIcon
+  Image as ImageIcon,
+  GalleryHorizontal
 } from 'lucide-react';
 import { useUIStore, useAuthStore } from '../../store';
 import { useAdminTranslation } from '../../lib/adminTranslations';
@@ -19,6 +20,7 @@ const adminNavItems = [
   { path: '/admin', labelKey: 'dashboard', icon: LayoutDashboard },
   { path: '/admin/projects', labelKey: 'categories', icon: FolderOpen },
   { path: '/admin/designs', labelKey: 'designs', icon: ImageIcon },
+  { path: '/admin/carousels', labelKey: 'carousels', icon: GalleryHorizontal },
   { path: '/admin/services', labelKey: 'services', icon: Briefcase },
   { path: '/admin/client-logos', labelKey: 'clientLogos', icon: ImagePlus },
   { path: '/admin/messages', labelKey: 'messages', icon: MessageSquareCode },
@@ -98,9 +100,6 @@ export default function AdminLayout() {
               src="/Mo3taz..svg"
               alt="MO3TAZ."
               className="h-6 w-auto object-contain transition-transform group-hover:scale-105"
-              style={{
-                filter: 'brightness(0) saturate(100%) invert(75%) sepia(60%) saturate(500%) hue-rotate(145deg) brightness(1.1)',
-              }}
               onError={(e) => {
                 (e.target as HTMLImageElement).style.display = 'none';
                 const fallback = (e.target as HTMLImageElement).nextElementSibling as HTMLElement;

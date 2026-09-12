@@ -182,7 +182,6 @@ export default function FloatingNav({ projectTitle }: { projectTitle?: string })
                 alt="MO3TAZ."
                 style={{
                   height: '28px',
-                  filter: 'brightness(0) saturate(100%) invert(75%) sepia(60%) saturate(500%) hue-rotate(145deg) brightness(1.1)',
                 }}
                 onError={(e) => {
                   (e.target as HTMLImageElement).style.display = 'none';
@@ -214,11 +213,11 @@ export default function FloatingNav({ projectTitle }: { projectTitle?: string })
           transition={{ delay: 0.2, duration: 0.5, ease: [0.22, 1, 0.36, 1] }}
           className="flex items-center justify-between px-4 py-3 mx-3 mt-2"
           style={{
-            background: 'linear-gradient(135deg, rgba(255, 255, 255, 0.08) 0%, rgba(255, 255, 255, 0.03) 100%)',
+            background: 'linear-gradient(135deg, rgba(255, 255, 255, 0.05) 0%, rgba(255, 255, 255, 0.02) 100%)',
             backdropFilter: 'blur(24px)',
-            border: '1px solid rgba(255, 255, 255, 0.1)',
+            border: 'none',
             borderRadius: '50px',
-            boxShadow: '0 8px 32px rgba(0, 0, 0, 0.3), inset 0 1px 1px rgba(255, 255, 255, 0.25)',
+            boxShadow: 'none',
           }}
         >
           {/* Right group: Menu only */}

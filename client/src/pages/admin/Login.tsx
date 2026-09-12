@@ -56,9 +56,6 @@ export default function Login() {
               src="/Mo3taz..svg"
               alt="MO3TAZ."
               className="h-16 w-auto object-contain drop-shadow-[0_0_15px_rgba(0,229,255,0.4)]"
-              style={{
-                filter: 'brightness(0) saturate(100%) invert(75%) sepia(60%) saturate(500%) hue-rotate(145deg) brightness(1.1)',
-              }}
             />
           </div>
           <p className="text-[10px] text-[#aab8d1] font-mono tracking-widest uppercase">

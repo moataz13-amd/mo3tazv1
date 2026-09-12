@@ -882,4 +882,90 @@ router.delete('/client-logos/:id', authenticate, async (req, res) => {
   }
 });
 
+// ============================================
+// CAROUSELS
+// ============================================
+router.get('/carousels', async (req, res) => {
+  try {
+    const data = await db.getCarousels();
+    res.json(data);
+  } catch (err: any) {
+    res.status(500).json({ message: err.message });
+  }
+});
+
+router.post('/carousels', authenticate, upload.array('carousel_images', 30), async (req, res) => {
+  try {
+    const files = (req as any).files || [];
+    const uploadedUrls: string[] = files.map((f: any) => {
+      if (f.path && (f.path.startsWith('http://') || f.path.startsWith('https://'))) return f.path;
+      if (f.filename) return `/uploads/${f.filename}`;
+      return f.path || '';
+    }).filter(Boolean);
+
+    let existingImages: string[] = [];
+    if (req.body.existing_images) {
+      try {
+        existingImages = JSON.parse(req.body.existing_images);
+      } catch {}
+    }
+
+    const images = [...existingImages, ...uploadedUrls];
+    const carouselData = {
+      title: req.body.title || 'كاروسيل جديد',
+      spacing: Number(req.body.spacing) ?? 16,
+      images,
+      order: Number(req.body.order) || 0
+    };
+
+    const data = await db.createCarousel(carouselData);
+    await db.logActivity('Carousel Created', `Created carousel: ${carouselData.title}`);
+    res.status(201).json(data);
+  } catch (err: any) {
+    res.status(500).json({ message: err.message });
+  }
+});
+
+router.put('/carousels/:id', authenticate, upload.array('carousel_images', 30), async (req, res) => {
+  try {
+    const files = (req as any).files || [];
+    const uploadedUrls: string[] = files.map((f: any) => {
+      if (f.path && (f.path.startsWith('http://') || f.path.startsWith('https://'))) return f.path;
+      if (f.filename) return `/uploads/${f.filename}`;
+      return f.path || '';
+    }).filter(Boolean);
+
+    let existingImages: string[] = [];
+    if (req.body.existing_images) {
+      try {
+        existingImages = JSON.parse(req.body.existing_images);
+      } catch {}
+    }
+
+    const images = [...existingImages, ...uploadedUrls];
+    const updateData: any = {
+      title: req.body.title,
+      spacing: Number(req.body.spacing) ?? 16,
+      images,
+      order: Number(req.body.order) || 0
+    };
+
+    const data = await db.updateCarousel(String(req.params.id), updateData);
+    await db.logActivity('Carousel Updated', `Updated carousel: ${updateData.title}`);
+    res.json(data);
+  } catch (err: any) {
+    res.status(500).json({ message: err.message });
+  }
+});
+
+router.delete('/carousels/:id', authenticate, async (req, res) => {
+  try {
+    await db.deleteCarousel(String(req.params.id));
+    await db.logActivity('Carousel Deleted', `Deleted carousel ID: ${req.params.id}`);
+    res.json({ message: 'Carousel deleted' });
+  } catch (err: any) {
+    res.status(500).json({ message: err.message });
+  }
+});
+
 export default router;

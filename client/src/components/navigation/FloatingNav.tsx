@@ -1,5 +1,5 @@
 import { useEffect, useState } from 'react';
-import { useNavigate } from 'react-router-dom';
+import { useNavigate, useLocation } from 'react-router-dom';
 import { motion, AnimatePresence } from 'framer-motion';
 import { Menu, X, ArrowRight, MessageCircle, Download } from 'lucide-react';
 import { useUIStore, useSettingsStore } from '../../store';
@@ -13,10 +13,11 @@ const navItems = [
 
 export default function FloatingNav({ projectTitle }: { projectTitle?: string }) {
   const navigate = useNavigate();
+  const location = useLocation();
   const { activeSection, setActiveSection } = useUIStore();
   const [scrolled, setScrolled] = useState(false);
   const [mobileMenuOpen, setMobileMenuOpen] = useState(false);
-  const isProjectPage = !!projectTitle;
+  const isProjectPage = !!projectTitle || location.pathname.startsWith('/project');
 
   const scrollToSection = (id: string) => {
     if (isProjectPage) {

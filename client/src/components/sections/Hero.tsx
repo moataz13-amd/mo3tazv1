@@ -1,52 +1,9 @@
-import { memo, useRef, useState } from 'react';
-import { motion } from 'framer-motion';
-import { useQuery } from '@tanstack/react-query';
+import { memo, useRef } from 'react';
 import { useSettingsStore } from '../../store';
-import { clientLogosAPI } from '../../lib/api';
 
 const StarDivider = ({ fill = "#26EFFD" }: { fill?: string }) => (
   <svg width="18" height="18" viewBox="0 0 24 24" fill={fill} className="mx-5 flex-shrink-0">
     <path d="M12 0L14.59 9.41L24 12L14.59 14.59L12 24L9.41 14.59L0 12L9.41 9.41L12 0Z" />
-  </svg>
-);
-
-const ClientLogoItem = memo(function ClientLogoItem({ logo }: { logo: { name: string; src: string } }) {
-  const [imgError, setImgError] = useState(false);
-
-  return (
-    <div
-      className="flex items-center justify-center h-14 md:h-16 px-4 py-1 opacity-80 hover:opacity-100 transition-opacity duration-200"
-    >
-      {logo.src && !imgError ? (
-        <img
-          src={logo.src}
-          alt={logo.name || 'Client Logo'}
-          className="h-full w-auto object-contain max-w-[160px]"
-          loading="eager"
-          decoding="async"
-          onError={() => setImgError(true)}
-        />
-      ) : (
-        <span 
-          className="text-lg md:text-xl font-bold tracking-wide text-white/80 hover:text-[#26EFFD] transition-colors"
-          style={{ fontFamily: "'Sahara Bold', 'Inter', sans-serif" }}
-        >
-          {logo.name}
-        </span>
-      )}
-    </div>
-  );
-});
-
-const CyanStar = () => (
-  <svg 
-    width="16" 
-    height="16" 
-    viewBox="0 0 24 24" 
-    fill="#26EFFD" 
-    className="drop-shadow-[0_0_8px_rgba(38,239,253,0.9)] flex-shrink-0"
-  >
-    <path d="M12 .587l3.668 7.431 8.2 1.192-5.934 5.787 1.4 8.168L12 18.896l-7.334 3.857 1.4-8.168L.132 9.21l8.2-1.192L12 .587z" />
   </svg>
 );
 
@@ -73,16 +30,7 @@ const Hero = memo(function Hero() {
   const heroRef = useRef<HTMLDivElement>(null);
   const settings = useSettingsStore((state) => state.settings);
 
-  // Fetch client logos from dedicated endpoint
-  const { data: fetchedLogos } = useQuery({
-    queryKey: ['client-logos'],
-    queryFn: () => clientLogosAPI.getAll().then((r) => r.data as { id: string; name: string; src: string; order: number }[]),
-    staleTime: 120_000,
-  });
-
   const headline = settings?.hero_headline || "حين يجتمع الإبداع مع التفاصيل\nتولد تصاميم استثنائية.";
-  const subheadline = settings?.hero_subheadline || "موثوق من قبل";
-  const clientLogos = fetchedLogos || [];
 
   const parseTags = (tags: any, fallback: any) => {
     if (Array.isArray(tags) && tags.length > 0) return tags;
@@ -141,26 +89,6 @@ const Hero = memo(function Hero() {
           )}
         </h1>
 
-        {/* Trusted By Section */}
-        {clientLogos.length > 0 && (
-          <div className="flex flex-col items-center gap-8">
-            {/* Label */}
-            {subheadline && (
-              <div className="glow-pill">
-                <CyanStar />
-                <span>{subheadline}</span>
-                <CyanStar />
-              </div>
-            )}
-
-            {/* Client logos */}
-            <div className="flex items-center gap-10 md:gap-14 flex-wrap justify-center">
-              {clientLogos.map((logo, index) => (
-                <ClientLogoItem key={`${logo.name}-${index}`} logo={logo} />
-              ))}
-            </div>
-          </div>
-        )}
       </div>
 
       {/* Infinite Marquee Service Carousel - Matching Reference 100% */}

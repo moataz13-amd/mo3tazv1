@@ -8,6 +8,7 @@ import type { SiteSettings } from '../types';
 import ThreeCanvas from '../components/three/ThreeCanvas';
 import FloatingNav from '../components/navigation/FloatingNav';
 import Hero from '../components/sections/Hero';
+import Logofolio from '../components/sections/Logofolio';
 import InteractiveCarouselSection from '../components/sections/InteractiveCarousel';
 import About from '../components/sections/About';
 import Skills from '../components/sections/Skills';
@@ -94,6 +95,7 @@ export default function Portfolio() {
         <InteractiveCarouselSection />
         <Services />
         <Skills />
+        <Logofolio />
         <PortfolioSection />
         <Stats />
         <Contact />

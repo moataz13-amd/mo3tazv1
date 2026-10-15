@@ -7,9 +7,14 @@
   padding: 140px 32px 56px;
 }
 
-.portfolio-hero-artwork {
+.portfolio-hero-picture {
   display: block;
   width: min(100%, 1100px);
+}
+
+.portfolio-hero-artwork {
+  display: block;
+  width: 100%;
   max-height: 74svh;
   object-fit: contain;
 }

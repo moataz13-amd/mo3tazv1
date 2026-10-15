@@ -1,0 +1,30 @@
+.logofolio-track {
+  display: flex;
+  width: max-content;
+  animation: logofolio-scroll linear infinite;
+}
+
+.logofolio-carousel:hover .logofolio-track,
+.logofolio-carousel:focus-within .logofolio-track {
+  animation-play-state: paused;
+}
+
+@keyframes logofolio-scroll {
+  to {
+    transform: translateX(-50%);
+  }
+}
+
+@media (prefers-reduced-motion: reduce) {
+  .logofolio-carousel {
+    overflow-x: auto;
+  }
+
+  .logofolio-track {
+    animation: none;
+  }
+
+  .logofolio-track > [aria-hidden='true'] {
+    display: none;
+  }
+}

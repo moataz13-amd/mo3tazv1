@@ -2,6 +2,33 @@ import { memo, useRef } from 'react';
 import { motion, useInView } from 'framer-motion';
 import { MapPin } from 'lucide-react';
 import { useSettingsStore } from '../../store';
+import './About.css';
+
+const Facebook = () => (
+  <svg viewBox="0 0 24 24" fill="currentColor" aria-hidden="true">
+    <path d="M13.8 22v-9h3l.5-3.5h-3.5V7.3c0-1 .3-1.7 1.8-1.7h1.9V2.5a24 24 0 0 0-2.8-.2c-2.8 0-4.7 1.7-4.7 4.8v2.4H7V13h3v9h3.8Z" />
+  </svg>
+);
+
+const Instagram = () => (
+  <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" aria-hidden="true">
+    <rect x="3" y="3" width="18" height="18" rx="5" />
+    <circle cx="12" cy="12" r="4" />
+    <circle cx="17.5" cy="6.5" r="1" fill="currentColor" stroke="none" />
+  </svg>
+);
+
+const Youtube = () => (
+  <svg viewBox="0 0 24 24" fill="currentColor" aria-hidden="true">
+    <path fillRule="evenodd" d="M21.6 5.7c-.2-.9-.9-1.6-1.8-1.8C18.2 3.5 12 3.5 12 3.5s-6.2 0-7.8.4c-.9.2-1.6.9-1.8 1.8C2 7.3 2 12 2 12s0 4.7.4 6.3c.2.9.9 1.6 1.8 1.8 1.6.4 7.8.4 7.8.4s6.2 0 7.8-.4c.9-.2 1.6-.9 1.8-1.8.4-1.6.4-6.3.4-6.3s0-4.7-.4-6.3ZM10 16V8l6 4-6 4Z" clipRule="evenodd" />
+  </svg>
+);
+
+const TikTokIcon = () => (
+  <svg viewBox="0 0 24 24" fill="currentColor" aria-hidden="true">
+    <path d="M16.6 1h-3.4v14.4a3 3 0 1 1-2.6-3V9a6.4 6.4 0 1 0 6 6.4V8.1a8.3 8.3 0 0 0 4.9 1.6V6.3A5 5 0 0 1 16.6 1Z" />
+  </svg>
+);
 
 const About = memo(function About() {
   const ref = useRef(null);
@@ -23,6 +50,12 @@ const About = memo(function About() {
   const stat2Label = settings?.stat2_label || "تصميم";
 
   const bioLines = bio.split('\n');
+  const socialPlatforms = [
+    { id: 'facebook', name: 'Facebook', Icon: Facebook, url: settings?.facebook_url },
+    { id: 'tiktok', name: 'TikTok', Icon: TikTokIcon, url: settings?.tiktok_url },
+    { id: 'instagram', name: 'Instagram', Icon: Instagram, url: settings?.instagram_url },
+    { id: 'youtube', name: 'YouTube', Icon: Youtube, url: settings?.social_links?.find((link) => link.platform.toLowerCase() === 'youtube' && link.enabled !== false)?.url },
+  ];
 
   // Check if we need to render the default stylized heading
   const isDefaultHeading = !settings?.about_section_heading || settings?.about_section_heading === "نحول الأفكار إلى تصاميم مؤثرة";
@@ -87,15 +120,15 @@ const About = memo(function About() {
           className="relative w-full p-6 md:p-12 overflow-visible flex flex-col items-center"
         >
           {/* Location Pin - Top Right */}
-          <div className="absolute top-8 right-8 z-30 flex items-center gap-2 text-white/50 text-[14px] font-medium" style={{ fontFamily: "'Sahara Bold', sans-serif" }}>
+          <div className="relative self-end mb-6 md:absolute md:top-8 md:right-8 z-30 flex items-center gap-2 text-white/50 text-[14px] font-medium" style={{ fontFamily: "'Sahara Bold', sans-serif" }}>
             <MapPin size={16} className="text-[#26EFFD]" />
             <span>{location}</span>
           </div>
 
           {/* Profile Photo with Cyan Arch/Circle Backdrop */}
-          <div className="relative z-10 flex justify-center -mt-8 md:-mt-16 mb-8 md:mb-10 w-full pointer-events-none">
+          <div className="about-portrait-stage relative z-10 flex justify-center mb-8 md:mb-10 w-full">
             {/* Profile Avatar Frame */}
-            <div className="relative w-full max-w-[320px] md:max-w-[420px] flex items-center justify-center">
+            <div className="about-portrait-frame relative w-full max-w-[320px] md:max-w-[420px] flex items-center justify-center">
               {avatar && (
                 <img
                   src={avatar}
@@ -104,6 +137,20 @@ const About = memo(function About() {
                   loading="lazy" decoding="async"
                 />
               )}
+              {socialPlatforms.map(({ id, name: platformName, Icon, url }) => {
+                const configuredUrl = url || settings?.social_links?.find((link) => link.platform.toLowerCase() === id && link.enabled !== false)?.url;
+                const safeUrl = configuredUrl && /^https?:\/\//i.test(configuredUrl) ? configuredUrl : undefined;
+                const content = <Icon />;
+                return safeUrl ? (
+                  <a key={id} className={`about-floating-social about-social-${id}`} href={safeUrl} target="_blank" rel="noopener noreferrer" aria-label={platformName} title={platformName}>
+                    {content}
+                  </a>
+                ) : (
+                  <span key={id} className={`about-floating-social about-social-${id}`} role="img" aria-label={platformName} title={platformName}>
+                    {content}
+                  </span>
+                );
+              })}
             </div>
           </div>
 

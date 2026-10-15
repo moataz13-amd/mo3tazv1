@@ -1,5 +1,7 @@
 import { memo, useRef } from 'react';
+import { ArrowDown, ArrowUpLeft, MoveLeft } from 'lucide-react';
 import { useSettingsStore } from '../../store';
+import './Hero.css';
 
 const StarDivider = ({ fill = "#26EFFD" }: { fill?: string }) => (
   <svg width="18" height="18" viewBox="0 0 24 24" fill={fill} className="mx-5 flex-shrink-0">
@@ -57,45 +59,52 @@ const Hero = memo(function Hero() {
     >
 
 
-      {/* Main headline content - takes up full viewport height on initial load */}
-      <div className="relative z-10 flex flex-col items-center justify-center text-center px-6 max-w-5xl mx-auto min-h-[92vh] pt-28 pb-10">
-        {/* Arabic Hero Headline */}
+      <div className="modern-hero-content relative z-10 mx-auto flex max-w-6xl flex-col items-center px-6 text-center">
+        <div className="hero-identity">
+          <span>{settings?.name || 'معتز جمعة'}</span>
+          <span className="hero-identity-divider" aria-hidden="true" />
+          <span className="hero-specialty">{settings?.title || 'مصمم جرافيك وهوية بصرية'}</span>
+        </div>
         <h1
-          className="hero-headline leading-tight mb-14"
-          style={{
-            fontFamily: "'Milan Display', 'Sahara Bold', 'Inter', sans-serif",
-            fontSize: 'clamp(2.5rem, 7.5vw, 6rem)',
-            fontWeight: 900,
-            lineHeight: 1.25,
-            color: '#FFFFFF',
-            filter: 'drop-shadow(0 2px 10px rgba(0,0,0,0.3))',
-          }}
+          className="hero-headline modern-hero-title"
         >
           <span>{headlineLines[0]}</span>
           {headlineLines.length > 1 && (
             <>
               <br />
-              <span
-                style={{
-                  backgroundImage: 'linear-gradient(135deg, #26EFFD 0%, #26EFFD 50%, #26EFFD 100%)',
-                  WebkitBackgroundClip: 'text',
-                  WebkitTextFillColor: 'transparent',
-                  backgroundClip: 'text',
-                }}
-              >
+              <span className="modern-hero-accent">
                 {headlineLines.slice(1).join(' ')}
               </span>
             </>
           )}
         </h1>
-
+        <p className="modern-hero-description">
+          {settings?.subtitle || 'هويات بصرية وتصاميم تحكي قصتك، وتترك أثرًا يدوم.'}
+        </p>
+        <div className="modern-hero-actions">
+          <a href="#portfolio" className="hero-action hero-action-primary">
+            <span>استكشف أعمالي</span>
+            <ArrowUpLeft size={22} aria-hidden="true" />
+          </a>
+          <a href="#contact" className="hero-action hero-action-secondary">
+            <span>خلينا نبدأ مشروعك</span>
+            <MoveLeft size={21} aria-hidden="true" />
+          </a>
+        </div>
+        <div className="hero-bottom-line">
+          <span dir="ltr">BRAND IDENTITY & GRAPHIC DESIGN</span>
+          <a href="#about" aria-label="اكتشف المزيد عني" title="اكتشف المزيد عني" className="hero-scroll-link">
+            <ArrowDown size={20} aria-hidden="true" />
+          </a>
+          <span>{settings?.location || 'مصر'} <span className="hero-bottom-accent">/</span> إبداع بلا حدود</span>
+        </div>
       </div>
 
       {/* Infinite Marquee Service Carousel - Matching Reference 100% */}
       {row1Tags.length > 0 && (
-        <div className="w-full mt-12 mb-16 z-30 flex flex-col gap-0 overflow-hidden">
+        <div className="hero-service-strips w-full mb-16 z-30 flex flex-col gap-0 overflow-hidden">
           {/* Row 1: Left scrolling - Dark Background / White Text */}
-          <div className="marquee-container w-full py-10 bg-[#050505]">
+          <div className="marquee-container w-full py-5 bg-[#050505]">
             <div className="marquee-track marquee-track-left">
               {[...row1Tags, ...row1Tags, ...row1Tags, ...row1Tags, ...row1Tags].map((tag, idx) => (
                 <div key={`r1-${idx}`} className="flex items-center flex-shrink-0">
@@ -113,7 +122,7 @@ const Hero = memo(function Hero() {
 
           {/* Row 2: Right scrolling - FULL WIDTH SOLID CYAN/MINT BANNER / Black Text */}
           {row2Tags.length > 0 && (
-            <div className="marquee-container w-full py-10 bg-[#26EFFD]">
+            <div className="marquee-container w-full py-5 bg-[#26EFFD]">
               <div className="marquee-track marquee-track-right">
                 {[...row2Tags, ...row2Tags, ...row2Tags, ...row2Tags, ...row2Tags].map((tag, idx) => (
                   <div key={`r2-${idx}`} className="flex items-center flex-shrink-0">

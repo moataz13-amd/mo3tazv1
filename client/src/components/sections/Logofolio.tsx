@@ -1,4 +1,4 @@
-import { memo, useState } from 'react';
+import { memo, useEffect, useState } from 'react';
 import { useQuery } from '@tanstack/react-query';
 import { clientLogosAPI } from '../../lib/api';
 import './Logofolio.css';
@@ -15,7 +15,7 @@ function LogoImage({ logo }: { logo: Logo }) {
           src={logo.src}
           alt={logo.name || 'Client logo'}
           className="h-full w-full object-contain"
-          loading="lazy"
+          loading="eager"
           decoding="async"
           onError={() => setFailedSource(logo.src)}
         />
@@ -29,6 +29,14 @@ function LogoImage({ logo }: { logo: Logo }) {
 }
 
 export default memo(function Logofolio() {
+  const [viewportWidth, setViewportWidth] = useState(() => window.innerWidth);
+
+  useEffect(() => {
+    const updateWidth = () => setViewportWidth(window.innerWidth);
+    window.addEventListener('resize', updateWidth);
+    return () => window.removeEventListener('resize', updateWidth);
+  }, []);
+
   const { data: logos = [] } = useQuery({
     queryKey: ['client-logos'],
     queryFn: () => clientLogosAPI.getAll().then((response) => response.data as Logo[]),
@@ -38,7 +46,9 @@ export default memo(function Logofolio() {
   if (!logos.length) return null;
 
   const sortedLogos = [...logos].sort((a, b) => a.order - b.order);
-  const slides = Array.from({ length: Math.max(1, Math.ceil(6 / logos.length)) }, () => sortedLogos).flat();
+  const slideWidth = viewportWidth >= 640 ? 320 : 240;
+  const minimumSlides = Math.ceil(viewportWidth / slideWidth) + 1;
+  const slides = Array.from({ length: Math.max(1, Math.ceil(minimumSlides / logos.length)) }, () => sortedLogos).flat();
 
   return (
     <section id="logofolio" aria-labelledby="logofolio-title" className="relative w-full py-16 md:py-24">
@@ -51,7 +61,7 @@ export default memo(function Logofolio() {
             {[0, 1].map((copy) => (
               <div key={copy} className="flex shrink-0" aria-hidden={copy === 1 ? true : undefined}>
                 {slides.map((logo, index) => (
-                  <div key={`${logo.id}-${index}`} aria-hidden={index >= sortedLogos.length ? true : undefined}>
+                  <div className="shrink-0" key={`${logo.id}-${index}`} aria-hidden={index >= sortedLogos.length ? true : undefined}>
                     <LogoImage logo={logo} />
                   </div>
                 ))}

@@ -1,6 +1,5 @@
 import { memo, useState } from 'react';
 import { useQuery } from '@tanstack/react-query';
-import { Pause, Play } from 'lucide-react';
 import { clientLogosAPI } from '../../lib/api';
 import './Logofolio.css';
 
@@ -30,7 +29,6 @@ function LogoImage({ logo }: { logo: Logo }) {
 }
 
 export default memo(function Logofolio() {
-  const [paused, setPaused] = useState(false);
   const { data: logos = [] } = useQuery({
     queryKey: ['client-logos'],
     queryFn: () => clientLogosAPI.getAll().then((response) => response.data as Logo[]),
@@ -43,25 +41,13 @@ export default memo(function Logofolio() {
   const slides = Array.from({ length: Math.max(1, Math.ceil(6 / logos.length)) }, () => sortedLogos).flat();
 
   return (
-    <section id="logofolio" aria-labelledby="logofolio-title" className="relative w-full px-6 py-16 md:py-24">
-      <div className="mx-auto max-w-6xl">
-        <h2 id="logofolio-title" className="mb-8 text-center text-3xl font-bold text-primary sm:text-4xl md:text-5xl" dir="rtl">
+    <section id="logofolio" aria-labelledby="logofolio-title" className="relative w-full py-16 md:py-24">
+      <div className="w-full">
+        <h2 id="logofolio-title" className="mb-8 px-6 text-center text-3xl font-bold text-primary sm:text-4xl md:text-5xl" dir="rtl">
           لوجوفوليو | <bdi>Logofolio</bdi>
         </h2>
-        <div className="mb-4 flex justify-end">
-          <button
-            type="button"
-            onClick={() => setPaused((value) => !value)}
-            aria-label={paused ? 'تشغيل حركة الشعارات' : 'إيقاف حركة الشعارات'}
-            title={paused ? 'تشغيل حركة الشعارات' : 'إيقاف حركة الشعارات'}
-            aria-pressed={paused}
-            className="flex h-10 w-10 items-center justify-center rounded border border-white/20 text-white transition-colors hover:text-primary focus-visible:outline focus-visible:outline-2 focus-visible:outline-primary"
-          >
-            {paused ? <Play size={18} /> : <Pause size={18} />}
-          </button>
-        </div>
-        <div className="logofolio-carousel overflow-hidden border-y border-white/10" dir="ltr" role="region" aria-label="شعارات العملاء">
-          <div className="logofolio-track" style={{ animationDuration: `${slides.length * 5}s`, animationPlayState: paused ? 'paused' : undefined }}>
+        <div className="logofolio-carousel overflow-hidden" dir="ltr" role="region" aria-label="شعارات العملاء">
+          <div className="logofolio-track" style={{ animationDuration: `${slides.length * 5}s` }}>
             {[0, 1].map((copy) => (
               <div key={copy} className="flex shrink-0" aria-hidden={copy === 1 ? true : undefined}>
                 {slides.map((logo, index) => (

@@ -71,7 +71,7 @@ a.about-floating-social:focus-visible {
 }
 
 @media (max-width: 767px) {
-  .about-portrait-stage { padding: 16px 24px; }
+  .about-portrait-stage { padding: 16px; }
   .about-floating-social { width: 44px; height: 44px; border-radius: 12px; }
   .about-floating-social svg { width: 24px; height: 24px; }
   .about-social-facebook, .about-social-instagram { right: -24px; }

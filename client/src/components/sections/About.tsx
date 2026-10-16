@@ -128,12 +128,12 @@ const About = memo(function About() {
           {/* Profile Photo with Cyan Arch/Circle Backdrop */}
           <div className="about-portrait-stage relative z-10 flex justify-center mb-8 md:mb-10 w-full">
             {/* Profile Avatar Frame */}
-            <div className="about-portrait-frame relative w-full max-w-[320px] md:max-w-[420px] flex items-center justify-center">
+            <div className="about-portrait-frame relative w-full max-w-[360px] md:max-w-[480px] flex items-center justify-center">
               {avatar && (
                 <img
                   src={avatar}
                   alt={name}
-                  className="w-full max-h-[420px] md:max-h-[520px] object-contain transition-transform duration-500"
+                  className="w-full max-h-[480px] md:max-h-[600px] object-contain transition-transform duration-500"
                   loading="lazy" decoding="async"
                 />
               )}

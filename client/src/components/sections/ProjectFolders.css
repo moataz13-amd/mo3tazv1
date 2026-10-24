@@ -7,6 +7,33 @@
   padding: 48px 24px 72px;
 }
 
+.project-folder-carousel-card {
+  max-width: 680px;
+  border: 0;
+  padding: 0;
+  background: transparent;
+  overflow: visible;
+}
+
+.project-folder-large {
+  height: 100%;
+  aspect-ratio: auto;
+}
+
+.project-folder-large .project-folder-title {
+  font-size: 28px;
+}
+
+.project-folder-carousel-card:focus-visible {
+  outline: 2px solid #26effd;
+  outline-offset: 4px;
+}
+
+@media (max-width: 639px) {
+  .project-folder-carousel-card { max-width: 300px; }
+  .project-folder-large .project-folder-title { font-size: 18px; }
+}
+
 .project-folders-grid {
   display: grid;
   grid-template-columns: repeat(3, minmax(0, 1fr));

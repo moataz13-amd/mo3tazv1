@@ -35,6 +35,7 @@ const CarouselCard = memo(function CarouselCard({
   onPrev,
   onNext,
   onNavigate,
+  folderMode = false,
 }: {
   project: Project;
   offset: number;
@@ -43,6 +44,7 @@ const CarouselCard = memo(function CarouselCard({
   onPrev: () => void;
   onNext: () => void;
   onNavigate: (p: Project) => void;
+  folderMode?: boolean;
 }) {
   // Responsive transform values for mobile vs desktop
   const xOffset = isSmallScreen ? 44 : 55;
@@ -58,7 +60,9 @@ const CarouselCard = memo(function CarouselCard({
   }, [offset, onPrev, onNext, onNavigate, project]);
 
   return (
-    <motion.div
+    <motion.button
+      type="button"
+      aria-label={`عرض مشروع ${project.title || project.internal_name || 'غير مسمى'}`}
       layout={false}
       onClick={handleClick}
       initial={false}
@@ -72,7 +76,7 @@ const CarouselCard = memo(function CarouselCard({
         ease: [0.25, 0.1, 0.25, 1],   // cubic-bezier – buttery smooth
         duration: 0.55,
       }}
-      className={`absolute top-0 w-full max-w-[960px] h-full rounded-[20px] sm:rounded-[32px] md:rounded-[42px] overflow-hidden select-none cursor-pointer group ${
+      className={folderMode ? 'project-folder-carousel-card absolute top-0 w-full h-full select-none cursor-pointer group' : `absolute top-0 w-full max-w-[960px] h-full rounded-[20px] sm:rounded-[32px] md:rounded-[42px] overflow-hidden select-none cursor-pointer group ${
         isActive
           ? 'border-2 border-[#000000] shadow-[6px_6px_0px_rgba(0,0,0,1),0_8px_0px_rgba(0,0,0,0.9)]'
           : 'border border-white/10'
@@ -86,7 +90,7 @@ const CarouselCard = memo(function CarouselCard({
       }}
     >
       {/* Image – native lazy + decoding async for off-screen perf */}
-      <div className="relative w-full h-full bg-[#050B14]">
+      {folderMode ? <FolderArtwork project={project} /> : <div className="relative w-full h-full bg-[#050B14]">
         <img
           src={project.cover_image}
           alt={project.title}
@@ -94,8 +98,8 @@ const CarouselCard = memo(function CarouselCard({
           loading="lazy"
           decoding="async"
         />
-      </div>
-    </motion.div>
+      </div>}
+    </motion.button>
   );
 });
 
@@ -107,6 +111,7 @@ interface Carousel3DSectionProps {
   titleHighlight: string;
   items: Project[];
   hideText?: boolean;
+  folderMode?: boolean;
 }
 
 const Carousel3DSection = memo(function Carousel3DSection({
@@ -116,6 +121,7 @@ const Carousel3DSection = memo(function Carousel3DSection({
   titleHighlight,
   items,
   hideText = false,
+  folderMode = false,
 }: Carousel3DSectionProps) {
   const navigate = useNavigate();
   const ref = useRef(null);
@@ -291,6 +297,7 @@ const Carousel3DSection = memo(function Carousel3DSection({
                 onPrev={handlePrev}
                 onNext={handleNext}
                 onNavigate={handleNavigate}
+                folderMode={folderMode}
               />
             ))}
           </div>
@@ -369,36 +376,17 @@ const Portfolio = memo(function Portfolio() {
       />
 
       {/* 2. Featured Projects Section (Main Portfolio Section) */}
-      <ProjectFolders items={projectsList} />
+      <Carousel3DSection id="portfolio" subtitle="إبداع يُرى ويُتذكّر" titlePrefix="المشاريع" titleHighlight="المميزة" items={projectsList} folderMode />
     </div>
   );
 });
 
 export default Portfolio;
 
-function ProjectFolders({ items }: { items: Project[] }) {
-  const navigate = useNavigate();
-
+function FolderArtwork({ project }: { project: Project }) {
+  const previews = (project.images?.length ? project.images : [project.cover_image]).filter(Boolean).slice(0, 4);
   return (
-    <section id="portfolio" className="project-folders-section" dir="rtl" aria-labelledby="project-folders-heading">
-      <div className="text-center mb-12">
-        <p className="text-primary text-sm mb-3">إبداع يُرى ويُتذكّر</p>
-        <h2 id="project-folders-heading" className="text-3xl md:text-5xl font-black" style={{ fontFamily: "'Milan Display', 'Sahara Bold', sans-serif" }}>
-          المشاريع <span className="text-primary">المميزة</span>
-        </h2>
-      </div>
-      {items.length ? (
-        <div className="project-folders-grid">
-          {items.map((project) => {
-            const previews = (project.images?.length ? project.images : [project.cover_image]).filter(Boolean).slice(0, 4);
-            return (
-              <button
-                type="button"
-                className="project-folder"
-                key={project.id}
-                onClick={() => navigate(`/project/${project.id}`, { state: { project } })}
-                aria-label={`عرض مشروع ${project.title || project.internal_name || 'غير مسمى'}`}
-              >
+    <span className="project-folder project-folder-large">
                 <span className="project-folder-title">{project.title || project.internal_name || 'غير مسمى'}</span>
                 <svg className="project-folder-back" viewBox="0 0 300 230" preserveAspectRatio="none" aria-hidden="true">
                   <path d="M17 2 H156 Q169 2 174 16 L183 32 H283 Q298 32 298 47 V213 Q298 228 283 228 H17 Q2 228 2 213 V17 Q2 2 17 2 Z" />
@@ -415,11 +403,6 @@ function ProjectFolders({ items }: { items: Project[] }) {
                   ))}
                 </span>
                 <span className="project-folder-front" aria-hidden="true" />
-              </button>
-            );
-          })}
-        </div>
-      ) : <p className="text-center text-white/50 py-12">لا توجد عناصر في هذا القسم بعد</p>}
-    </section>
+    </span>
   );
 }

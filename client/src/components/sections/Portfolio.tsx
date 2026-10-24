@@ -47,7 +47,7 @@ const CarouselCard = memo(function CarouselCard({
   folderMode?: boolean;
 }) {
   // Responsive transform values for mobile vs desktop
-  const xOffset = isSmallScreen ? 44 : 55;
+  const xOffset = folderMode ? 100 : isSmallScreen ? 44 : 55;
   const xPercent = offset === 0 ? 0 : offset < 0 ? -xOffset : xOffset;
   const cardScale = isActive ? 1 : isSmallScreen ? 0.82 : 0.78;
   const cardOpacity = isActive ? 1 : 0.45;
@@ -85,7 +85,7 @@ const CarouselCard = memo(function CarouselCard({
         zIndex,
         willChange: 'transform, opacity',
         backfaceVisibility: 'hidden',
-        contain: 'layout style paint',
+        contain: folderMode ? 'layout style' : 'layout style paint',
         transform: 'translateZ(0)',     // force GPU compositing layer
       }}
     >

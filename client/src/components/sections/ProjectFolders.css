@@ -90,25 +90,25 @@
 .project-folder-sheets {
   position: absolute;
   display: block;
-  inset: 17% 9% 10%;
+  inset: 19% 15% 12%;
   z-index: 2;
 }
 
 .project-folder-sheet {
   position: absolute;
   display: block;
-  width: 57%;
-  height: 89%;
+  width: 56%;
+  height: 80%;
   object-fit: contain;
   border-radius: 7px;
   filter: drop-shadow(0 5px 8px #0005);
   transition: transform 300ms ease;
 }
 
-.project-folder-sheet-0 { left: 1%; top: 0; transform: rotate(-9deg); }
-.project-folder-sheet-1 { right: 1%; top: 0; transform: rotate(14deg); }
-.project-folder-sheet-2 { left: 10%; top: 9%; transform: rotate(-5deg); }
-.project-folder-sheet-3 { right: 7%; top: 12%; transform: rotate(9deg); }
+.project-folder-sheet-0 { left: 3%; top: 0; transform: rotate(-9deg); }
+.project-folder-sheet-1 { right: 3%; top: 0; transform: rotate(10deg); }
+.project-folder-sheet-2 { left: 12%; top: 13%; transform: rotate(-5deg); }
+.project-folder-sheet-3 { right: 10%; top: 16%; transform: rotate(6deg); }
 
 .project-folder-front {
   position: absolute;
@@ -116,7 +116,7 @@
   z-index: 3;
   border: 1px solid #efffff66;
   border-radius: 15px;
-  background: linear-gradient(145deg, #d4f5fa30, #d9edf04d);
+  background: linear-gradient(145deg, #d4f5fa24, #d9edf03d);
   box-shadow: inset 0 1px 5px #ffffff40, 0 12px 24px #0002;
   transform: perspective(700px) rotateX(-7deg);
   transform-origin: bottom;
@@ -127,6 +127,11 @@
 .project-folder:focus-visible .project-folder-sheet { translate: 0 -8px; }
 .project-folder:hover .project-folder-front { transform: perspective(700px) rotateX(-18deg); }
 .project-folder:focus-visible { outline: 2px solid #26effd; outline-offset: 8px; border-radius: 8px; }
+
+.project-folder.project-folder-large {
+  height: 100%;
+  aspect-ratio: auto;
+}
 
 @media (max-width: 1000px) {
   .project-folders-grid { grid-template-columns: repeat(2, minmax(0, 1fr)); gap: 28px; }

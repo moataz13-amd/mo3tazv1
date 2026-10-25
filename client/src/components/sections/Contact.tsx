@@ -52,7 +52,7 @@ const Contact = memo(function Contact() {
       value: settings?.email || 'mizoelzyat@gmail.com',
       href: `mailto:${settings?.email || 'mizoelzyat@gmail.com'}`,
       icon: <Mail className="text-[#26EFFD]" size={20} />,
-      bgClass: 'bg-[#26EFFD] text-black',
+      bgClass: 'bg-[#26EFFD]/75 text-black',
       iconBgClass: 'bg-white',
       arrowColor: 'text-black/50',
     },
@@ -61,8 +61,8 @@ const Contact = memo(function Contact() {
       value: settings?.phone || '+20 1271946126',
       href: `tel:${settings?.phone || '+20 1271946126'}`,
       icon: <Phone className="text-white" size={20} />,
-      bgClass: 'bg-white text-black',
-      iconBgClass: 'bg-[#26EFFD]',
+      bgClass: 'bg-white/85 text-black',
+      iconBgClass: 'bg-[#26EFFD]/75',
       arrowColor: 'text-black/30',
     },
     {
@@ -76,8 +76,8 @@ const Contact = memo(function Contact() {
           <path d="M.057 24l1.687-6.163c-1.041-1.804-1.588-3.849-1.587-5.946C.06 5.348 5.397.01 12.008.01c3.202.001 6.212 1.246 8.477 3.514 2.266 2.268 3.507 5.28 3.505 8.484-.004 6.657-5.34 11.997-11.953 11.997-2.005-.001-3.973-.502-5.724-1.455L0 24zm6.59-4.846c1.6.95 3.498 1.45 5.416 1.451 5.408 0 9.807-4.394 9.811-9.808.002-2.624-1.018-5.09-2.868-6.944-1.85-1.855-4.318-2.876-6.944-2.878-5.412 0-9.81 4.396-9.814 9.812-.001 1.914.501 3.784 1.455 5.394L2.617 21.39l4.03-.636z" />
         </svg>
       ),
-      bgClass: 'bg-white text-black',
-      iconBgClass: 'bg-[#26EFFD]',
+      bgClass: 'bg-white/85 text-black',
+      iconBgClass: 'bg-[#26EFFD]/75',
       arrowColor: 'text-black/30',
     },
   ];
@@ -123,7 +123,7 @@ const Contact = memo(function Contact() {
               rel={
                 tab.href.startsWith('http') ? 'noopener noreferrer' : undefined
               }
-              className="flex items-stretch rounded-2xl border-2 border-black overflow-hidden shadow-[4px_4px_0px_#000000] hover:shadow-[2px_2px_0px_#000000] hover:translate-y-[2px] transition-all duration-150 cursor-pointer bg-white"
+              className="flex items-stretch rounded-2xl border border-white/30 backdrop-blur-xl overflow-hidden shadow-[0_12px_36px_rgba(0,0,0,0.18),inset_0_1px_0_rgba(255,255,255,0.3)] hover:shadow-[0_8px_24px_rgba(0,0,0,0.14)] hover:translate-y-[2px] transition-all duration-150 cursor-pointer bg-white/85"
             >
               {/* Text Column */}
               <div
@@ -172,7 +172,7 @@ const Contact = memo(function Contact() {
         </div>
 
         {/* Main Form White Card */}
-        <div className="bg-white rounded-[32px] border-2 border-black p-8 md:p-12 pt-20 md:pt-24 shadow-[8px_8px_0px_#000000] relative z-10">
+        <div className="bg-white/85 rounded-[32px] border border-white/30 backdrop-blur-xl p-8 md:p-12 pt-20 md:pt-24 shadow-[0_12px_36px_rgba(0,0,0,0.18),inset_0_1px_0_rgba(255,255,255,0.3)] relative z-10">
           {!isSubmitSuccess ? (
             <>
               {/* Internal Title */}
@@ -298,7 +298,7 @@ const Contact = memo(function Contact() {
                     disabled={isSubmitting}
                     whileHover={{ scale: 1.01, y: 1 }}
                     whileTap={{ scale: 0.99 }}
-                    className="w-full py-5 inline-flex items-center justify-center gap-3 bg-[#00E5FF] text-black border-2 border-black shadow-[4px_4px_0px_#000000] hover:shadow-[2px_2px_0px_#000000] transition-all duration-150 select-none whitespace-nowrap cursor-pointer text-lg font-black"
+                    className="w-full py-5 inline-flex items-center justify-center gap-3 bg-[#00E5FF]/75 text-black border border-white/30 backdrop-blur-xl shadow-[0_12px_36px_rgba(0,0,0,0.18),inset_0_1px_0_rgba(255,255,255,0.3)] hover:shadow-[0_8px_24px_rgba(0,0,0,0.14)] transition-all duration-150 select-none whitespace-nowrap cursor-pointer text-lg font-black"
                     style={{
                       borderRadius: '9999px',
                       fontFamily: "'Sahara Bold', 'Inter', sans-serif",
@@ -326,7 +326,7 @@ const Contact = memo(function Contact() {
               className="text-center py-12 text-black flex flex-col items-center"
             >
               {/* Animated checkmark container */}
-              <div className="w-20 h-20 rounded-full border-2 border-black bg-[#26EFFD] flex items-center justify-center shadow-[4px_4px_0px_#000000] mb-8">
+              <div className="w-20 h-20 rounded-full border border-white/30 backdrop-blur-xl bg-[#26EFFD]/75 flex items-center justify-center shadow-[0_12px_36px_rgba(0,0,0,0.18),inset_0_1px_0_rgba(255,255,255,0.3)] mb-8">
                 <svg
                   className="w-10 h-10 text-black"
                   fill="none"
@@ -369,7 +369,7 @@ const Contact = memo(function Contact() {
                 onClick={() => setIsSubmitSuccess(false)}
                 whileHover={{ scale: 1.03, y: 1 }}
                 whileTap={{ scale: 0.97 }}
-                className="mt-8 px-8 py-3 bg-[#F3F4F6] text-black border-2 border-black rounded-full font-black text-sm shadow-[3px_3px_0px_#000000] hover:shadow-[1px_1px_0px_#000000] transition-all cursor-pointer"
+                className="mt-8 px-8 py-3 bg-[#F3F4F6] text-black border border-white/30 backdrop-blur-xl rounded-full font-black text-sm shadow-[0_12px_36px_rgba(0,0,0,0.18),inset_0_1px_0_rgba(255,255,255,0.3)] hover:shadow-[0_8px_24px_rgba(0,0,0,0.14)] transition-all cursor-pointer"
                 style={{
                   fontFamily: "'Sahara Bold', 'Inter', sans-serif",
                 }}

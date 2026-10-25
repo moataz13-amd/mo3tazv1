@@ -228,7 +228,7 @@ const About = memo(function About() {
             }}
             whileHover={{ scale: 1.02, y: 2 }}
             whileTap={{ scale: 0.98 }}
-            className="w-full py-4 inline-flex items-center justify-center bg-[#00E5FF] text-black border-2 border-black shadow-[4px_4px_0px_#000000] hover:shadow-[2px_2px_0px_#000000] transition-all duration-150 leading-none select-none whitespace-nowrap cursor-pointer text-lg font-black"
+            className="w-full py-4 inline-flex items-center justify-center bg-[#00E5FF]/75 text-black border border-white/30 backdrop-blur-xl shadow-[0_12px_36px_rgba(0,0,0,0.18),inset_0_1px_0_rgba(255,255,255,0.3)] hover:shadow-[0_8px_24px_rgba(0,0,0,0.14)] transition-all duration-150 leading-none select-none whitespace-nowrap cursor-pointer text-lg font-black"
             style={{
               borderRadius: '9999px',
               fontFamily: "'Sahara Bold', 'Inter', sans-serif",

@@ -120,10 +120,7 @@ body::before {
   position: fixed;
   inset: 0;
   z-index: 0;
-  background-image: url('./assets/PortfolioBg.svg');
-  background-repeat: repeat-y;
-  background-position: top center;
-  background-size: 100% auto;
+  background: linear-gradient(135deg, #06191f 0%, #103e43 42%, #102d29 72%, #071a24 100%);
   pointer-events: none;
   will-change: transform;
   transform: translateZ(0);

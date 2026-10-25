@@ -112,7 +112,7 @@ export default function FloatingNav({ projectTitle }: { projectTitle?: string })
             whileHover={{ scale: 1.02, x: 2, y: 2 }}
             whileTap={{ scale: 0.98 }}
             onClick={() => scrollToSection('contact')}
-            className="flex-shrink-0 cursor-pointer inline-flex items-center justify-center bg-[#00E5FF] text-black border-2 border-black shadow-[4px_4px_0px_#000000] hover:shadow-[2px_2px_0px_#000000] transition-all duration-150 leading-none select-none whitespace-nowrap"
+            className="flex-shrink-0 cursor-pointer inline-flex items-center justify-center bg-[#00E5FF]/75 text-black border border-white/30 backdrop-blur-xl shadow-[0_12px_36px_rgba(0,0,0,0.18),inset_0_1px_0_rgba(255,255,255,0.3)] hover:shadow-[0_8px_24px_rgba(0,0,0,0.14)] transition-all duration-150 leading-none select-none whitespace-nowrap"
             style={{
               width: '160px',
               height: '50px',
@@ -360,7 +360,7 @@ export default function FloatingNav({ projectTitle }: { projectTitle?: string })
                     color: '#000',
                     borderRadius: '100px',
                     border: '2px solid #000',
-                    boxShadow: '3px 3px 0px #000',
+                    boxShadow: '0 8px 24px rgba(0,0,0,0.18), inset 0 1px 0 rgba(255,255,255,0.3)',
                     fontFamily: "'Sahara Bold', 'Inter', sans-serif",
                     fontSize: '16px',
                   }}

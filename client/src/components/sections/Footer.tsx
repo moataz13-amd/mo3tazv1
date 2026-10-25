@@ -103,7 +103,7 @@ const Footer = memo(function Footer() {
       <div className="max-w-4xl mx-auto relative">
         {/* Ticket Body Card */}
         <div 
-          className="w-full bg-[#26EFFD] text-black border-2 border-black rounded-[36px] p-6 sm:p-10 md:p-12 relative flex flex-col items-center shadow-[12px_12px_0px_#000000]"
+          className="w-full bg-[#26EFFD]/75 text-black border border-white/30 backdrop-blur-xl rounded-[36px] p-6 sm:p-10 md:p-12 relative flex flex-col items-center shadow-[0_12px_36px_rgba(0,0,0,0.18),inset_0_1px_0_rgba(255,255,255,0.3)]"
         >
           {/* Top CTA Area */}
           <div className="text-center mb-6">
@@ -131,7 +131,7 @@ const Footer = memo(function Footer() {
               onClick={() => handleScroll('contact')}
               whileHover={{ scale: 1.05, y: -2 }}
               whileTap={{ scale: 0.95 }}
-              className="px-10 py-2.5 bg-white text-black border-2 border-black rounded-full font-black text-lg sm:text-xl shadow-[4px_4px_0px_#000000] hover:shadow-[2px_2px_0px_#000000] transition-all cursor-pointer"
+              className="px-10 py-2.5 bg-white/85 text-black border border-white/30 backdrop-blur-xl rounded-full font-black text-lg sm:text-xl shadow-[0_12px_36px_rgba(0,0,0,0.18),inset_0_1px_0_rgba(255,255,255,0.3)] hover:shadow-[0_8px_24px_rgba(0,0,0,0.14)] transition-all cursor-pointer"
               style={{ fontFamily: "'Milan Display', 'Sahara Bold', sans-serif" }}
             >
               تواصل
@@ -142,14 +142,14 @@ const Footer = memo(function Footer() {
           <div className="w-[calc(100%+3rem)] sm:w-[calc(100%+5rem)] md:w-[calc(100%+6rem)] -mx-6 sm:-mx-10 md:-mx-12 relative flex items-center justify-center my-6">
             {/* Left Notch Subtract Punch Hole - Carves inward into the card */}
             <div 
-              className="absolute left-0 -translate-x-1/2 w-8 h-8 sm:w-10 sm:h-10 rounded-full bg-[#082127] border-2 border-black z-20"
+              className="absolute left-0 -translate-x-1/2 w-8 h-8 sm:w-10 sm:h-10 rounded-full bg-[#082127] border border-white/30 backdrop-blur-xl z-20"
               style={{ clipPath: 'inset(0 0 0 50%)' }}
             />
             {/* Dashed Horizontal Line */}
             <div className="w-full border-t-2 border-dashed border-black/40" />
             {/* Right Notch Subtract Punch Hole - Carves inward into the card */}
             <div 
-              className="absolute right-0 translate-x-1/2 w-8 h-8 sm:w-10 sm:h-10 rounded-full bg-[#082127] border-2 border-black z-20"
+              className="absolute right-0 translate-x-1/2 w-8 h-8 sm:w-10 sm:h-10 rounded-full bg-[#082127] border border-white/30 backdrop-blur-xl z-20"
               style={{ clipPath: 'inset(0 50% 0 0)' }}
             />
           </div>
@@ -183,7 +183,7 @@ const Footer = memo(function Footer() {
                       href={social.url}
                       target="_blank"
                       rel="noopener noreferrer"
-                      className="w-9 h-9 rounded-full bg-white flex items-center justify-center border-2 border-black shadow-[2px_2px_0px_#000000] hover:translate-y-[1px] hover:shadow-[1px_1px_0px_#000000] transition-all text-black"
+                      className="w-9 h-9 rounded-full bg-white/85 flex items-center justify-center border border-white/30 backdrop-blur-xl shadow-[0_12px_36px_rgba(0,0,0,0.18),inset_0_1px_0_rgba(255,255,255,0.3)] hover:translate-y-[1px] hover:shadow-[0_8px_24px_rgba(0,0,0,0.14)] transition-all text-black"
                     >
                       {social.icon}
                     </a>

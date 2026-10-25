@@ -78,7 +78,7 @@ const CarouselCard = memo(function CarouselCard({
       }}
       className={folderMode ? 'project-folder-carousel-card absolute top-0 w-full h-full select-none cursor-pointer group' : `absolute top-0 w-full max-w-[960px] h-full rounded-[20px] sm:rounded-[32px] md:rounded-[42px] overflow-hidden select-none cursor-pointer group ${
         isActive
-          ? 'border-2 border-[#000000] shadow-[6px_6px_0px_rgba(0,0,0,1),0_8px_0px_rgba(0,0,0,0.9)]'
+          ? 'border border-white/25 backdrop-blur-xl shadow-[0_12px_36px_rgba(0,0,0,0.18),inset_0_1px_0_rgba(255,255,255,0.3)]'
           : 'border border-white/10'
       }`}
       style={{

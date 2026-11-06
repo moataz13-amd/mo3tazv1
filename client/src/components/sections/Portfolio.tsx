@@ -130,7 +130,7 @@ const Carousel3DSection = memo(function Carousel3DSection({
 
   const [currentIndex, setCurrentIndex] = useState(0);
   const isPausedRef = useRef(false);           // ref instead of state – avoids re-renders on hover
-  const timerRef = useRef<ReturnType<typeof setInterval> | null>(null);
+  const timerRef = useRef<ReturnType<typeof setTimeout> | null>(null);
 
   const total = items.length;
 
@@ -153,11 +153,13 @@ const Carousel3DSection = memo(function Carousel3DSection({
   useEffect(() => {
     if (total <= 1 || !isInView) return;
 
-    timerRef.current = setInterval(() => {
-      if (!isPausedRef.current && document.visibilityState === 'visible') {
-        handleNext();
-      }
-    }, AUTOPLAY_DURATION);
+    const scheduleNext = () => {
+      timerRef.current = setTimeout(() => {
+        if (!isPausedRef.current && document.visibilityState === 'visible') handleNext();
+        else scheduleNext();
+      }, AUTOPLAY_DURATION);
+    };
+    scheduleNext();
 
     return () => {
       if (timerRef.current) clearInterval(timerRef.current);
@@ -307,14 +309,12 @@ const Carousel3DSection = memo(function Carousel3DSection({
         {/* Group / Project Title outside the card */}
         {!hideText && total > 0 && items[currentIndex] && (
           <AnimatePresence mode="wait">
-            <motion.div
+            <button
+              type="button"
               key={items[currentIndex].id}
-              initial={{ opacity: 0, y: 8 }}
-              animate={{ opacity: 1, y: 0 }}
-              exit={{ opacity: 0, y: -8 }}
-              transition={{ duration: 0.25 }}
               onClick={() => handleNavigate(items[currentIndex])}
-              className="text-center cursor-pointer group max-w-2xl mx-auto px-4 mt-1 mb-1"
+              className="text-center cursor-pointer group max-w-2xl mx-auto px-4 mt-1 mb-1 bg-transparent border-0"
+              aria-label={`فتح فئة ${items[currentIndex].title || items[currentIndex].internal_name || 'غير مسمى'}`}
             >
               <h3
                 className="text-2xl sm:text-3xl md:text-4xl font-black text-white group-hover:text-[#26EFFD] transition-colors duration-200"
@@ -327,7 +327,7 @@ const Carousel3DSection = memo(function Carousel3DSection({
                   {items[currentIndex].description}
                 </p>
               )}
-            </motion.div>
+            </button>
           </AnimatePresence>
         )}
       </motion.div>
@@ -393,7 +393,7 @@ function FolderArtwork({ project }: { project: Project }) {
                 </svg>
                 <span className="project-folder-sheets" aria-hidden="true">
                   {previews.map((src, index) => (
-                    <img key={`${src}-${index}`} src={src} alt="" loading="eager" decoding="async" className={`project-folder-sheet project-folder-sheet-${index}`} onError={(event) => {
+                    <img key={`${src}-${index}`} src={src} alt="" loading={index === 0 ? 'eager' : 'lazy'} decoding="async" fetchPriority={index === 0 ? 'high' : 'low'} className={`project-folder-sheet project-folder-sheet-${index}`} onError={(event) => {
                       const image = event.currentTarget;
                       if (project.cover_image && image.dataset.fallback !== 'true') {
                         image.dataset.fallback = 'true';
